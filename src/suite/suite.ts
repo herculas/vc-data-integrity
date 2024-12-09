@@ -1,5 +1,5 @@
 import type { Proof } from "./proof.ts"
-import type { Purpose } from "../purpose/base.ts"
+import type { Purpose } from "../purpose/purpose.ts"
 import type { Type } from "../syntax.ts"
 
 export interface Suite {

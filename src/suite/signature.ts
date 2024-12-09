@@ -1,5 +1,5 @@
 import type { Keypair } from "../key/keypair.ts"
-import type { Purpose } from "../purpose/base.ts"
+import type { Purpose } from "../purpose/purpose.ts"
 import type { Type } from "../syntax.ts"
 import { toW3CTimestampString } from "../util.ts"
 import type { Proof } from "./proof.ts"

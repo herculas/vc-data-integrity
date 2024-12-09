@@ -1,7 +1,8 @@
 /**
- * The keypair interface.
+ * The keypair base class.
+ * This class should be extended by specific key types.
  */
-export abstract class Keypair {
+export class Keypair {
   id?: string
   controller?: string
   type: string
@@ -26,42 +27,23 @@ export abstract class Keypair {
   /**
    * Generate a new keypair.
    *
-   * @param {object} options Suite-specific options for keypair generation.
-   *
-   * @returns {Promise<Keypair>} Resolve to a new keypair instance.
+   * @param {object} _options Suite-specific options for keypair generation.
    */
-  abstract generate(options: object): Promise<Keypair>
-
-  /**
-   * Import a keypair instance from a provided externally fetched document.
-   *
-   * @param {object} document An externally fetched key document.
-   * @param {boolean} checkContext Whether to check that the fetched document contains the context required by the
-   * key's cryptographic suite.
-   * @param {boolean} checkRevoked Whether to check that the fetched document contains a `revoked` timestamp.
-   *
-   * @returns {Promise<Keypair>} Resolve to a keypair instance.
-   */
-  abstract fromDocument(document: object, checkContext: boolean, checkRevoked: boolean): Promise<Keypair>
-
-  /**
-   * Import a keypair from provided options.
-   *
-   * @param {object} options Suite-specific options for keypair import.
-   *
-   * @returns {Promise<Keypair>} Resolve to a keypair instance.
-   */
-  abstract from(options: object): Promise<Keypair>
+  generate(_options: object): void {
+    throw new Error('Method not implemented.')
+  }
 
   /**
    * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {boolean} pkFlag Whether to include the public key in the export.
-   * @param {boolean} skFlag Whether to include the private key in the export.
+   * @param {boolean} _pkFlag Whether to include the public key in the export.
+   * @param {boolean} _skFlag Whether to include the private key in the export.
    *
    * @returns {object} The serialized keypair to be exported.
    */
-  abstract export(pkFlag: boolean, skFlag: boolean): object
+  export(_pkFlag: boolean, _skFlag: boolean): object {
+    throw new Error('Method not implemented.')
+  }
 
   /**
    * Calculate the public key fingerprint, multibase + multicodec encoded. The specific fingerprint method is
@@ -72,14 +54,44 @@ export abstract class Keypair {
    *
    * @returns {string} The fingerprint.
    */
-  abstract fingerprint(): string
+  fingerprint(): string {
+    throw new Error('Method not implemented.')
+  }
 
   /**
    * Verify that a provided fingerprint matches the public key material belonging to this keypair.
    *
-   * @param {string} fingerprint A public key fingerprint.
+   * @param {string} _fingerprint A public key fingerprint.
    *
    * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
-  abstract verifyFingerprint(fingerprint: string): boolean
+  verifyFingerprint(_fingerprint: string): boolean {
+    throw new Error('Method not implemented.')
+  }
+
+
+  /**
+   * Import a keypair instance from a provided externally fetched document.
+   *
+   * @param {object} _document An externally fetched key document.
+   * @param {boolean} _checkContext Whether to check that the fetched document contains the context required by the
+   * key's cryptographic suite.
+   * @param {boolean} _checkRevoked Whether to check that the fetched document contains a `revoked` timestamp.
+   *
+   * @returns {Promise<Keypair>} Resolve to a keypair instance.
+   */
+  static fromDocument(_document: object, _checkContext: boolean, _checkRevoked: boolean): Promise<Keypair> {
+    throw new Error('Method not implemented.')
+  }
+
+  /**
+   * Import a keypair from provided options.
+   *
+   * @param {object} _options Suite-specific options for keypair import.
+   *
+   * @returns {Promise<Keypair>} Resolve to a keypair instance.
+   */
+  static from(_options: object): Promise<Keypair> {
+    throw new Error('Method not implemented.')
+  }
 }

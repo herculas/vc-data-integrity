@@ -27,9 +27,9 @@ export class Keypair {
   /**
    * Generate a new keypair.
    *
-   * @param {object} _options Suite-specific options for keypair generation.
+   * @param {Uint8Array} _seed A seed to generate the keypair from. If not provided, a random seed will be used.
    */
-  generate(_options: object): void {
+  generate(_seed?: Uint8Array): void {
     throw new Error('Method not implemented.')
   }
 

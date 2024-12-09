@@ -1,6 +1,6 @@
 {
   "name": "@crumble-jon/ld-crypto-syntax",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "license": "MIT",
   "exports": "./src/mod.ts",
   "imports": {

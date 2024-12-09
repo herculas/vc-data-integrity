@@ -3,3 +3,4 @@ export type { Purpose, ValidationResult as PurposeValidationResult } from "./pur
 export type { Suite } from "./suite/suite.ts"
 export { Signature } from "./suite/signature.ts"
 export type { Proof } from "./suite/proof.ts"
+export { toW3CTimestampString } from "./util.ts"

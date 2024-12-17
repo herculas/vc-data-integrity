@@ -1,8 +1,9 @@
-import type { Id, OneOrMany, Type } from "../syntax.ts"
+import type { Context, OneOrMany } from "./basic.ts"
 
 export interface Proof {
-  id?: Id
-  type: Type
+  "@context"?: Context
+  id?: string
+  type: OneOrMany<string>
   proofPurpose: string
   verificationMethod?: string
   cryptosuite?: string
@@ -10,7 +11,7 @@ export interface Proof {
   expires?: string
   domain?: OneOrMany<string>
   challenge?: string
-  proofValue: string
+  proofValue?: string
   previousProof?: OneOrMany<string>
   nonce?: string
 }

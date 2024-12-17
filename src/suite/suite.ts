@@ -1,46 +1,75 @@
-import type { Proof } from "./proof.ts"
+import type { Proof } from "../types/proof.ts"
 import type { Purpose } from "../purpose/purpose.ts"
-import type { Type } from "../syntax.ts"
+import type { Loader } from "../types/loader.ts"
+import type { OneOrMany } from "../types/basic.ts"
+import type { JsonLdDocument } from "../types/document.ts"
 
-export interface Suite {
-  type: Type
+export class Suite {
+  type: OneOrMany<string>
+
+  /**
+   * @param {string|Array<string>} type The `type` term specified in the Linked Data Proofs specification.
+   */
+  constructor(type: OneOrMany<string>) {
+    this.type = type
+  }
 
   /**
    * Create a proof for the given document.
    *
-   * @param {object} document The document to prove.
-   * @param {Purpose} purpose The purpose of the proof.
-   * @param {Array<Proof>} set Any existing proofs to include in the new proof.
+   * @param {JsonLdDocument} _document The document to prove.
+   * @param {Purpose} _purpose The purpose of the proof.
+   * @param {Array<Proof>} _proofs Any existing proofs to include in the new proof.
+   * @param {Loader} _loader A loader to resolve external documents.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  prove(document: object, purpose: Purpose, set: Array<Proof>): Promise<Proof>
+  prove(
+    _document: JsonLdDocument,
+    _purpose: Purpose,
+    _proofs: Array<Proof>,
+    _loader: Loader,
+  ): Promise<Proof> {
+    throw new Error("Method not implemented.")
+  }
 
   /**
    * Derive a proof from the given document.
    *
-   * @param {object} document The document to prove.
-   * @param {Purpose} purpose The purpose of the proof.
-   * @param {Array<Proof>} set Any existing proofs.
+   * @param {JsonLdDocument} _document The document to prove.
+   * @param {Purpose} _purpose The purpose of the proof.
+   * @param {Array<Proof>} _proofs Any existing proofs.
+   * @param {Loader} _loader A loader to resolve external documents.
    *
    * @returns {Promise<Proof>} Resolve to the derived proof.
    */
-  derive(document: object, purpose: Purpose, set: Array<Proof>): Promise<Proof>
+  derive(
+    _document: JsonLdDocument,
+    _purpose: Purpose,
+    _proofs: Array<Proof>,
+    _loader: Loader,
+  ): Promise<Proof> {
+    throw new Error("Method not implemented.")
+  }
 
   /**
    * Verify a proof for the given document.
    *
-   * @param {object} document The document to be verified.
-   * @param {Proof} proof The proof to be verified.
-   * @param {Purpose} purpose The purpose of the proof.
-   * @param {Array<Proof>} set Any existing proofs.
+   * @param {JsonLdDocument} _document The document to be verified.
+   * @param {Proof} _proof The proof to be verified.
+   * @param {Purpose} _purpose The purpose of the proof.
+   * @param {Array<Proof>} _proofs Any existing proofs.
+   * @param {Loader} _loader A loader to resolve external documents.
    *
    * @returns {Promise<boolean>} Resolve to true if the proof is valid.
    */
   verify(
-    document: object,
-    proof: object,
-    purpose: Purpose,
-    set: Array<Proof>,
-  ): Promise<boolean>
+    _document: JsonLdDocument,
+    _proof: Proof,
+    _purpose: Purpose,
+    _proofs: Array<Proof>,
+    _loader: Loader,
+  ): Promise<boolean> {
+    throw new Error("Method not implemented.")
+  }
 }

@@ -3,6 +3,7 @@ import type { Purpose } from "../purpose/purpose.ts"
 import type { Loader } from "../types/loader.ts"
 import type { OneOrMany } from "../types/basic.ts"
 import type { JsonLdDocument } from "../types/document.ts"
+import type { VerificationMethod } from "../types/interfaces.ts"
 
 export class Suite {
   type: OneOrMany<string>
@@ -69,7 +70,7 @@ export class Suite {
     _purpose: Purpose,
     _proofs: Array<Proof>,
     _loader: Loader,
-  ): Promise<boolean> {
+  ): Promise<VerificationMethod> {
     throw new Error("Method not implemented.")
   }
 }

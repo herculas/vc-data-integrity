@@ -14,7 +14,7 @@ export interface NodeObject {
   "@reverse"?: Reverse
   "@index"?: Index
   [key: string]:
-    | OneOrMany<null | boolean | number | string | NodeObject | GraphObject | ValueObject | ListObject | SetObject>
+    | OneOrMany<Primitive | NodeObject | GraphObject | ValueObject | ListObject | SetObject>
     | IncludedBlock
     | LanguageMap
     | IndexMap
@@ -40,15 +40,15 @@ type Id = OneOrMany<string>
 type Import = string
 type Index = string
 type Language = string
-type List = OneOrMany<Value | NodeObject | ValueObject>
+type List = OneOrMany<Primitive | NodeObject | ValueObject>
 type Nest = OneOrMany<JsonObject>
 type Prefix = boolean
 type Propagate = boolean
 type Protected = boolean
 type Reverse = { [key: string]: OneOrMany<string> }
-type Set = OneOrMany<Value | NodeObject | ValueObject>
+type Set = OneOrMany<Primitive | NodeObject | ValueObject>
 type Type = OneOrMany<string>
-type Value = null | boolean | number | string
+type Primitive = string | number | boolean | null
 type Version = "1.1"
 type Vocab = string | null
 
@@ -74,14 +74,14 @@ type ValueObject =
     "@context"?: Context
   }
   & ({
-    "@value": Value
+    "@value": Primitive
     "@language"?: Language
     "@direction"?: Direction
   } | {
-    "@value": Value
+    "@value": Primitive
     "@type": Type
   } | {
-    "@value": Value | JsonObject | JsonArray
+    "@value": Primitive | JsonObject | JsonArray
     "@type": "@json"
   })
 
@@ -114,7 +114,7 @@ interface LanguageMap {
  * @see https://www.w3.org/TR/json-ld11/#index-maps
  */
 interface IndexMap {
-  [key: string]: OneOrMany<Value | NodeObject | ValueObject | ListObject | SetObject>
+  [key: string]: OneOrMany<Primitive | NodeObject | ValueObject | ListObject | SetObject>
 }
 
 /**
@@ -195,8 +195,7 @@ type ContainerTypeCombination =
   | ["@set", ContainerType]
   | [ContainerType, "@set"]
 
-type JsonPrimitive = string | number | boolean | null
-type JsonValue = JsonPrimitive | JsonObject | JsonArray
+type JsonValue = Primitive | JsonObject | JsonArray
 interface JsonArray extends Array<JsonValue> {}
 interface JsonObject {
   [key: string]: JsonValue | undefined

@@ -1,7 +1,8 @@
 import * as jsonld from "jsonld"
 import type * as Options from "./types/options.ts"
-import type { Proof } from "./mod.ts"
 import { SECURITY_CONTEXT_V2_URL } from "./context.ts"
+import type { Loader } from "./types/loader.ts"
+import type { NodeObject } from "./types/basic.ts"
 
 export function toW3CTimestampString(date?: Date | number | string): string {
   if (!date) {
@@ -39,31 +40,45 @@ export function concatenate(...arrays: Array<Uint8Array>): Uint8Array {
  *
  * @returns {Promise<string>} Resolve to the canonized document.
  */
-// deno-lint-ignore require-await
 export async function canonize(input: object, options: Options.Canonize): Promise<string> {
-  return jsonld.default.canonize(input, {
-    algorithm: "URDNA2015",
-    format: "application/n-quads",
-    documentLoader: options.loader,
-    skipExpansion: options.skipExpansion,
+  return await jsonld.default.canonize(input, options)
+}
+
+export async function frame(method: string, loader: Loader): Promise<object> {
+  const framed = await jsonld.default.frame(method, {
+    "@context": SECURITY_CONTEXT_V2_URL,
+    "@embed": "@always",
+    id: method,
+  }, {
+    documentLoader: loader,
+    compactToRelative: false,
+    expandContext: SECURITY_CONTEXT_V2_URL,
   })
+  if (!framed) {
+    throw new Error(`Verification method ${method} not found.`)
+  }
+  return framed
 }
 
 /**
- * Canonize an object using the URDNA2015 algorithm for proof creation.
- *
- * @param {object} proof The proof to canonize.
- * @param {Options.Canonize} options The options.
- *
- * @returns {Promise<string>} Resolve to the canonized proof.
+ * Check if a provided document includes a context URL in its `@context` property.
+ * 
+ * @param {NodeObject} document A JSON-LD document.
+ * @param {string} context The context URL to check.
+ * 
+ * @returns {boolean} `true` if the context is included, `false` otherwise. 
  */
-export function canonizeForProof(proof: Proof, options: Options.Canonize): Promise<string> {
-  proof["@context"] = SECURITY_CONTEXT_V2_URL
-  delete proof.proofValue
-  return canonize(proof, {
-    loader: options.loader,
-    skipExpansion: false,
-  })
+export function includeContext(document: NodeObject, context: string): boolean {
+  if (Array.isArray(document)) {
+    document = document[0]
+  }
+  const fromContext = document["@context"]
+  if (context === fromContext) {
+    return true
+  } else if (Array.isArray(fromContext)) {
+    return fromContext.includes(context)
+  }
+  return false
 }
 
 /**

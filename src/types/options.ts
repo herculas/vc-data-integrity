@@ -1,6 +1,13 @@
 import type { Loader } from "./loader.ts"
 
 export type Canonize = {
-  loader: Loader
+  algorithm?: string
+  base?: string
+  expandContext?: string | object
   skipExpansion?: boolean
+  format?: string
+  safe?: boolean
+  produceGeneralizedRdf?: boolean
+  documentLoader?: Loader
+  rdfDirection?: string
 }

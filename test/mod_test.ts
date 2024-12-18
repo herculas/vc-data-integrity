@@ -1,6 +1,10 @@
 import * as jsonld from "jsonld"
-import { canonize, sha256 } from "../src/util.ts"
+import { canonize, frame, sha256 } from "../src/util.ts"
 import { extend } from "../src/loader.ts"
+
+import * as keypair from "../data/test/keypair.json" with { type: "json" }
+import * as controller from "../data/test/controller.json" with { type: "json" }
+
 const ld = jsonld.default
 
 Deno.test("jsonld", async () => {
@@ -18,6 +22,26 @@ Deno.test("jsonld", async () => {
   console.log(JSON.stringify(compacted, null, 2))
 })
 
+const customLoader = (url: string) => {
+  const document = new Map<string, object>([
+    ["did:example:489398593#test", keypair.default],
+    ["did:example:489398593", controller.default],
+  ])
+
+  if (document.has(url)) {
+    const context = document.get(url)!
+    return Promise.resolve({
+      document: context,
+      documentUrl: url,
+    })
+  }
+  throw new Error(
+    `Attempted to remote load context : '${url}', please cache instead`,
+  )
+}
+
+const loader = extend(customLoader)
+
 Deno.test("extend", async () => {
   const input = {
     "@context": "https://w3id.org/security/v2",
@@ -26,16 +50,11 @@ Deno.test("extend", async () => {
     "verificationMethod": "did:example:489398593#test",
     "proofPurpose": "assertionMethod",
   }
-  const customLoader = (url: string) => {
-    return Promise.resolve({
-      documentUrl: url,
-    })
-  }
-  const loader = extend(customLoader)
   const options = {
-    loader: loader,
+    documentLoader: loader,
     skipExpansion: false,
-    expansionMap: undefined,
+    algorithm: "URDNA2015",
+    format: "application/n-quads",
   }
   const result = await canonize(input, options)
   console.log(result)
@@ -46,4 +65,10 @@ Deno.test("hash", async () => {
   const str = "hello"
   const hash = await sha256(str)
   console.log(hash)
+})
+
+Deno.test("frame", async () => {
+  const method = "did:example:489398593#test"
+  const framed = await frame(method, loader)
+  console.log(framed)
 })

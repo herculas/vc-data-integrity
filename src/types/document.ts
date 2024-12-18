@@ -5,8 +5,3 @@ import type { NodeObject, OneOrMany } from "./basic.ts"
  * @see https://www.w3.org/TR/json-ld11/#json-ld-grammar
  */
 export type JsonLdDocument = OneOrMany<NodeObject>
-
-export type DocCache = {
-  doc: object
-  hash: Uint8Array
-}

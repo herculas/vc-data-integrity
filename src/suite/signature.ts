@@ -1,13 +1,13 @@
 import type { Keypair } from "../key/keypair.ts"
 import type { Purpose } from "../purpose/purpose.ts"
 import type { Loader } from "../types/loader.ts"
-import type { JsonLdDocument } from "../types/document.ts"
-import { canonize, concatenate, frame, includeContext, sha256, toW3CTimestampString } from "../util.ts"
+import type { JsonLdDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/proof.ts"
-import { Suite } from "./suite.ts"
-import type { OneOrMany } from "../types/basic.ts"
-import { SECURITY_CONTEXT_V2_URL } from "../context.ts"
 import type { DocCache, VerificationResult } from "../types/interfaces.ts"
+import type { ContextURL, Type } from "../types/jsonld/keywords.ts"
+import { canonize, concatenate, frame, includeContext, sha256, toW3CTimestampString } from "../util.ts"
+import { Suite } from "./suite.ts"
+import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.
@@ -15,20 +15,20 @@ import type { DocCache, VerificationResult } from "../types/interfaces.ts"
  */
 export class Signature extends Suite {
   keypair: Keypair
-  context: string
+  context: ContextURL
   time: Date
   proof?: Proof
 
   private cache?: DocCache
 
   /**
-   * @param {string|Array<string>} type The suite name, should be provided by sub-classes.
+   * @param {Type} type The suite name, should be provided by sub-classes.
    * @param {Keypair} keypair The keypair used to create the signature.
-   * @param {string} context The json-ld context URL that defines the terms of this suite.
-   * @param {object} proof A json-ld document with options for this instance.
+   * @param {ContextURL} context The json-ld context URL that defines the terms of this suite.
+   * @param {Proof} proof A json-ld document with options for this instance.
    * @param {Date} time The time of the operation.
    */
-  constructor(type: OneOrMany<string>, keypair: Keypair, context: string, time?: Date, proof?: Proof) {
+  constructor(type: Type, keypair: Keypair, context: ContextURL, time?: Date, proof?: Proof) {
     super(type)
     this.keypair = keypair
     this.context = context
@@ -93,7 +93,7 @@ export class Signature extends Suite {
     try {
       const compressed = await this.compress(document, proof, proofs, loader)
       const method = await this.getVerificationMethod(document, proof, loader)
-      await this.verifySignature(document, proof, compressed, method, loader)
+      this.verifySignature(document, proof, compressed, method, loader)
       return { verified: true, method: method }
     } catch (error) {
       if (error instanceof Error) {
@@ -139,7 +139,7 @@ export class Signature extends Suite {
    * @param {JsonLdDocument} _document The document.
    * @param {Proof} _proof The proof to be updated.
    * @param {Purpose} _purpose The purpose of the proof.
-   * @param {Array} _proofs Any existing proofs.
+   * @param {Array<Proof>} _proofs Any existing proofs.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
@@ -215,7 +215,7 @@ export class Signature extends Suite {
    *
    * @param {JsonLdDocument} document The document to be signed.
    * @param {Proof} proof The proof.
-   * @param {Array} proofs Any existing proofs.
+   * @param {Array} _proofs Any existing proofs.
    * @param {Loader} loader A loader for external documents.
    */
   protected async compress(

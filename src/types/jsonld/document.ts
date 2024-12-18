@@ -1,4 +1,5 @@
-import type { NodeObject, OneOrMany } from "./basic.ts"
+import type { OneOrMany } from "./base.ts"
+import type { NodeObject } from "./node.ts"
 
 /**
  * A JSON-LD document is a valid JSON document that conforms to the JSON-LD grammar.

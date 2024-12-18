@@ -1,5 +1,5 @@
-import { urlContextMap } from "./context.ts"
-import type { Loader } from "./types/loader.ts"
+import type { Loader } from "../types/loader.ts"
+import { urlContextMap } from "../context/context.ts"
 
 /**
  * Given a existing document loader function, return a new document loader function. The new function will first check

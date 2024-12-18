@@ -1,17 +1,18 @@
-import type { Context, OneOrMany } from "./basic.ts"
+import type { OneOrMany } from "./jsonld/base.ts"
+import type { Context, Type, URL } from "./jsonld/keywords.ts"
 
 export interface Proof {
   "@context"?: Context
-  id?: string
-  type: OneOrMany<string>
-  proofPurpose: string
-  verificationMethod?: string
-  cryptosuite?: string
-  created?: string
-  expires?: string
-  domain?: OneOrMany<string>
+  id?: URL
+  type: Type
   challenge?: string
-  proofValue?: string
-  previousProof?: OneOrMany<string>
+  created?: string
+  cryptosuite?: string
+  domain?: OneOrMany<string>
+  expires?: string
   nonce?: string
+  previousProof?: OneOrMany<string>
+  proofPurpose: string
+  proofValue?: string
+  verificationMethod?: string
 }

@@ -1,17 +1,17 @@
+import type { JsonLdDocument } from "../types/jsonld/document.ts"
+import type { Type } from "../types/jsonld/keywords.ts"
+import type { Loader } from "../types/loader.ts"
 import type { Proof } from "../types/proof.ts"
 import type { Purpose } from "../purpose/purpose.ts"
-import type { Loader } from "../types/loader.ts"
-import type { OneOrMany } from "../types/basic.ts"
-import type { JsonLdDocument } from "../types/document.ts"
 import type { VerificationMethod } from "../types/interfaces.ts"
 
 export class Suite {
-  type: OneOrMany<string>
+  type: Type
 
   /**
-   * @param {string|Array<string>} type The `type` term specified in the Linked Data Proofs specification.
+   * @param {Type} type The `type` term specified in the Linked Data Proofs specification.
    */
-  constructor(type: OneOrMany<string>) {
+  constructor(type: Type) {
     this.type = type
   }
 

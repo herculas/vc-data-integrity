@@ -1,7 +1,7 @@
 import type { Proof } from "../types/proof.ts"
 import type { Suite } from "../suite/suite.ts"
 import type { Loader } from "../types/loader.ts"
-import type { JsonLdDocument } from "../types/document.ts"
+import type { JsonLdDocument } from "../types/jsonld/document.ts"
 
 /**
  * A class that represents a purpose for a proof.

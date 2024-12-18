@@ -1,9 +1,9 @@
-import * as jsonld from "jsonld"
-import { canonize, frame, sha256 } from "../src/util.ts"
-import { extend } from "../src/loader.ts"
-
-import * as keypair from "../data/test/keypair.json" with { type: "json" }
 import * as controller from "../data/test/controller.json" with { type: "json" }
+import * as jsonld from "jsonld"
+import * as keypair from "../data/test/keypair.json" with { type: "json" }
+import { extend } from "../src/loader/extend.ts"
+import { sha256 } from "../src/utils/crypto.ts"
+import { canonize, frame } from "../src/utils/jsonld.ts"
 
 const ld = jsonld.default
 

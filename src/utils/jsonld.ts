@@ -2,8 +2,8 @@ import * as jsonld from "jsonld"
 import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
 import type { ContextURL } from "../types/jsonld/keywords.ts"
 import type { NodeObject } from "../types/jsonld/node.ts"
-import type { Loader } from "../types/loader.ts"
-import type * as Options from "../types/options.ts"
+import type { Loader } from "../types/interface/loader.ts"
+import type * as Options from "../types/interface/options.ts"
 
 /**
  * Canonize an object using the URDNA2015 algorithm.

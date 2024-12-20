@@ -3,10 +3,10 @@ import { expandController } from "../utils/jsonld.ts"
 import { DID_VR_TERMS } from "./constants.ts"
 import { Purpose } from "./purpose.ts"
 import type { Proof, Suite } from "../mod.ts"
-import type { Controller, VerificationMethod } from "../types/interface/common.ts"
 import type { ValidationResult } from "../types/interface/purpose.ts"
 import type { JsonLdDocument } from "../types/jsonld/document.ts"
-import type { Loader } from "../types/loader.ts"
+import type { Loader } from "../types/interface/loader.ts"
+import type { VerificationMethod } from "../types/did/method.ts"
 
 export class ControllerPurpose extends Purpose {
   controller?: Controller

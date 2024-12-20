@@ -29,9 +29,9 @@ export type Version = "1.1"
 export type Vocab = string | null
 
 /**
- * An included block is used to provide a set of node objects. An included block MAY appear as the value of a member 
+ * An included block is used to provide a set of node objects. An included block MAY appear as the value of a member
  * of a node object with either key of `@included` or an alias of `@included`.
- * 
+ *
  * @see https://www.w3.org/TR/json-ld11/#included-blocks
  */
 export type IncludedBlock = OneOrMany<NodeObject>

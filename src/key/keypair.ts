@@ -30,7 +30,7 @@ export class Keypair {
    * @param {Uint8Array} _seed A seed to generate the keypair from. If not provided, a random seed will be used.
    */
   generate(_seed?: Uint8Array): void {
-    throw new Error('Method not implemented.')
+    throw new Error("Method not implemented.")
   }
 
   /**
@@ -42,7 +42,7 @@ export class Keypair {
    * @returns {object} The serialized keypair to be exported.
    */
   export(_pkFlag: boolean, _skFlag: boolean): object {
-    throw new Error('Method not implemented.')
+    throw new Error("Method not implemented.")
   }
 
   /**
@@ -55,7 +55,7 @@ export class Keypair {
    * @returns {string} The fingerprint.
    */
   fingerprint(): string {
-    throw new Error('Method not implemented.')
+    throw new Error("Method not implemented.")
   }
 
   /**
@@ -66,9 +66,8 @@ export class Keypair {
    * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
   verifyFingerprint(_fingerprint: string): boolean {
-    throw new Error('Method not implemented.')
+    throw new Error("Method not implemented.")
   }
-
 
   /**
    * Import a keypair instance from a provided externally fetched document.
@@ -81,7 +80,7 @@ export class Keypair {
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
   static fromDocument(_document: object, _checkContext: boolean, _checkRevoked: boolean): Promise<Keypair> {
-    throw new Error('Method not implemented.')
+    throw new Error("Method not implemented.")
   }
 
   /**
@@ -92,6 +91,6 @@ export class Keypair {
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
   static from(_options: object): Promise<Keypair> {
-    throw new Error('Method not implemented.')
+    throw new Error("Method not implemented.")
   }
 }

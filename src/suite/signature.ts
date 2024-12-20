@@ -6,12 +6,12 @@ import { sha256 } from "../utils/crypto.ts"
 import { concatenate } from "../utils/format.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Purpose } from "../purpose/purpose.ts"
-import type { Loader } from "../types/loader.ts"
+import type { Loader } from "../types/interface/loader.ts"
 import type { JsonLdDocument } from "../types/jsonld/document.ts"
-import type { Proof } from "../types/proof.ts"
+import type { Proof } from "../types/interface/proof.ts"
 import type { DocCache, VerificationResult } from "../types/interface/suite.ts"
 import type { ContextURL, Type } from "../types/jsonld/keywords.ts"
-import type { VerificationMethod } from "../types/interface/common.ts"
+import type { VerificationMethod } from "../types/did/method.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.

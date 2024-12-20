@@ -1,5 +1,5 @@
-import type { OneOrMany } from "./jsonld/base.ts"
-import type { Context, Type, URL } from "./jsonld/keywords.ts"
+import type { OneOrMany } from "../jsonld/base.ts"
+import type { Context, Type, URL } from "../jsonld/keywords.ts"
 
 export interface Proof {
   "@context"?: Context

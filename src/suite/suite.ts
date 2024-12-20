@@ -3,7 +3,7 @@ import type { Type } from "../types/jsonld/keywords.ts"
 import type { Loader } from "../types/loader.ts"
 import type { Proof } from "../types/proof.ts"
 import type { Purpose } from "../purpose/purpose.ts"
-import type { VerificationMethod } from "../types/interfaces.ts"
+import type { VerificationResult } from "../types/interface/suite.ts"
 
 export class Suite {
   type: Type
@@ -70,7 +70,7 @@ export class Suite {
     _purpose: Purpose,
     _proofs: Array<Proof>,
     _loader: Loader,
-  ): Promise<VerificationMethod> {
+  ): Promise<VerificationResult> {
     throw new Error("Method not implemented.")
   }
 }

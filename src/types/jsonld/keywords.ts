@@ -38,6 +38,5 @@ export type IncludedBlock = OneOrMany<NodeObject>
 
 export type DOMString = string
 export type URL = DOMString
-
 export type IRIReference = URL
 export type ContextURL = URL

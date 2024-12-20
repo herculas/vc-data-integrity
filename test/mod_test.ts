@@ -3,7 +3,9 @@ import * as jsonld from "jsonld"
 import * as keypair from "../data/test/keypair.json" with { type: "json" }
 import { extend } from "../src/loader/extend.ts"
 import { sha256 } from "../src/utils/crypto.ts"
-import { canonize, frame } from "../src/utils/jsonld.ts"
+import { canonize, expandMethod } from "../src/utils/jsonld.ts"
+import type { NodeObject } from "../src/types/jsonld/node.ts"
+import type { MethodMap } from "../src/types/did/method.ts"
 
 const ld = jsonld.default
 
@@ -23,7 +25,7 @@ Deno.test("jsonld", async () => {
 })
 
 const customLoader = (url: string) => {
-  const document = new Map<string, object>([
+  const document = new Map<string, NodeObject>([
     ["did:example:489398593#test", keypair.default],
     ["did:example:489398593", controller.default],
   ])
@@ -69,6 +71,19 @@ Deno.test("hash", async () => {
 
 Deno.test("frame", async () => {
   const method = "did:example:489398593#test"
-  const framed = await frame(method, loader)
+  const framed = await expandMethod(method, loader)
   console.log(framed)
+})
+
+Deno.test("multi-type array", () => {
+  const id = "did:example:489398593#test"
+  const id2 = {
+    id: "did:example:489398593#test",
+    controller: "did:example:489398593",
+    type: "Ed25519VerificationKey2018",
+  }
+
+  const array: Array<MethodMap> = [id, id2]
+
+  console.log(array)
 })

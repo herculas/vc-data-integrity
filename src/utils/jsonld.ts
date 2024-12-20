@@ -17,7 +17,32 @@ export async function canonize(input: object, options: Options.Canonize): Promis
   return await jsonld.default.canonize(input, options)
 }
 
-export async function frame(method: string, loader: Loader): Promise<object> {
+export async function expandController(
+  document: NodeObject,
+  controller: string,
+  term: string,
+  verificationId: string,
+  loader: Loader,
+): Promise<NodeObject> {
+  const framed = await jsonld.default.frame(document, {
+    "@context": SECURITY_CONTEXT_V2_URL,
+    id: controller,
+    [term]: {
+      "@embed": "@never",
+      id: verificationId,
+    },
+  }, {
+    documentLoader: loader,
+    compactToRelative: false,
+    safe: true,
+  })
+  if (!framed) {
+    throw new Error(`Controller ${controller} not found.`)
+  }
+  return framed
+}
+
+export async function expandMethod(method: string, loader: Loader): Promise<object> {
   const framed = await jsonld.default.frame(method, {
     "@context": SECURITY_CONTEXT_V2_URL,
     "@embed": "@always",

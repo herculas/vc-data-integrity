@@ -7,3 +7,17 @@ export function toW3CTimestampString(date?: Date | number | string): string {
   const str = date.toISOString()
   return str.substring(0, str.length - 5) + "Z"
 }
+
+export function assertTime(date: Date, delta: number, created?: string) {
+  if (delta !== Infinity) {
+    const expected = date.getTime()
+    const deltaMilliseconds = delta * 1000
+    if (!created) {
+      throw new Error("Proof does not contain a creation date!")
+    }
+    const createdDate = new Date(created).getTime()
+    if (createdDate < expected - deltaMilliseconds || createdDate > expected + deltaMilliseconds) {
+      throw new Error("Proof creation date is outside of the allowed time window!")
+    }
+  }
+}

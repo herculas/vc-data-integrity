@@ -3,10 +3,7 @@ export type DocCache = {
   hash: Uint8Array
 }
 
-export type VerificationMethod = {}
-
 export type VerificationResult = {
   verified: boolean
-  error?: string
-  method?: VerificationMethod
+  error?: Error
 }

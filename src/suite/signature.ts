@@ -1,13 +1,17 @@
+import { Suite } from "./suite.ts"
+import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
+import { toW3CTimestampString } from "../utils/time.ts"
+import { canonize, expandMethod, includeContext } from "../utils/jsonld.ts"
+import { sha256 } from "../utils/crypto.ts"
+import { concatenate } from "../utils/format.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Purpose } from "../purpose/purpose.ts"
 import type { Loader } from "../types/loader.ts"
 import type { JsonLdDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/proof.ts"
-import type { DocCache, VerificationResult } from "../types/interfaces.ts"
+import type { DocCache, VerificationResult } from "../types/interface/suite.ts"
 import type { ContextURL, Type } from "../types/jsonld/keywords.ts"
-import { canonize, concatenate, frame, includeContext, sha256, toW3CTimestampString } from "../util.ts"
-import { Suite } from "./suite.ts"
-import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
+import type { VerificationMethod } from "../types/interface/common.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.
@@ -94,14 +98,14 @@ export class Signature extends Suite {
       const compressed = await this.compress(document, proof, proofs, loader)
       const method = await this.getVerificationMethod(document, proof, loader)
       this.verifySignature(document, proof, compressed, method, loader)
-      return { verified: true, method: method }
+      return { verified: true }
     } catch (error) {
       if (error instanceof Error) {
-        return { verified: false, error: error.message }
-      } else if (typeof error === "string") {
         return { verified: false, error: error }
+      } else if (typeof error === "string") {
+        return { verified: false, error: new Error(error) }
       }
-      return { verified: false, error: "[Signature] An unknown error occurred during verification." }
+      return { verified: false, error: new Error("[Signature] An unknown error occurred during verification.") }
     }
   }
 
@@ -124,10 +128,10 @@ export class Signature extends Suite {
   }
 
   verifySignature(
-    _document: object,
+    _document: JsonLdDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
-    _method: object,
+    _method: VerificationMethod,
     _loader: Loader,
   ) {
     throw new Error("[Signature] Method should be implemented by sub-class!")
@@ -250,11 +254,15 @@ export class Signature extends Suite {
    * @param {Proof} proof The proof.
    * @param {Loader} loader A loader for external documents.
    */
-  protected async getVerificationMethod(_document: JsonLdDocument, proof: Proof, loader: Loader): Promise<object> {
+  protected async getVerificationMethod(
+    _document: JsonLdDocument,
+    proof: Proof,
+    loader: Loader,
+  ): Promise<VerificationMethod> {
     if (!proof.verificationMethod) {
       throw new Error("[Signature] Verification method not found.")
     }
-    const framed = await frame(proof.verificationMethod, loader)
+    const framed = await expandMethod(proof.verificationMethod, loader)
     if (!framed) {
       throw new Error("[Signature] Verification method not found.")
     }

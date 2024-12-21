@@ -1,6 +1,6 @@
 import { DID_CONTEXT_V1_URL } from "../context/constants.ts"
 import { expandController } from "../utils/jsonld.ts"
-import { DID_VR_TERMS } from "./constants.ts"
+import { PROOF_PURPOSE_TYPES } from "./constants.ts"
 import { Purpose } from "./purpose.ts"
 import type { Proof, Suite } from "../mod.ts"
 import type { ValidationResult } from "../types/interface/purpose.ts"
@@ -20,7 +20,7 @@ export class ControllerPurpose extends Purpose {
   constructor(term: string, controller?: Controller, date?: Date, delta?: number) {
     super(term, date, delta)
     this.controller = controller
-    this.defined = DID_VR_TERMS.has(term)
+    this.defined = PROOF_PURPOSE_TYPES.has(term)
   }
 
   /**

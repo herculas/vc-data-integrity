@@ -5,6 +5,7 @@ import type { ValueObject } from "./objects.ts"
 
 /**
  * A list of keywords used in JSON-LD documents.
+ * 
  * @see https://www.w3.org/TR/json-ld11/#keywords
  */
 export type Base = IRIReference | null

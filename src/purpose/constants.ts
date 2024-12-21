@@ -1,4 +1,4 @@
-export const DID_VR_TERMS = new Set<string>([
+export const PROOF_PURPOSE_TYPES = new Set<string>([
   "assertionMethod",
   "authentication",
   "capabilityDelegation",

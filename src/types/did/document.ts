@@ -1,5 +1,6 @@
 import type { OneOrMany } from "../jsonld/base.ts"
-import type { Context, URL } from "../jsonld/keywords.ts"
+import type { ContextedDocument } from "../jsonld/document.ts"
+import type { URL } from "../jsonld/keywords.ts"
 import type { DID } from "./keywords.ts"
 import type { MethodMap, VerificationMethod } from "./method.ts"
 import type { Service } from "./service.ts"
@@ -12,12 +13,7 @@ import type { Service } from "./service.ts"
  * @see https://www.w3.org/TR/did-core/#did-documents
  * @see https://www.w3.org/TR/did-core/#did-subject
  */
-export interface DIDDocument {
-  /**
-   * A JSON-LD context definition.
-   */
-  "@context"?: Context
-
+export interface DIDDocument extends ContextedDocument {
   /**
    * The DID for a particular DID subject.
    *

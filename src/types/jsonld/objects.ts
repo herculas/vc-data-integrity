@@ -4,6 +4,7 @@ import type { NodeObject } from "./node.ts"
 
 /**
  * A JSON-LD graph object represents a named graph, which MAY include an explicit graph name.
+ * 
  * @see https://www.w3.org/TR/json-ld11/#graph-objects
  */
 export interface GraphObject {
@@ -16,6 +17,7 @@ export interface GraphObject {
 /**
  * A JSON-LD value object is used to explicitly associate a type or a language with a value to create a typed value or
  * a language-tagged string and possibly associate a base direction.
+ * 
  * @see https://www.w3.org/TR/json-ld11/#value-objects
  */
 export type ValueObject =

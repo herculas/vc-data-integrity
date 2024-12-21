@@ -1,7 +1,7 @@
 import type { JsonLdDocument } from "../types/jsonld/document.ts"
 import type { Type } from "../types/jsonld/keywords.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { Proof } from "../types/interface/proof.ts"
+import type { Proof } from "../types/jsonld/proof.ts"
 import type { Purpose } from "../purpose/purpose.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
 

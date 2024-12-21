@@ -1,7 +1,7 @@
 import { assertTime } from "../utils/time.ts"
 import type { JsonLdDocument } from "../types/jsonld/document.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { Proof } from "../types/interface/proof.ts"
+import type { Proof } from "../types/jsonld/proof.ts"
 import type { Suite } from "../suite/suite.ts"
 import type { ValidationResult } from "../types/interface/purpose.ts"
 import type { VerificationMethod } from "../types/did/method.ts"

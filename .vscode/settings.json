@@ -3,6 +3,7 @@
     "cryptosuite",
     "DIDURL",
     "Keypair",
+    "keypairs",
     "linkability",
     "multibase",
     "multicodec",

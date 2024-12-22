@@ -1,9 +1,9 @@
 import type { Loader } from "../types/interface/loader.ts"
-import type { VerificationResult } from "../types/interface/suite.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { Type } from "../types/jsonld/keywords.ts"
 import type { Purpose } from "../purpose/purpose.ts"
+import type { Type } from "../types/jsonld/keywords.ts"
+import type { VerificationResult } from "../types/interface/suite.ts"
 
 export class Suite {
   type: Type

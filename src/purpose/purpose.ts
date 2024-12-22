@@ -1,10 +1,10 @@
 import { assertTime } from "../utils/time.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { ValidationResult } from "../types/interface/purpose.ts"
+import type { MethodMap } from "../types/did/method.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { MethodMap } from "../types/did/method.ts"
 import type { Suite } from "../suite/suite.ts"
+import type { VerificationResult } from "../types/interface/suite.ts"
 
 /**
  * A class that represents a purpose for a proof.
@@ -37,7 +37,7 @@ export class Purpose {
    * @param {Suite} _suite The cryptographic suite that the proof is to be verified against.
    * @param {MethodMap} _method The verification method that the proof is to be verified against.
    *
-   * @returns {Promise<ValidationResult>} Resolve to an object with `valid` and `error` properties.
+   * @returns {Promise<VerificationResult>} Resolve to an object with `valid` and `error` properties.
    */
   // deno-lint-ignore require-await
   async validate(
@@ -46,14 +46,16 @@ export class Purpose {
     _suite: Suite,
     _method: MethodMap,
     _loader: Loader,
-  ): Promise<ValidationResult> {
+  ): Promise<VerificationResult> {
     try {
       assertTime(this.date, this.delta, proof.created)
-      return { valid: true }
+      return {
+        verified: true
+      }
     } catch (error) {
       return {
-        valid: false,
-        error: error instanceof Error ? error : new Error("Purpose validation failed!"),
+        verified: false,
+        errors: error instanceof Error ? error : new Error("Purpose validation failed!"),
       }
     }
   }

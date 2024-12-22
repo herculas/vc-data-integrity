@@ -1,7 +1,6 @@
 import { Suite } from "./suite.ts"
-import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
 import { toW3CTimestampString } from "../utils/time.ts"
-import { canonize, expandMethod, includeContext } from "../utils/jsonld.ts"
+import { canonizeDocument, canonizeProof, expandVerificationMethod, includeContext } from "../utils/jsonld.ts"
 import { sha256 } from "../utils/crypto.ts"
 import { concatenate } from "../utils/format.ts"
 import type { Keypair } from "../key/keypair.ts"
@@ -79,34 +78,11 @@ export class Signature extends Suite {
       proof.created = dateStr
     }
 
-    proof = await this.updateProof(document, proof, purpose, proofs, loader)
     proof = await purpose.update(proof, document, this, loader)
     const compressed = await this.compress(document, proof, proofs, loader)
-    proof = await this.generateSignature(document, proof, compressed, loader)
+    proof = await this.sign(document, proof, compressed, loader)
 
     return proof
-  }
-
-  override async verifyProof(
-    document: PlainDocument,
-    proof: Proof,
-    _purpose: Purpose,
-    proofs: Array<Proof>,
-    loader: Loader,
-  ): Promise<VerificationResult> {
-    try {
-      const compressed = await this.compress(document, proof, proofs, loader)
-      const method = await this.getVerificationMethod(document, proof, loader)
-      this.verifySignature(document, proof, compressed, method, loader)
-      return { verified: true }
-    } catch (error) {
-      if (error instanceof Error) {
-        return { verified: false, error: error }
-      } else if (typeof error === "string") {
-        return { verified: false, error: new Error(error) }
-      }
-      return { verified: false, error: new Error("[Signature] An unknown error occurred during verification.") }
-    }
   }
 
   override deriveProof(
@@ -118,7 +94,32 @@ export class Signature extends Suite {
     throw new Error("[Signature] Method should be implemented by sub-class!")
   }
 
-  generateSignature(
+  override async verifyProof(
+    document: PlainDocument,
+    proof: Proof,
+    _purpose: Purpose,
+    proofs: Array<Proof>,
+    loader: Loader,
+  ): Promise<VerificationResult> {
+    try {
+      const compressed = await this.compress(document, proof, proofs, loader)
+      const method = await expandVerificationMethod(loader, proof.verificationMethod)
+      this.verify(document, proof, compressed, method, loader)
+      return {
+        verified: true,
+        verifiedDocument: document,
+      }
+    } catch (error) {
+      return {
+        verified: false,
+        errors: error instanceof Error
+          ? error
+          : new Error("[Signature] An unknown error occurred during verification."),
+      }
+    }
+  }
+
+  sign(
     _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
@@ -127,7 +128,7 @@ export class Signature extends Suite {
     throw new Error("[Signature] Method should be implemented by sub-class!")
   }
 
-  verifySignature(
+  verify(
     _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
@@ -138,26 +139,6 @@ export class Signature extends Suite {
   }
 
   /**
-   * Add extensions to the proof, mostly for legacy support.
-   *
-   * @param {PlainDocument} _document The document.
-   * @param {Proof} proof The proof to be updated.
-   * @param {Purpose} _purpose The purpose of the proof.
-   * @param {Array<Proof>} _proofs Any existing proofs.
-   *
-   * @returns {Promise<Proof>} Resolve to the created proof.
-   */
-  updateProof(
-    _document: PlainDocument,
-    proof: Proof,
-    _purpose: Purpose,
-    _proofs: Array<Proof>,
-    _loader: Loader,
-  ): Promise<Proof> {
-    return Promise.resolve(proof)
-  }
-
-  /**
    * Ensure the document to be signed contains the required signature suite specific context.
    * If `add` is set to true, the context will be added to the document if it is missing.
    * Else, if `add` is set to false, an error will be thrown if the context is missing.
@@ -165,7 +146,7 @@ export class Signature extends Suite {
    * @param {PlainDocument} document The document to be signed.
    * @param {boolean} add Whether to add the context if it is missing.
    */
-  protected ensureSuiteContext(document: PlainDocument, add: boolean = false) {
+  ensureSuiteContext(document: PlainDocument, add: boolean = false) {
     if (Array.isArray(document)) {
       document = document[0]
     }
@@ -177,41 +158,6 @@ export class Signature extends Suite {
     document["@context"] = Array.isArray(existingContext)
       ? [...existingContext, this.context]
       : [existingContext, this.context]
-  }
-
-  /**
-   * Canonize an object using the URDNA2015 algorithm.
-   *
-   * @param {object} input The document to canonize.
-   * @param {Loader} loader A loader for external documents.
-   * @param {boolean} skipExpansion Whether to skip the expansion step.
-   * @returns {Promise<string>} Resolve to the canonized document.
-   */
-  async canonize(input: object, loader: Loader, skipExpansion: boolean = false): Promise<string> {
-    return await canonize(input, {
-      algorithm: "URDNA2015",
-      format: "application/n-quads",
-      documentLoader: loader,
-      skipExpansion: skipExpansion,
-    })
-  }
-
-  /**
-   * Canonize an object using the URDNA2015 algorithm for proof creation.
-   *
-   * @param {Proof} proof The proof to canonize.
-   * @param {PlainDocument} _document The document for reference.
-   * @param {Loader} loader A loader for external documents.
-   *
-   * @returns {Promise<string>} Resolve to the canonized proof.
-   */
-  async canonizeForProof(proof: Proof, _document: PlainDocument, loader: Loader): Promise<string> {
-    proof["@context"] = SECURITY_CONTEXT_V2_URL
-
-    delete proof.nonce
-    delete proof.proofValue
-
-    return await this.canonize(proof, loader, false)
   }
 
   /**
@@ -232,40 +178,16 @@ export class Signature extends Suite {
     if (this.cache && this.cache.doc === document) {
       cachedHash = this.cache.hash
     } else {
-      const canonizedDoc = await this.canonize(document, loader, false)
-      const docBytes = await sha256(canonizedDoc)
+      const canonizedDocument = await canonizeDocument(document, loader)
+      const docBytes = await sha256(canonizedDocument)
       this.cache = {
         doc: document,
         hash: docBytes,
       }
       cachedHash = docBytes
     }
-
-    const canonizedProof = await this.canonizeForProof(proof, document, loader)
+    const canonizedProof = await canonizeProof(proof, loader)
     const proofBytes = await sha256(canonizedProof)
-
     return concatenate(proofBytes, cachedHash)
-  }
-
-  /**
-   * Fetch the verification method from the document.
-   *
-   * @param {PlainDocument} _document The document to be signed or verified.
-   * @param {Proof} proof The proof.
-   * @param {Loader} loader A loader for external documents.
-   */
-  protected async getVerificationMethod(
-    _document: PlainDocument,
-    proof: Proof,
-    loader: Loader,
-  ): Promise<MethodMap> {
-    if (!proof.verificationMethod) {
-      throw new Error("[Signature] Verification method not found.")
-    }
-    const framed = await expandMethod(proof.verificationMethod, loader)
-    if (!framed) {
-      throw new Error("[Signature] Verification method not found.")
-    }
-    return framed
   }
 }

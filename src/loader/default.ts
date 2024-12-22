@@ -1,6 +1,15 @@
 import type { LoadedDocument } from "../types/interface/loader.ts"
 
-// deno-lint-ignore require-await
 export async function defaultLoader(_url: string): Promise<LoadedDocument> {
-  throw new Error("Method not implemented.")
+  try {
+    const response = await fetch(_url)
+    const document = await response.json()
+    return {
+      contextUrl: _url,
+      documentUrl: _url,
+      document: document,
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch ${_url}: ${error}`)
+  }
 }

@@ -1,14 +1,19 @@
 import type { Loader } from "./loader.ts"
+import type { MethodMap } from "../did/method.ts"
+import type { PlainDocument } from "../jsonld/document.ts"
+import type { Proof } from "../jsonld/proof.ts"
+import type { Purpose as ProofPurpose } from "../../purpose/purpose.ts"
+import type { Suite as DataIntegrityProof } from "../../suite/suite.ts"
 
 export type Suite = {
-  purpose: Purpose
+  purpose: ProofPurpose
   proofs?: Array<Proof>
   loader?: Loader
 }
 
 export type Purpose = {
   document?: PlainDocument
-  suite?: Suite
+  suite?: DataIntegrityProof
   method?: MethodMap
   loader?: Loader
 }

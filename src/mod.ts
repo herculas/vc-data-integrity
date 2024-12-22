@@ -28,5 +28,6 @@ export type { OneOrMany } from "./types/jsonld/base.ts"
 export type { JsonLdDocument, PlainDocument } from "./types/jsonld/document.ts"
 
 // utilities
-export { severalToMany } from "./utils/format.ts"
+export { sha256 } from "./utils/crypto.ts"
+export { concatenate, severalToMany } from "./utils/format.ts"
 export { canonize } from "./utils/jsonld.ts"

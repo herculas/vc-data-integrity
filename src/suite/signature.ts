@@ -1,7 +1,8 @@
-import { toW3CTimestampString } from "../utils/time.ts"
-import { canonizeDocument, canonizeProof, expandVerificationMethod, includeContext } from "../utils/jsonld.ts"
 import { concatenate } from "../utils/format.ts"
 import { sha256 } from "../utils/crypto.ts"
+import { canonizeDocument, canonizeProof, expandVerificationMethod, includeContext } from "../utils/jsonld.ts"
+import { toW3CTimestampString } from "../utils/time.ts"
+import { defaultLoader } from "../loader/default.ts"
 import { Suite } from "./suite.ts"
 import type { CachedDocument, VerificationResult } from "../types/interface/suite.ts"
 import type { ContextURL } from "../types/jsonld/keywords.ts"
@@ -10,7 +11,6 @@ import type { Loader } from "../types/interface/loader.ts"
 import type { MethodMap } from "../types/did/method.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { Purpose } from "../purpose/purpose.ts"
 import type * as Options from "../types/interface/options.ts"
 
 /**
@@ -77,11 +77,10 @@ export class Signature extends Suite {
       proof.created = dateStr
     }
 
-    proof = await options.purpose.update(proof, {document: document, suite: this, })
-
-    // proof = await options.purpose.update(proof, document, this, options.loader)
-    // const compressed = await this.compress(document, proof, options.proofs, options.loader)
-    // proof = await this.sign(document, proof, compressed, options.loader)
+    options.loader = options.loader || defaultLoader
+    proof = await options.purpose.update(proof, { document: document, suite: this, loader: options.loader })
+    const compressed = await this.compress(document, proof, options.loader, options.proofs)
+    proof = await this.sign(document, proof, compressed, options.loader)
 
     return proof
   }
@@ -99,9 +98,10 @@ export class Signature extends Suite {
     options: Options.Suite,
   ): Promise<VerificationResult> {
     try {
-      const compressed = await this.compress(document, proof, proofs, loader)
-      const method = await expandVerificationMethod(loader, proof.verificationMethod)
-      this.verify(document, proof, compressed, method, loader)
+      options.loader = options.loader || defaultLoader
+      const compressed = await this.compress(document, proof, options.loader, options.proofs)
+      const method = await expandVerificationMethod(options.loader, proof.verificationMethod)
+      this.verify(document, proof, compressed, method, options.loader)
       return {
         verified: true,
         verifiedDocument: document,
@@ -120,7 +120,7 @@ export class Signature extends Suite {
     _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
-    _loader: Loader,
+    _loader?: Loader,
   ): Promise<Proof> {
     throw new Error("[Signature] Method should be implemented by sub-class!")
   }
@@ -130,7 +130,7 @@ export class Signature extends Suite {
     _proof: Proof,
     _verifyData: Uint8Array,
     _method: MethodMap,
-    _loader: Loader,
+    _loader?: Loader,
   ) {
     throw new Error("[Signature] Method should be implemented by sub-class!")
   }
@@ -144,9 +144,6 @@ export class Signature extends Suite {
    * @param {boolean} add Whether to add the context if it is missing.
    */
   ensureSuiteContext(document: PlainDocument, add: boolean = false) {
-    if (Array.isArray(document)) {
-      document = document[0]
-    }
     if (includeContext(document, this.context)) return
     if (!add) {
       throw new Error(`[Signature] Required context '${this.context}' not found in document.`)
@@ -168,23 +165,23 @@ export class Signature extends Suite {
   protected async compress(
     document: PlainDocument,
     proof: Proof,
-    _proofs: Array<Proof>,
     loader: Loader,
+    _proofs?: Array<Proof>,
   ): Promise<Uint8Array> {
-    let cachedHash: Uint8Array
-    if (this.cache && this.cache.doc === document) {
-      cachedHash = this.cache.hash
+    let documentHash: Uint8Array
+    if (this.cache && this.cache.document === document) {
+      documentHash = this.cache.hash
     } else {
       const canonizedDocument = await canonizeDocument(document, loader)
       const docBytes = await sha256(canonizedDocument)
       this.cache = {
-        doc: document,
+        document: document,
         hash: docBytes,
       }
-      cachedHash = docBytes
+      documentHash = docBytes
     }
     const canonizedProof = await canonizeProof(proof, loader)
-    const proofBytes = await sha256(canonizedProof)
-    return concatenate(proofBytes, cachedHash)
+    const proofHash = await sha256(canonizedProof)
+    return concatenate(proofHash, documentHash)
   }
 }

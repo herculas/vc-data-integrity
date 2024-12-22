@@ -1,7 +1,9 @@
+import type { URL } from "../jsonld/keywords.ts"
+
 export type LoadedDocument = {
-  contextUrl?: string
-  documentUrl?: string
+  contextUrl?: URL
+  documentUrl?: URL
   document?: object
 }
 
-export type Loader = (url: string) => Promise<LoadedDocument>
+export type Loader = (url: URL) => Promise<LoadedDocument>

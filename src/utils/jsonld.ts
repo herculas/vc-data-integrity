@@ -86,7 +86,10 @@ export async function expandController(
   return framed
 }
 
-export async function expandVerificationMethod(loader: Loader, verificationMethod?: string): Promise<MethodMap> {
+export async function expandVerificationMethod(
+  loader: Loader,
+  verificationMethod?: string,
+): Promise<MethodMap> {
   if (!verificationMethod) {
     throw new Error("Verification method not found.")
   }
@@ -114,9 +117,6 @@ export async function expandVerificationMethod(loader: Loader, verificationMetho
  * @returns {boolean} `true` if the context is included, `false` otherwise.
  */
 export function includeContext(document: PlainDocument, context: ContextURL): boolean {
-  if (Array.isArray(document)) {
-    document = document[0]
-  }
   const fromContext = document["@context"]
   if (context === fromContext) {
     return true

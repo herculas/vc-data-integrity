@@ -1,3 +1,4 @@
+import type { Purpose } from "../../mod.ts"
 import type { Loader } from "./loader.ts"
 
 export type Canonize = {
@@ -10,4 +11,11 @@ export type Canonize = {
   produceGeneralizedRdf?: boolean
   documentLoader?: Loader
   rdfDirection?: string
+}
+
+export type AddProof = {
+  purpose: Purpose
+  loader?: Loader
+  domain?: string
+  challenge?: string
 }

@@ -1,9 +1,10 @@
 import * as jsonld from "jsonld"
 import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
 import type { ContextURL } from "../types/jsonld/keywords.ts"
-import type { NodeObject } from "../types/jsonld/node.ts"
+import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Loader } from "../types/interface/loader.ts"
 import type * as Options from "../types/interface/options.ts"
+import type { MethodMap } from "../types/did/method.ts"
 
 /**
  * Canonize an object using the URDNA2015 algorithm.
@@ -18,12 +19,12 @@ export async function canonize(input: object, options: Options.Canonize): Promis
 }
 
 export async function expandController(
-  document: NodeObject,
+  document: PlainDocument,
   controller: string,
   term: string,
   verificationId: string,
   loader: Loader,
-): Promise<NodeObject> {
+): Promise<PlainDocument> {
   const framed = await jsonld.default.frame(document, {
     "@context": SECURITY_CONTEXT_V2_URL,
     id: controller,
@@ -42,7 +43,7 @@ export async function expandController(
   return framed
 }
 
-export async function expandMethod(method: string, loader: Loader): Promise<object> {
+export async function expandMethod(method: string, loader: Loader): Promise<MethodMap> {
   const framed = await jsonld.default.frame(method, {
     "@context": SECURITY_CONTEXT_V2_URL,
     "@embed": "@always",
@@ -61,12 +62,12 @@ export async function expandMethod(method: string, loader: Loader): Promise<obje
 /**
  * Check if a provided document includes a context URL in its `@context` property.
  *
- * @param {NodeObject} document A JSON-LD document.
+ * @param {PlainDocument} document A JSON-LD document.
  * @param {ContextURL} context The context URL to check.
  *
  * @returns {boolean} `true` if the context is included, `false` otherwise.
  */
-export function includeContext(document: NodeObject, context: ContextURL): boolean {
+export function includeContext(document: PlainDocument, context: ContextURL): boolean {
   if (Array.isArray(document)) {
     document = document[0]
   }

@@ -6,9 +6,7 @@
   "imports": {
     "@std/assert": "jsr:@std/assert@1",
     "@std/crypto": "jsr:@std/crypto@^1.0.3",
-    "@types/jsonld": "npm:@types/jsonld@^1.5.15",
-    "jsonld": "npm:jsonld@^8.3.2",
-    "rdf-canonize": "npm:rdf-canonize@^4.0.1"
+    "jsonld": "npm:jsonld@^8.3.2"
   },
   "fmt": {
     "indentWidth": 2,

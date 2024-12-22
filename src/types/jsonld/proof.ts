@@ -1,6 +1,6 @@
 import type { OneOrMany } from "./base.ts"
-import type { ContextedDocument } from "./document.ts"
 import type { Type, URL } from "./keywords.ts"
+import type { NodeObject } from "./node.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and
@@ -9,7 +9,7 @@ import type { Type, URL } from "./keywords.ts"
  * @see https://www.w3.org/TR/vc-data-model-2.0/#securing-mechanisms
  * @see https://www.w3.org/TR/vc-data-integrity/#proofs
  */
-export interface Proof extends ContextedDocument {
+export interface Proof extends NodeObject {
   /**
    * The identifier of the proof.
    *

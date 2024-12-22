@@ -1,8 +1,8 @@
 import type { OneOrMany } from "../jsonld/base.ts"
-import type { ContextedDocument } from "../jsonld/document.ts"
 import type { URL } from "../jsonld/keywords.ts"
+import type { NodeObject } from "../jsonld/node.ts"
 import type { DID } from "./keywords.ts"
-import type { MethodMap, VerificationMethod } from "./method.ts"
+import type { VerificationMethod, MethodMap } from "./method.ts"
 import type { Service } from "./service.ts"
 
 /**
@@ -13,7 +13,7 @@ import type { Service } from "./service.ts"
  * @see https://www.w3.org/TR/did-core/#did-documents
  * @see https://www.w3.org/TR/did-core/#did-subject
  */
-export interface DIDDocument extends ContextedDocument {
+export interface DIDDocument extends NodeObject {
   /**
    * The DID for a particular DID subject.
    *
@@ -43,7 +43,7 @@ export interface DIDDocument extends ContextedDocument {
    *
    * The value of this property MUST be an set of verification methods, where each one is expressed using a map.
    */
-  verificationMethod?: Array<VerificationMethod>
+  verificationMethod?: Array<MethodMap>
 
   /**
    * The authentication property is used to specify how the DID subject is expected to be authenticated, for purposes
@@ -52,7 +52,7 @@ export interface DIDDocument extends ContextedDocument {
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
    */
-  authentication?: Array<MethodMap>
+  authentication?: Array<VerificationMethod>
 
   /**
    * The assertionMethod property is used to specify how the DID subject is expected to express claims, such as
@@ -61,7 +61,7 @@ export interface DIDDocument extends ContextedDocument {
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
    */
-  assertionMethod?: Array<MethodMap>
+  assertionMethod?: Array<VerificationMethod>
 
   /**
    * The keyAgreement property is used to specify how an entity can generate encryption material in order to transmit
@@ -71,7 +71,7 @@ export interface DIDDocument extends ContextedDocument {
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
    */
-  keyAgreement?: Array<MethodMap>
+  keyAgreement?: Array<VerificationMethod>
 
   /**
    * The capabilityInvocation property is used to specify a verification method that might be used by the DID subject
@@ -80,7 +80,7 @@ export interface DIDDocument extends ContextedDocument {
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
    */
-  capabilityInvocation?: Array<MethodMap>
+  capabilityInvocation?: Array<VerificationMethod>
 
   /**
    * The capabilityDelegation property is used to specify a mechanism that might be used by the DID subject to delegate
@@ -90,7 +90,7 @@ export interface DIDDocument extends ContextedDocument {
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
    */
-  capabilityDelegation?: Array<MethodMap>
+  capabilityDelegation?: Array<VerificationMethod>
 
   /**
    * Services are used in DID documents to express ways of communicating with the DID subject or associated entities.

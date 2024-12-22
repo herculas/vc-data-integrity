@@ -1,7 +1,8 @@
+import type { NodeObject } from "../jsonld/node.ts"
 import type { JWK } from "./jwk.ts"
 import type { DID, DIDURL } from "./keywords.ts"
 
-export type MethodMap = VerificationMethod | DIDURL
+export type VerificationMethod = MethodMap | DIDURL
 
 /**
  * A set of data describing a verification method, such as a cryptographic key, that can be used to authenticate a DID
@@ -9,7 +10,7 @@ export type MethodMap = VerificationMethod | DIDURL
  *
  * @see https://www.w3.org/TR/did-core/#verification-methods
  */
-export interface VerificationMethod {
+export interface MethodMap extends NodeObject {
   /**
    * The identifier for a particular verification method.
    *

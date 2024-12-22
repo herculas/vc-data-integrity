@@ -1,3 +1,5 @@
+import type { OneOrMany } from "../types/jsonld/base.ts"
+
 /**
  * Concatenate multiple Uint8Arrays.
  *
@@ -14,4 +16,15 @@ export function concatenate(...arrays: Array<Uint8Array>): Uint8Array {
     offset += arr.length
   }
   return result
+}
+
+/**
+ * Convert a value of one or many element(s) to an array.
+ *
+ * @param {OneOrMany<T>} several The value with one or many elements.
+ *
+ * @returns {Array<T>} The array of elements.
+ */
+export function severalToMany<T>(several: OneOrMany<T>): Array<T> {
+  return Array.isArray(several) ? several : [several]
 }

@@ -1,7 +1,9 @@
+import type { NodeObject } from "../jsonld/node.ts"
+
 /**
  * A JSON Web Key (JWK) is a JavaScript Object Notation (JSON) data structure that represents a cryptographic key.
  */
-export interface JWK {
+export interface JWK extends NodeObject {
   /**
    * The `kty` (key type) parameter identifies the cryptographic algorithm family used with the key.
    *

@@ -1,11 +1,12 @@
 import { extend } from "../src/loader/extend.ts"
-import type { NodeObject } from "../src/types/jsonld/node.ts"
+import type { PlainDocument } from "../src/types/jsonld/document.ts"
+import type { Loader } from "../src/types/interface/loader.ts"
 
 import * as controller from "../data/test/controller.json" with { type: "json" }
 import * as keypair from "../data/test/keypair.json" with { type: "json" }
 
-const customLoader = (url: string) => {
-  const document = new Map<string, NodeObject>([
+const customLoader: Loader = (url: string) => {
+  const document = new Map<string, PlainDocument>([
     ["did:example:489398593#test", keypair.default],
     ["did:example:489398593", controller.default],
   ])

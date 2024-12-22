@@ -1,9 +1,9 @@
-import type { JsonLdDocument } from "../types/jsonld/document.ts"
-import type { Type } from "../types/jsonld/keywords.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { Proof } from "../types/jsonld/proof.ts"
-import type { Purpose } from "../purpose/purpose.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
+import type { PlainDocument } from "../types/jsonld/document.ts"
+import type { Proof } from "../types/jsonld/proof.ts"
+import type { Type } from "../types/jsonld/keywords.ts"
+import type { Purpose } from "../purpose/purpose.ts"
 
 export class Suite {
   type: Type
@@ -18,15 +18,15 @@ export class Suite {
   /**
    * Create a proof for the given document.
    *
-   * @param {JsonLdDocument} _document The document to prove.
+   * @param {PlainDocument} _document The document to prove.
    * @param {Purpose} _purpose The purpose of the proof.
    * @param {Array<Proof>} _proofs Any existing proofs to include in the new proof.
    * @param {Loader} _loader A loader to resolve external documents.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  prove(
-    _document: JsonLdDocument,
+  createProof(
+    _document: PlainDocument,
     _purpose: Purpose,
     _proofs: Array<Proof>,
     _loader: Loader,
@@ -37,15 +37,15 @@ export class Suite {
   /**
    * Derive a proof from the given document.
    *
-   * @param {JsonLdDocument} _document The document to prove.
+   * @param {PlainDocument} _document The document to prove.
    * @param {Purpose} _purpose The purpose of the proof.
    * @param {Array<Proof>} _proofs Any existing proofs.
    * @param {Loader} _loader A loader to resolve external documents.
    *
    * @returns {Promise<Proof>} Resolve to the derived proof.
    */
-  derive(
-    _document: JsonLdDocument,
+  deriveProof(
+    _document: PlainDocument,
     _purpose: Purpose,
     _proofs: Array<Proof>,
     _loader: Loader,
@@ -56,7 +56,7 @@ export class Suite {
   /**
    * Verify a proof for the given document.
    *
-   * @param {JsonLdDocument} _document The document to be verified.
+   * @param {PlainDocument} _document The document to be verified.
    * @param {Proof} _proof The proof to be verified.
    * @param {Purpose} _purpose The purpose of the proof.
    * @param {Array<Proof>} _proofs Any existing proofs.
@@ -64,8 +64,8 @@ export class Suite {
    *
    * @returns {Promise<boolean>} Resolve to true if the proof is valid.
    */
-  verify(
-    _document: JsonLdDocument,
+  verifyProof(
+    _document: PlainDocument,
     _proof: Proof,
     _purpose: Purpose,
     _proofs: Array<Proof>,

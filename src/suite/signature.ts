@@ -7,11 +7,11 @@ import { concatenate } from "../utils/format.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Purpose } from "../purpose/purpose.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { JsonLdDocument } from "../types/jsonld/document.ts"
+import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { DocCache, VerificationResult } from "../types/interface/suite.ts"
+import type { CachedDocument, VerificationResult } from "../types/interface/suite.ts"
 import type { ContextURL, Type } from "../types/jsonld/keywords.ts"
-import type { VerificationMethod } from "../types/did/method.ts"
+import type { MethodMap } from "../types/did/method.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.
@@ -21,9 +21,9 @@ export class Signature extends Suite {
   keypair: Keypair
   context: ContextURL
   time: Date
-  proof?: Proof
 
-  private cache?: DocCache
+  proof?: Proof
+  private cache?: CachedDocument
 
   /**
    * @param {Type} type The suite name, should be provided by sub-classes.
@@ -43,15 +43,15 @@ export class Signature extends Suite {
   /**
    * Create a signature with respect to the given document.
    *
-   * @param {JsonLdDocument} document The document to be signed.
+   * @param {PlainDocument} document The document to be signed.
    * @param {Purpose} purpose The purpose of the proof.
    * @param {Array<Proof>} proofs Any existing proofs.
    * @param {Loader} loader A loader for external documents.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  override async prove(
-    document: JsonLdDocument,
+  override async createProof(
+    document: PlainDocument,
     purpose: Purpose,
     proofs: Array<Proof>,
     loader: Loader,
@@ -61,13 +61,13 @@ export class Signature extends Suite {
     if (this.proof) {
       proof = Object.assign({
         type: this.type,
-        proofPurpose: purpose.term,
+        proofPurpose: purpose.proofPurpose,
         proofValue: "",
       }, this.proof)
     } else {
       proof = {
         type: this.type,
-        proofPurpose: purpose.term,
+        proofPurpose: purpose.proofPurpose,
         proofValue: "",
       }
     }
@@ -87,8 +87,8 @@ export class Signature extends Suite {
     return proof
   }
 
-  override async verify(
-    document: JsonLdDocument,
+  override async verifyProof(
+    document: PlainDocument,
     proof: Proof,
     _purpose: Purpose,
     proofs: Array<Proof>,
@@ -109,8 +109,8 @@ export class Signature extends Suite {
     }
   }
 
-  override derive(
-    _document: JsonLdDocument,
+  override deriveProof(
+    _document: PlainDocument,
     _purpose: Purpose,
     _proofs: Array<Proof>,
     _loader: Loader,
@@ -119,7 +119,7 @@ export class Signature extends Suite {
   }
 
   generateSignature(
-    _document: JsonLdDocument,
+    _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
     _loader: Loader,
@@ -128,10 +128,10 @@ export class Signature extends Suite {
   }
 
   verifySignature(
-    _document: JsonLdDocument,
+    _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
-    _method: VerificationMethod,
+    _method: MethodMap,
     _loader: Loader,
   ) {
     throw new Error("[Signature] Method should be implemented by sub-class!")
@@ -140,21 +140,21 @@ export class Signature extends Suite {
   /**
    * Add extensions to the proof, mostly for legacy support.
    *
-   * @param {JsonLdDocument} _document The document.
-   * @param {Proof} _proof The proof to be updated.
+   * @param {PlainDocument} _document The document.
+   * @param {Proof} proof The proof to be updated.
    * @param {Purpose} _purpose The purpose of the proof.
    * @param {Array<Proof>} _proofs Any existing proofs.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
   updateProof(
-    _document: JsonLdDocument,
-    _proof: Proof,
+    _document: PlainDocument,
+    proof: Proof,
     _purpose: Purpose,
     _proofs: Array<Proof>,
     _loader: Loader,
   ): Promise<Proof> {
-    return Promise.resolve(_proof)
+    return Promise.resolve(proof)
   }
 
   /**
@@ -162,10 +162,10 @@ export class Signature extends Suite {
    * If `add` is set to true, the context will be added to the document if it is missing.
    * Else, if `add` is set to false, an error will be thrown if the context is missing.
    *
-   * @param {JsonLdDocument} document The document to be signed.
+   * @param {PlainDocument} document The document to be signed.
    * @param {boolean} add Whether to add the context if it is missing.
    */
-  protected ensureSuiteContext(document: JsonLdDocument, add: boolean = false) {
+  protected ensureSuiteContext(document: PlainDocument, add: boolean = false) {
     if (Array.isArray(document)) {
       document = document[0]
     }
@@ -200,12 +200,12 @@ export class Signature extends Suite {
    * Canonize an object using the URDNA2015 algorithm for proof creation.
    *
    * @param {Proof} proof The proof to canonize.
-   * @param {JsonLdDocument} _document The document for reference.
+   * @param {PlainDocument} _document The document for reference.
    * @param {Loader} loader A loader for external documents.
    *
    * @returns {Promise<string>} Resolve to the canonized proof.
    */
-  async canonizeForProof(proof: Proof, _document: JsonLdDocument, loader: Loader): Promise<string> {
+  async canonizeForProof(proof: Proof, _document: PlainDocument, loader: Loader): Promise<string> {
     proof["@context"] = SECURITY_CONTEXT_V2_URL
 
     delete proof.nonce
@@ -217,13 +217,13 @@ export class Signature extends Suite {
   /**
    * Create the data to be signed and verified.
    *
-   * @param {JsonLdDocument} document The document to be signed.
+   * @param {PlainDocument} document The document to be signed.
    * @param {Proof} proof The proof.
    * @param {Array} _proofs Any existing proofs.
    * @param {Loader} loader A loader for external documents.
    */
   protected async compress(
-    document: JsonLdDocument,
+    document: PlainDocument,
     proof: Proof,
     _proofs: Array<Proof>,
     loader: Loader,
@@ -250,15 +250,15 @@ export class Signature extends Suite {
   /**
    * Fetch the verification method from the document.
    *
-   * @param {JsonLdDocument} _document The document to be signed or verified.
+   * @param {PlainDocument} _document The document to be signed or verified.
    * @param {Proof} proof The proof.
    * @param {Loader} loader A loader for external documents.
    */
   protected async getVerificationMethod(
-    _document: JsonLdDocument,
+    _document: PlainDocument,
     proof: Proof,
     loader: Loader,
-  ): Promise<VerificationMethod> {
+  ): Promise<MethodMap> {
     if (!proof.verificationMethod) {
       throw new Error("[Signature] Verification method not found.")
     }

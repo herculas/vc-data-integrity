@@ -1,10 +1,11 @@
 import type { OneOrMany } from "../jsonld/base.ts"
 import type { Type, URL } from "../jsonld/keywords.ts"
+import type { NodeObject } from "../jsonld/node.ts"
 
 /**
  * Service are used to express ways of communicating with the DID subject or associated entities.
  */
-export interface Service {
+export interface Service extends NodeObject {
   /**
    * The identifier of the service.
    *

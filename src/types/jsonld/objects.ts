@@ -1,5 +1,5 @@
 import type { JsonArray, JsonObject, OneOrMany } from "./base.ts"
-import type { Context, Direction, Id, Index, Language, LdSet, List, Primitive, Type } from "./keywords.ts"
+import type { Context, Direction, Id, Index, Language, LdSet, List, Primitive, Types } from "./keywords.ts"
 import type { NodeObject } from "./node.ts"
 
 /**
@@ -31,7 +31,7 @@ export type ValueObject =
     "@direction"?: Direction
   } | {
     "@value": Primitive
-    "@type": Type
+    "@type": Types
   } | {
     "@value": Primitive | JsonObject | JsonArray
     "@type": "@json"

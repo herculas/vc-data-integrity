@@ -1,11 +1,15 @@
+import type { DIDURL } from "../types/did/keywords.ts"
+import type { PlainDocument } from "../types/jsonld/document.ts"
+import type { Type, URL } from "../types/jsonld/keywords.ts"
+
 /**
  * The keypair base class.
  * This class should be extended by specific key types.
  */
 export class Keypair {
-  id?: string
-  controller?: string
-  type: string
+  id?: URL
+  controller?: DIDURL
+  type: Type
   revoked?: Date
 
   /**
@@ -17,20 +21,11 @@ export class Keypair {
    * @param {Date} revoked The time when the key was revoked in RFC3339 format. If not present, the key is considered
    * active.
    */
-  constructor(type: string, id?: string, controller?: string, revoked?: Date) {
+  constructor(type: Type, id?: URL, controller?: DIDURL, revoked?: Date) {
     this.type = type
     this.id = id
     this.controller = controller
     this.revoked = revoked
-  }
-
-  /**
-   * Generate a new keypair.
-   *
-   * @param {Uint8Array} _seed A seed to generate the keypair from. If not provided, a random seed will be used.
-   */
-  generate(_seed?: Uint8Array): void {
-    throw new Error("Method not implemented.")
   }
 
   /**
@@ -70,16 +65,25 @@ export class Keypair {
   }
 
   /**
+   * Generate a new keypair.
+   *
+   * @param {Uint8Array} _seed A seed to generate the keypair from. If not provided, a random seed will be used.
+   */
+  static generate(_seed?: Uint8Array): void {
+    throw new Error("Method not implemented.")
+  }
+
+  /**
    * Import a keypair instance from a provided externally fetched document.
    *
-   * @param {object} _document An externally fetched key document.
+   * @param {PlainDocument} _document An externally fetched key document.
    * @param {boolean} _checkContext Whether to check that the fetched document contains the context required by the
    * key's cryptographic suite.
    * @param {boolean} _checkRevoked Whether to check that the fetched document contains a `revoked` timestamp.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static fromDocument(_document: object, _checkContext: boolean, _checkRevoked: boolean): Promise<Keypair> {
+  static fromDocument(_document: PlainDocument, _checkContext: boolean, _checkRevoked: boolean): Promise<Keypair> {
     throw new Error("Method not implemented.")
   }
 

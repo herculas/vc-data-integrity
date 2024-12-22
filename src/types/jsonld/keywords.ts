@@ -24,7 +24,7 @@ export type Propagate = boolean
 export type Protected = boolean
 export type Reverse = { [key: string]: OneOrMany<string> }
 export type LdSet = OneOrMany<Primitive | NodeObject | ValueObject>
-export type Type = OneOrMany<string>
+export type Types = OneOrMany<Type>
 export type Primitive = string | number | boolean | null
 export type Version = "1.1"
 export type Vocab = string | null
@@ -38,6 +38,7 @@ export type Vocab = string | null
 export type IncludedBlock = OneOrMany<NodeObject>
 
 export type DOMString = string
+export type Type = string
 export type URL = DOMString
 export type IRIReference = URL
 export type ContextURL = URL

@@ -1,16 +1,17 @@
-import { Suite } from "./suite.ts"
 import { toW3CTimestampString } from "../utils/time.ts"
 import { canonizeDocument, canonizeProof, expandVerificationMethod, includeContext } from "../utils/jsonld.ts"
-import { sha256 } from "../utils/crypto.ts"
 import { concatenate } from "../utils/format.ts"
+import { sha256 } from "../utils/crypto.ts"
+import { Suite } from "./suite.ts"
+import type { CachedDocument, VerificationResult } from "../types/interface/suite.ts"
+import type { ContextURL } from "../types/jsonld/keywords.ts"
 import type { Keypair } from "../key/keypair.ts"
-import type { Purpose } from "../purpose/purpose.ts"
 import type { Loader } from "../types/interface/loader.ts"
+import type { MethodMap } from "../types/did/method.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { CachedDocument, VerificationResult } from "../types/interface/suite.ts"
-import type { ContextURL, Type } from "../types/jsonld/keywords.ts"
-import type { MethodMap } from "../types/did/method.ts"
+import type { Purpose } from "../purpose/purpose.ts"
+import type * as Options from "../types/interface/options.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.
@@ -25,14 +26,14 @@ export class Signature extends Suite {
   private cache?: CachedDocument
 
   /**
-   * @param {Type} type The suite name, should be provided by sub-classes.
+   * @param {string} suite The identifier of the cryptographic suite, should be provided by sub-classes.
    * @param {Keypair} keypair The keypair used to create the signature.
    * @param {ContextURL} context The json-ld context URL that defines the terms of this suite.
    * @param {Proof} proof A json-ld document with options for this instance.
    * @param {Date} time The time of the operation.
    */
-  constructor(type: Type, keypair: Keypair, context: ContextURL, time?: Date, proof?: Proof) {
-    super(type)
+  constructor(suite: string, keypair: Keypair, context: ContextURL, time?: Date, proof?: Proof) {
+    super(suite)
     this.keypair = keypair
     this.context = context
     this.proof = proof
@@ -43,30 +44,28 @@ export class Signature extends Suite {
    * Create a signature with respect to the given document.
    *
    * @param {PlainDocument} document The document to be signed.
-   * @param {Purpose} purpose The purpose of the proof.
-   * @param {Array<Proof>} proofs Any existing proofs.
-   * @param {Loader} loader A loader for external documents.
+   * @param {Options.Suite} options Options for the signature suite.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
   override async createProof(
     document: PlainDocument,
-    purpose: Purpose,
-    proofs: Array<Proof>,
-    loader: Loader,
+    options: Options.Suite,
   ): Promise<Proof> {
     // construct a proof instance, fill in the signature options
     let proof: Proof
     if (this.proof) {
       proof = Object.assign({
-        type: this.type,
-        proofPurpose: purpose.proofPurpose,
+        type: "DataIntegrityProof",
+        cryptosuite: this.proof.cryptosuite,
+        proofPurpose: this.proof.proofPurpose,
         proofValue: "",
       }, this.proof)
     } else {
       proof = {
-        type: this.type,
-        proofPurpose: purpose.proofPurpose,
+        type: "DataIntegrityProof",
+        cryptosuite: this.cryptosuite,
+        proofPurpose: options.purpose.proofPurpose,
         proofValue: "",
       }
     }
@@ -78,18 +77,18 @@ export class Signature extends Suite {
       proof.created = dateStr
     }
 
-    proof = await purpose.update(proof, document, this, loader)
-    const compressed = await this.compress(document, proof, proofs, loader)
-    proof = await this.sign(document, proof, compressed, loader)
+    proof = await options.purpose.update(proof, {document: document, suite: this, })
+
+    // proof = await options.purpose.update(proof, document, this, options.loader)
+    // const compressed = await this.compress(document, proof, options.proofs, options.loader)
+    // proof = await this.sign(document, proof, compressed, options.loader)
 
     return proof
   }
 
   override deriveProof(
     _document: PlainDocument,
-    _purpose: Purpose,
-    _proofs: Array<Proof>,
-    _loader: Loader,
+    _options: Options.Suite,
   ): Promise<Proof> {
     throw new Error("[Signature] Method should be implemented by sub-class!")
   }
@@ -97,9 +96,7 @@ export class Signature extends Suite {
   override async verifyProof(
     document: PlainDocument,
     proof: Proof,
-    _purpose: Purpose,
-    proofs: Array<Proof>,
-    loader: Loader,
+    options: Options.Suite,
   ): Promise<VerificationResult> {
     try {
       const compressed = await this.compress(document, proof, proofs, loader)

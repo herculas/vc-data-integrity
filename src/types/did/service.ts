@@ -1,5 +1,5 @@
 import type { OneOrMany } from "../jsonld/base.ts"
-import type { Type, URL } from "../jsonld/keywords.ts"
+import type { Types, URL } from "../jsonld/keywords.ts"
 import type { NodeObject } from "../jsonld/node.ts"
 
 /**
@@ -18,7 +18,7 @@ export interface Service extends NodeObject {
    *
    * The value of this property MUST be a string, or a set of strings.
    */
-  type: Type
+  type: Types
 
   /**
    * The service endpoint.

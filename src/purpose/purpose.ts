@@ -1,9 +1,6 @@
 import { assertTime } from "../utils/time.ts"
-import type { Loader } from "../types/interface/loader.ts"
-import type { MethodMap } from "../types/did/method.ts"
-import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { Suite } from "../suite/suite.ts"
+import type * as Options from "../types/interface/options.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
 
 /**
@@ -33,24 +30,19 @@ export class Purpose {
    * against the public key.
    *
    * @param {Proof} proof A proof with the matching purpose.
-   * @param {PlainDocument} _document The document that the proof is to be verified against.
-   * @param {Suite} _suite The cryptographic suite that the proof is to be verified against.
-   * @param {MethodMap} _method The verification method that the proof is to be verified against.
+   * @param {Options.Purpose} _options The options for the purpose.
    *
    * @returns {Promise<VerificationResult>} Resolve to an object with `valid` and `error` properties.
    */
   // deno-lint-ignore require-await
   async validate(
     proof: Proof,
-    _document: PlainDocument,
-    _suite: Suite,
-    _method: MethodMap,
-    _loader: Loader,
+    _options: Options.Purpose,
   ): Promise<VerificationResult> {
     try {
       assertTime(this.date, this.delta, proof.created)
       return {
-        verified: true
+        verified: true,
       }
     } catch (error) {
       return {
@@ -67,17 +59,13 @@ export class Purpose {
    * proof value.
    *
    * @param {Proof} proof A proof with the matching purpose.
-   * @param {PlainDocument} _document The document that the proof is to be generated against.
-   * @param {Suite} _suite The cryptographic suite that the proof is to be generated against.
-   *
+   * @param {Options.Purpose} _options The options for the purpose.
    * @returns {Promise<Proof>} Resolve to the proof instance.
    */
   // deno-lint-ignore require-await
   async update(
     proof: Proof,
-    _document: PlainDocument,
-    _suite: Suite,
-    _loader: Loader,
+    _options: Options.Purpose,
   ): Promise<Proof> {
     proof.proofPurpose = this.proofPurpose
     return proof

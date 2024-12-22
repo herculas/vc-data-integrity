@@ -1,35 +1,29 @@
-import type { Loader } from "../types/interface/loader.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type { Purpose } from "../purpose/purpose.ts"
-import type { Type } from "../types/jsonld/keywords.ts"
+import type * as Options from "../types/interface/options.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
 
 export class Suite {
-  type: Type
+  cryptosuite: string
 
   /**
-   * @param {Type} type The `type` term specified in the Linked Data Proofs specification.
+   * @param {string} suite The identifier of the cryptographic suite.
    */
-  constructor(type: Type) {
-    this.type = type
+  constructor(suite: string) {
+    this.cryptosuite = suite
   }
 
   /**
    * Create a proof for the given document.
    *
    * @param {PlainDocument} _document The document to prove.
-   * @param {Purpose} _purpose The purpose of the proof.
-   * @param {Array<Proof>} _proofs Any existing proofs to include in the new proof.
-   * @param {Loader} _loader A loader to resolve external documents.
+   * @param {Options.Suite} _options The options to use.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
   createProof(
     _document: PlainDocument,
-    _purpose: Purpose,
-    _proofs: Array<Proof>,
-    _loader: Loader,
+    _options: Options.Suite,
   ): Promise<Proof> {
     throw new Error("Method not implemented.")
   }
@@ -38,17 +32,13 @@ export class Suite {
    * Derive a proof from the given document.
    *
    * @param {PlainDocument} _document The document to prove.
-   * @param {Purpose} _purpose The purpose of the proof.
-   * @param {Array<Proof>} _proofs Any existing proofs.
-   * @param {Loader} _loader A loader to resolve external documents.
+   * @param {Options.Suite} _options The options to use.
    *
    * @returns {Promise<Proof>} Resolve to the derived proof.
    */
   deriveProof(
     _document: PlainDocument,
-    _purpose: Purpose,
-    _proofs: Array<Proof>,
-    _loader: Loader,
+    _options: Options.Suite,
   ): Promise<Proof> {
     throw new Error("Method not implemented.")
   }
@@ -58,18 +48,14 @@ export class Suite {
    *
    * @param {PlainDocument} _document The document to be verified.
    * @param {Proof} _proof The proof to be verified.
-   * @param {Purpose} _purpose The purpose of the proof.
-   * @param {Array<Proof>} _proofs Any existing proofs.
-   * @param {Loader} _loader A loader to resolve external documents.
+   * @param {Options.Suite} _options The options to use.
    *
    * @returns {Promise<boolean>} Resolve to true if the proof is valid.
    */
   verifyProof(
     _document: PlainDocument,
     _proof: Proof,
-    _purpose: Purpose,
-    _proofs: Array<Proof>,
-    _loader: Loader,
+    _options: Options.Suite,
   ): Promise<VerificationResult> {
     throw new Error("Method not implemented.")
   }

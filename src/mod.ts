@@ -25,9 +25,11 @@ export type { DID, DIDURL } from "./types/did/keywords.ts"
 export type { MethodMap, VerificationMethod } from "./types/did/method.ts"
 
 export type { OneOrMany } from "./types/jsonld/base.ts"
+export type { ContextURL, DOMString, IRIReference, Type, URL } from "./types/jsonld/keywords.ts"
 export type { JsonLdDocument, PlainDocument } from "./types/jsonld/document.ts"
 
 // utilities
 export { sha256 } from "./utils/crypto.ts"
 export { concatenate, severalToMany } from "./utils/format.ts"
 export { canonize } from "./utils/jsonld.ts"
+export { toW3CTimestampString } from "./utils/time.ts"

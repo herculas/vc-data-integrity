@@ -15,28 +15,25 @@ export class Keypair {
   /**
    * Generate a keypair instance.
    *
-   * @param {string} id The identifier of the key, typically hashed from the controller URL and the key fingerprint.
-   * @param {string} controller The controller of the key, typically a URL of the entity controlling the key.
-   * @param {Type} type The type of the key.
-   * @param {Date} revoked The time when the key was revoked in RFC3339 format. If not present, the key is considered
+   * @param {string} _id The identifier of the key, typically hashed from the controller URL and the key fingerprint.
+   * @param {string} _controller The controller of the key, typically a URL of the entity controlling the key.
+   * @param {Type} _type The type of the key.
+   * @param {Date} _revoked The time when the key was revoked in RFC3339 format. If not present, the key is considered
    * active.
    */
-  constructor(type: Type, id?: URL, controller?: DIDURL, revoked?: Date) {
-    this.type = type
-    this.id = id
-    this.controller = controller
-    this.revoked = revoked
+  constructor(_type: Type, _id?: URL, _controller?: DIDURL, _revoked?: Date) {
+    this.type = _type
+    this.id = _id
+    this.controller = _controller
+    this.revoked = _revoked
   }
 
   /**
-   * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
+   * Generate a keypair instance from a provided seed.
    *
-   * @param {boolean} _pkFlag Whether to include the public key in the export.
-   * @param {boolean} _skFlag Whether to include the private key in the export.
-   *
-   * @returns {object} The serialized keypair to be exported.
+   * @param {Uint8Array} _seed A seed to generate the keypair from. If not provided, a random seed will be used.
    */
-  export(_pkFlag: boolean, _skFlag: boolean): object {
+  generate(_seed?: Uint8Array) {
     throw new Error("Method not implemented.")
   }
 
@@ -65,11 +62,24 @@ export class Keypair {
   }
 
   /**
-   * Generate a new keypair.
+   * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {Uint8Array} _seed A seed to generate the keypair from. If not provided, a random seed will be used.
+   * @param {string} _flag The flag to determine which part of the keypair to export.
+   *
+   * @returns {object} The serialized keypair to be exported.
    */
-  static generate(_seed?: Uint8Array): void {
+  export(_flag: "private" | "public" | "both"): PlainDocument {
+    throw new Error("Method not implemented.")
+  }
+
+  /**
+   * Import a keypair from provided options.
+   *
+   * @param {object} _options Suite-specific options for keypair import.
+   *
+   * @returns {Promise<Keypair>} Resolve to a keypair instance.
+   */
+  static from(_options: object): Promise<Keypair> {
     throw new Error("Method not implemented.")
   }
 
@@ -84,17 +94,6 @@ export class Keypair {
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
   static fromDocument(_document: PlainDocument, _checkContext: boolean, _checkRevoked: boolean): Promise<Keypair> {
-    throw new Error("Method not implemented.")
-  }
-
-  /**
-   * Import a keypair from provided options.
-   *
-   * @param {object} _options Suite-specific options for keypair import.
-   *
-   * @returns {Promise<Keypair>} Resolve to a keypair instance.
-   */
-  static from(_options: object): Promise<Keypair> {
     throw new Error("Method not implemented.")
   }
 }

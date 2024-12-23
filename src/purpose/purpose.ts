@@ -12,14 +12,14 @@ export class Purpose {
   proofPurpose: string
 
   /**
-   * @param {string} purpose The proof purpose defined in the linked data proof specification.
-   * @param {Date} date The date of the creation of the proof.
-   * @param {number} delta A maximum number of seconds that the date of the proof can deviate from.
+   * @param {string} _purpose The proof purpose defined in the linked data proof specification.
+   * @param {Date} _date The date of the creation of the proof.
+   * @param {number} _delta A maximum number of seconds that the date of the proof can deviate from.
    */
-  constructor(purpose: string, date?: Date, delta?: number) {
-    this.proofPurpose = purpose
-    this.date = date || new Date()
-    this.delta = delta || Infinity
+  constructor(_purpose: string, _date?: Date, _delta?: number) {
+    this.proofPurpose = _purpose
+    this.date = _date || new Date()
+    this.delta = _delta || Infinity
   }
 
   /**
@@ -29,45 +29,42 @@ export class Purpose {
    * verification method, e.g., in the case of a digital signature, the signature has been cryptographically verified
    * against the public key.
    *
-   * @param {Proof} proof A proof with the matching purpose.
+   * @param {Proof} _proof A proof with the matching purpose.
    * @param {Options.Purpose} _options The options for the purpose.
    *
    * @returns {Promise<VerificationResult>} Resolve to an object with `valid` and `error` properties.
    */
-  // deno-lint-ignore require-await
-  async validate(
-    proof: Proof,
+  validate(
+    _proof: Proof,
     _options: Options.Purpose,
   ): Promise<VerificationResult> {
     try {
-      assertTime(this.date, this.delta, proof.created)
-      return {
+      assertTime(this.date, this.delta, _proof.created)
+      return Promise.resolve({
         verified: true,
-      }
+      })
     } catch (error) {
-      return {
+      return Promise.resolve({
         verified: false,
         errors: error instanceof Error ? error : new Error("Purpose validation failed!"),
-      }
+      })
     }
   }
 
   /**
-   * Update a proof when it is created, adding any properties specific to this purpose.
+   * Update a proof when it is created, adding any properties specific to this purpose. This method is called prior to
+   * proof value been generated, such that any properties added may be included in the proof value.
    *
-   * This method is called prior to proof value been generated, such that any properties added may be included in the
-   * proof value.
-   *
-   * @param {Proof} proof A proof with the matching purpose.
+   * @param {Proof} _proof A proof with the matching purpose.
    * @param {Options.Purpose} _options The options for the purpose.
+   *
    * @returns {Promise<Proof>} Resolve to the proof instance.
    */
-  // deno-lint-ignore require-await
-  async update(
-    proof: Proof,
+  update(
+    _proof: Proof,
     _options: Options.Purpose,
   ): Promise<Proof> {
-    proof.proofPurpose = this.proofPurpose
-    return proof
+    _proof.proofPurpose = this.proofPurpose
+    return Promise.resolve(_proof)
   }
 }

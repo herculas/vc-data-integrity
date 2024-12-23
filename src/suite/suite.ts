@@ -9,8 +9,8 @@ export class Suite {
   /**
    * @param {string} suite The identifier of the cryptographic suite.
    */
-  constructor(suite: string) {
-    this.cryptosuite = suite
+  constructor(_suite: string) {
+    this.cryptosuite = _suite
   }
 
   /**

@@ -26,31 +26,31 @@ export class Signature extends Suite {
   private cache?: CachedDocument
 
   /**
-   * @param {string} suite The identifier of the cryptographic suite, should be provided by sub-classes.
-   * @param {Keypair} keypair The keypair used to create the signature.
-   * @param {ContextURL} context The json-ld context URL that defines the terms of this suite.
-   * @param {Proof} proof A json-ld document with options for this instance.
-   * @param {Date} time The time of the operation.
+   * @param {string} _suite The identifier of the cryptographic suite, should be provided by sub-classes.
+   * @param {Keypair} _keypair The keypair used to create the signature.
+   * @param {ContextURL} _context The json-ld context URL that defines the terms of this suite.
+   * @param {Proof} _proof A json-ld document with options for this instance.
+   * @param {Date} _time The time of the operation.
    */
-  constructor(suite: string, keypair: Keypair, context: ContextURL, time?: Date, proof?: Proof) {
-    super(suite)
-    this.keypair = keypair
-    this.context = context
-    this.proof = proof
-    this.time = time || new Date()
+  constructor(_suite: string, _keypair: Keypair, _context: ContextURL, _time?: Date, _proof?: Proof) {
+    super(_suite)
+    this.keypair = _keypair
+    this.context = _context
+    this.proof = _proof
+    this.time = _time || new Date()
   }
 
   /**
    * Create a signature with respect to the given document.
    *
-   * @param {PlainDocument} document The document to be signed.
-   * @param {Options.Suite} options Options for the signature suite.
+   * @param {PlainDocument} _document The document to be signed.
+   * @param {Options.Suite} _options Options for the signature suite.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
   override async createProof(
-    document: PlainDocument,
-    options: Options.Suite,
+    _document: PlainDocument,
+    _options: Options.Suite,
   ): Promise<Proof> {
     // construct a proof instance, fill in the signature options
     let proof: Proof
@@ -65,7 +65,7 @@ export class Signature extends Suite {
       proof = {
         type: "DataIntegrityProof",
         cryptosuite: this.cryptosuite,
-        proofPurpose: options.purpose.proofPurpose,
+        proofPurpose: _options.purpose.proofPurpose,
         proofValue: "",
       }
     }
@@ -77,10 +77,10 @@ export class Signature extends Suite {
       proof.created = dateStr
     }
 
-    options.loader = options.loader || defaultLoader
-    proof = await options.purpose.update(proof, { document: document, suite: this, loader: options.loader })
-    const compressed = await this.compress(document, proof, options.loader, options.proofs)
-    proof = await this.sign(document, proof, compressed, options.loader)
+    _options.loader = _options.loader || defaultLoader
+    proof = await _options.purpose.update(proof, { document: _document, suite: this, loader: _options.loader })
+    const compressed = await this.compress(_document, proof, _options.loader, _options.proofs)
+    proof = await this.sign(_document, proof, compressed, _options.loader)
 
     return proof
   }
@@ -93,18 +93,18 @@ export class Signature extends Suite {
   }
 
   override async verifyProof(
-    document: PlainDocument,
-    proof: Proof,
-    options: Options.Suite,
+    _document: PlainDocument,
+    _proof: Proof,
+    _options: Options.Suite,
   ): Promise<VerificationResult> {
     try {
-      options.loader = options.loader || defaultLoader
-      const compressed = await this.compress(document, proof, options.loader, options.proofs)
-      const method = await expandVerificationMethod(proof.verificationMethod!, options.loader)
-      this.verify(document, proof, compressed, method, options.loader)
+      _options.loader = _options.loader || defaultLoader
+      const compressed = await this.compress(_document, _proof, _options.loader, _options.proofs)
+      const method = await expandVerificationMethod(_proof.verificationMethod!, _options.loader)
+      this.verify(_document, _proof, compressed, method, _options.loader)
       return {
         verified: true,
-        verifiedDocument: document,
+        verifiedDocument: _document,
       }
     } catch (error) {
       return {

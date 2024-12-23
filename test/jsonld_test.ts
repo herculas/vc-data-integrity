@@ -1,6 +1,6 @@
 import * as jsonld from "jsonld"
 import { loader } from "./loader.ts"
-import { canonize, expandMethod } from "../src/utils/jsonld.ts"
+import { canonize, expandVerificationMethod } from "../src/utils/jsonld.ts"
 
 const ld = jsonld.default
 
@@ -40,6 +40,6 @@ Deno.test("jsonld canonization", async () => {
 
 Deno.test("jsonld framing an element", async () => {
   const method = "did:example:489398593#test"
-  const framed = await expandMethod(method, loader)
+  const framed = await expandVerificationMethod(method, loader)
   console.log(framed)
 })

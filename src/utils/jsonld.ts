@@ -87,23 +87,20 @@ export async function expandController(
 }
 
 export async function expandVerificationMethod(
+  method: string,
   loader: Loader,
-  verificationMethod?: string,
 ): Promise<MethodMap> {
-  if (!verificationMethod) {
-    throw new Error("Verification method not found.")
-  }
-  const framed = await jsonld.default.frame(verificationMethod, {
+  const framed = await jsonld.default.frame(method, {
     "@context": SECURITY_CONTEXT_V2_URL,
     "@embed": "@always",
-    id: verificationMethod,
+    id: method,
   }, {
     documentLoader: loader,
     compactToRelative: false,
     expandContext: SECURITY_CONTEXT_V2_URL,
   })
   if (!framed) {
-    throw new Error(`Verification method ${verificationMethod} not found.`)
+    throw new Error(`Verification method ${method} not found.`)
   }
   return framed
 }

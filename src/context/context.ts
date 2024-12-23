@@ -5,6 +5,9 @@ import * as securityVer2 from "../../data/context/security-v2.json" with { type:
 
 import * as CONSTANTS from "./constants.ts"
 
+/**
+ * The map of context URLs to the context contents.
+ */
 export const urlContextMap: Map<string, object> = new Map<string, object>([
   [CONSTANTS.CREDENTIAL_CONTEXT_V1_URL, credentialVer1.default],
   [CONSTANTS.CREDENTIAL_CONTEXT_V2_URL, credentialVer2.default],

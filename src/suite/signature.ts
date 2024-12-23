@@ -100,7 +100,7 @@ export class Signature extends Suite {
     try {
       options.loader = options.loader || defaultLoader
       const compressed = await this.compress(document, proof, options.loader, options.proofs)
-      const method = await expandVerificationMethod(options.loader, proof.verificationMethod)
+      const method = await expandVerificationMethod(proof.verificationMethod!, options.loader)
       this.verify(document, proof, compressed, method, options.loader)
       return {
         verified: true,

@@ -1,15 +1,23 @@
 import type { LoadedDocument } from "../types/interface/loader.ts"
+import type { URL } from "../types/jsonld/keywords.ts"
 
-export async function defaultLoader(_url: string): Promise<LoadedDocument> {
+/**
+ * Construct the default document loader for fetching JSON-LD documents.
+ * 
+ * @param {URL} url The URL to fetch.
+ * 
+ * @returns {Promise<LoadedDocument>} Resolve to the loaded document.
+ */
+export async function defaultLoader(url: URL): Promise<LoadedDocument> {
   try {
-    const response = await fetch(_url)
+    const response = await fetch(url)
     const document = await response.json()
     return {
-      contextUrl: _url,
-      documentUrl: _url,
+      contextUrl: url,
+      documentUrl: url,
       document: document,
     }
   } catch (error) {
-    throw new Error(`Failed to fetch ${_url}: ${error}`)
+    throw new Error(`Failed to fetch ${url}: ${error}`)
   }
 }

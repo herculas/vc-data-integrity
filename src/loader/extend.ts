@@ -1,4 +1,4 @@
-import { urlContextMap } from "../context/context.ts"
+import { URL_CONTEXT_MAP } from "../context/context.ts"
 import type { Loader } from "../types/interface/loader.ts"
 
 /**
@@ -14,10 +14,10 @@ import type { Loader } from "../types/interface/loader.ts"
  */
 export function extend(loader: Loader): Loader {
   return (url: string) => {
-    if (urlContextMap.has(url)) {
+    if (URL_CONTEXT_MAP.has(url)) {
       return Promise.resolve({
         documentUrl: url,
-        document: urlContextMap.get(url)!,
+        document: URL_CONTEXT_MAP.get(url)!,
       })
     }
     return loader(url)

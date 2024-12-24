@@ -2,12 +2,14 @@
   "cSpell.words": [
     "cryptosuite",
     "DIDURL",
+    "eddsa",
     "Keypair",
     "keypairs",
     "linkability",
     "multibase",
     "multicodec",
     "PKIX",
+    "rdfc",
     "recompact",
     "unlinkable",
     "URDNA"

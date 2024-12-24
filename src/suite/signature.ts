@@ -4,6 +4,8 @@ import { canonizeDocument, canonizeProof, expandVerificationMethod, includeConte
 import { toW3CTimestampString } from "../utils/time.ts"
 import { defaultLoader } from "../loader/default.ts"
 import { Suite } from "./suite.ts"
+import { LDError } from "../error/error.ts"
+import { LDErrorCode } from "../error/constants.ts"
 import type { CachedDocument, VerificationResult } from "../types/interface/suite.ts"
 import type { ContextURL } from "../types/jsonld/keywords.ts"
 import type { Keypair } from "../key/keypair.ts"
@@ -89,7 +91,11 @@ export class Signature extends Suite {
     _document: PlainDocument,
     _options: Options.Suite,
   ): Promise<Proof> {
-    throw new Error("[Signature] Method should be implemented by sub-class!")
+    throw new LDError(
+      LDErrorCode.NOT_IMPLEMENTED,
+      "Signature.deriveProof",
+      "This method should be implemented by sub-classes!",
+    )
   }
 
   override async verifyProof(
@@ -109,9 +115,11 @@ export class Signature extends Suite {
     } catch (error) {
       return {
         verified: false,
-        errors: error instanceof Error
-          ? error
-          : new Error("[Signature] An unknown error occurred during verification."),
+        errors: new LDError(
+          LDErrorCode.PROOF_VERIFICATION_FAILURE,
+          "Signature.verifyProof",
+          `Error occurred during verification: ${error}`,
+        ),
       }
     }
   }
@@ -122,7 +130,11 @@ export class Signature extends Suite {
     _verifyData: Uint8Array,
     _loader?: Loader,
   ): Promise<Proof> {
-    throw new Error("[Signature] Method should be implemented by sub-class!")
+    throw new LDError(
+      LDErrorCode.NOT_IMPLEMENTED,
+      "Signature.sign",
+      "This method should be implemented by sub-classes!",
+    )
   }
 
   verify(
@@ -132,7 +144,11 @@ export class Signature extends Suite {
     _method: MethodMap,
     _loader?: Loader,
   ) {
-    throw new Error("[Signature] Method should be implemented by sub-class!")
+    throw new LDError(
+      LDErrorCode.NOT_IMPLEMENTED,
+      "Signature.verify",
+      "This method should be implemented by sub-classes!",
+    )
   }
 
   /**
@@ -146,7 +162,11 @@ export class Signature extends Suite {
   ensureSuiteContext(document: PlainDocument, add: boolean = false) {
     if (includeContext(document, this.context)) return
     if (!add) {
-      throw new Error(`[Signature] Required context '${this.context}' not found in document.`)
+      throw new LDError(
+        LDErrorCode.CONTEXT_MISMATCH,
+        "Signature.ensureSuiteContext",
+        `Required context '${this.context}' not found in document!`,
+      )
     }
     const existingContext = document["@context"] || []
     document["@context"] = Array.isArray(existingContext)

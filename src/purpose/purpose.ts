@@ -1,4 +1,6 @@
 import { assertTime } from "../utils/time.ts"
+import { LDError } from "../error/error.ts"
+import { LDErrorCode } from "../error/constants.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
 import type * as Options from "../types/interface/options.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
@@ -20,6 +22,23 @@ export class Purpose {
     this.proofPurpose = _purpose
     this.date = _date || new Date()
     this.delta = _delta || Infinity
+  }
+
+  /**
+   * Update a proof when it is created, adding any properties specific to this purpose. This method is called prior to
+   * proof value been generated, such that any properties added may be included in the proof value.
+   *
+   * @param {Proof} _proof A proof with the matching purpose.
+   * @param {Options.Purpose} _options The options for the purpose.
+   *
+   * @returns {Promise<Proof>} Resolve to the proof instance.
+   */
+  update(
+    _proof: Proof,
+    _options: Options.Purpose,
+  ): Promise<Proof> {
+    _proof.proofPurpose = this.proofPurpose
+    return Promise.resolve(_proof)
   }
 
   /**
@@ -46,25 +65,12 @@ export class Purpose {
     } catch (error) {
       return Promise.resolve({
         verified: false,
-        errors: error instanceof Error ? error : new Error("Purpose validation failed!"),
+        errors: new LDError(
+          LDErrorCode.PURPOSE_VALIDATION_FAILURE,
+          "Purpose.validate",
+          `Purpose validation failed: ${error}`,
+        ),
       })
     }
-  }
-
-  /**
-   * Update a proof when it is created, adding any properties specific to this purpose. This method is called prior to
-   * proof value been generated, such that any properties added may be included in the proof value.
-   *
-   * @param {Proof} _proof A proof with the matching purpose.
-   * @param {Options.Purpose} _options The options for the purpose.
-   *
-   * @returns {Promise<Proof>} Resolve to the proof instance.
-   */
-  update(
-    _proof: Proof,
-    _options: Options.Purpose,
-  ): Promise<Proof> {
-    _proof.proofPurpose = this.proofPurpose
-    return Promise.resolve(_proof)
   }
 }

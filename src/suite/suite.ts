@@ -1,3 +1,5 @@
+import { LDError } from "../error/error.ts"
+import { LDErrorCode } from "../error/constants.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
 import type * as Options from "../types/interface/options.ts"
@@ -7,7 +9,7 @@ export class Suite {
   cryptosuite: string
 
   /**
-   * @param {string} suite The identifier of the cryptographic suite.
+   * @param {string} _suite The identifier of the cryptographic suite.
    */
   constructor(_suite: string) {
     this.cryptosuite = _suite
@@ -25,7 +27,12 @@ export class Suite {
     _document: PlainDocument,
     _options: Options.Suite,
   ): Promise<Proof> {
-    throw new Error("Method not implemented.")
+    // throw new Error("Method not implemented.")
+    throw new LDError(
+      LDErrorCode.NOT_IMPLEMENTED,
+      "Suite.createProof",
+      "This method should be implemented by sub-classes!",
+    )
   }
 
   /**
@@ -40,7 +47,11 @@ export class Suite {
     _document: PlainDocument,
     _options: Options.Suite,
   ): Promise<Proof> {
-    throw new Error("Method not implemented.")
+    throw new LDError(
+      LDErrorCode.NOT_IMPLEMENTED,
+      "Suite.deriveProof",
+      "This method should be implemented by sub-classes!",
+    )
   }
 
   /**
@@ -57,6 +68,10 @@ export class Suite {
     _proof: Proof,
     _options: Options.Suite,
   ): Promise<VerificationResult> {
-    throw new Error("Method not implemented.")
+    throw new LDError(
+      LDErrorCode.NOT_IMPLEMENTED,
+      "Suite.verifyProof",
+      "This method should be implemented by sub-classes!",
+    )
   }
 }

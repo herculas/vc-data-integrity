@@ -1,5 +1,5 @@
 import * as jsonld from "jsonld"
-import { SECURITY_CONTEXT_V2_URL } from "../context/constants.ts"
+import * as CONTEXT_URL from "../context/constants.ts"
 import type { ContextURL } from "../types/jsonld/keywords.ts"
 import type { Loader } from "../types/interface/loader.ts"
 import type { MethodMap } from "../types/did/method.ts"
@@ -50,7 +50,7 @@ export async function canonizeDocument(
  * @returns {Promise<string>} Resolve to the canonized proof.
  */
 export async function canonizeProof(proof: Proof, loader: Loader): Promise<string> {
-  proof["@context"] = SECURITY_CONTEXT_V2_URL
+  proof["@context"] = CONTEXT_URL.SECURITY_V2
   delete proof.nonce
   delete proof.proofValue
   return await canonize(proof, {
@@ -69,7 +69,7 @@ export async function expandController(
   loader: Loader,
 ): Promise<PlainDocument> {
   const framed = await jsonld.default.frame(document, {
-    "@context": SECURITY_CONTEXT_V2_URL,
+    "@context": CONTEXT_URL.SECURITY_V2,
     id: controller,
     [term]: {
       "@embed": "@never",
@@ -91,13 +91,13 @@ export async function expandVerificationMethod(
   loader: Loader,
 ): Promise<MethodMap> {
   const framed = await jsonld.default.frame(method, {
-    "@context": SECURITY_CONTEXT_V2_URL,
+    "@context": CONTEXT_URL.SECURITY_V2,
     "@embed": "@always",
     id: method,
   }, {
     documentLoader: loader,
     compactToRelative: false,
-    expandContext: SECURITY_CONTEXT_V2_URL,
+    expandContext: CONTEXT_URL.SECURITY_V2,
   })
   if (!framed) {
     throw new Error(`Verification method ${method} not found.`)

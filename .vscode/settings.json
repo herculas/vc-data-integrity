@@ -1,8 +1,15 @@
 {
   "cSpell.words": [
+    "abempty",
+    "ABNF",
+    "AQAB",
     "cryptosuite",
     "DIDURL",
     "eddsa",
+    "HEXDIG",
+    "idchar",
+    "JWKEC",
+    "JWKRSA",
     "Keypair",
     "keypairs",
     "linkability",

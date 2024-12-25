@@ -24,14 +24,19 @@ export { toW3CTimestampString } from "./utils/time.ts"
 
 // interfaces
 export type { LoadedDocument, Loader } from "./types/interface/loader.ts"
-export type { Purpose as PurposeOptions, Suite as SuiteOptions } from "./types/interface/options.ts"
+export type {
+  Export as KeypairExportOptions,
+  Import as KeypairImportOptions,
+  Purpose as PurposeOptions,
+  Suite as SuiteOptions,
+} from "./types/interface/options.ts"
 export type { VerificationResult } from "./types/interface/suite.ts"
 
 // DID type definitions
 export type { DIDDocument } from "./types/did/document.ts"
-export type { JWK } from "./types/did/jwk.ts"
+export type { JWK, JWKEC, JWKOct, JWKRSA, JWKSet, OtherPrimeInfo } from "./types/did/jwk.ts"
 export type { DID, DIDURL } from "./types/did/keywords.ts"
-export type { MethodMap, VerificationMethod } from "./types/did/method.ts"
+export type { VerificationMethod, VerificationMethodMap } from "./types/did/method.ts"
 export type { Service } from "./types/did/service.ts"
 
 // JSON-LD type definitions

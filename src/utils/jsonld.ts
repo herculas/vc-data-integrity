@@ -2,7 +2,7 @@ import * as jsonld from "jsonld"
 import * as CONTEXT_URL from "../context/constants.ts"
 import type { ContextURL } from "../types/jsonld/keywords.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { MethodMap } from "../types/did/method.ts"
+import type { VerificationMethodMap } from "../types/did/method.ts"
 import type * as Options from "../types/interface/options.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
@@ -89,7 +89,7 @@ export async function expandController(
 export async function expandVerificationMethod(
   method: string,
   loader: Loader,
-): Promise<MethodMap> {
+): Promise<VerificationMethodMap> {
   const framed = await jsonld.default.frame(method, {
     "@context": CONTEXT_URL.SECURITY_V2,
     "@embed": "@always",

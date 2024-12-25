@@ -3,6 +3,8 @@ import { LDErrorCode } from "../error/constants.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Type, URL } from "../types/jsonld/keywords.ts"
+import type * as Options from "../types/interface/options.ts"
+import type { VerificationResult } from "../types/interface/suite.ts"
 
 /**
  * The keypair base class. This class is used to represent a cryptographic keypair, which is used to sign and verify
@@ -51,12 +53,12 @@ export class Keypair {
   }
 
   /**
-   * Generate a keypair instance from a provided seed.
+   * Initialize the private and public keys of the keypair using the seed provided. If no seed is provided, a random
+   * seed will be used.
    *
    * @param {Uint8Array} [_seed] A seed to generate the keypair from. If not specified, a random one will be used.
    */
-  generate(_seed?: Uint8Array) {
-    // throw new Error("Method not implemented.")
+  initialize(_seed?: Uint8Array) {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.generate",
@@ -73,7 +75,7 @@ export class Keypair {
    *
    * @returns {string} The fingerprint.
    */
-  fingerprint(): string {
+  generateFingerprint(): string {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.fingerprint",
@@ -88,7 +90,7 @@ export class Keypair {
    *
    * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
-  verifyFingerprint(_fingerprint: string): boolean {
+  verifyFingerprint(_fingerprint: string): Promise<VerificationResult> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.verifyFingerprint",
@@ -99,11 +101,11 @@ export class Keypair {
   /**
    * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {string} _flag The flag to determine which part of the keypair to export.
+   * @param {Options.Export} _options Options for keypair export.
    *
    * @returns {object} The serialized keypair to be exported.
    */
-  export(_flag: "private" | "public" | "both"): PlainDocument {
+  export(_options: Options.Export): PlainDocument {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.export",
@@ -112,38 +114,17 @@ export class Keypair {
   }
 
   /**
-   * Import a keypair from provided options.
-   *
-   * @param {object} _options Suite-specific options for keypair import.
-   *
-   * @returns {Promise<Keypair>} Resolve to a keypair instance.
-   */
-  static from(_options: object): Promise<Keypair> {
-    throw new LDError(
-      LDErrorCode.NOT_IMPLEMENTED,
-      "Keypair.from",
-      "This method should be implemented by sub-classes!",
-    )
-  }
-
-  /**
-   * Import a keypair instance from a provided externally fetched document.
+   * Import a keypair from a serialized representation of a keypair.
    *
    * @param {PlainDocument} _document An externally fetched key document.
-   * @param {boolean} _checkContext Whether to check that the fetched document contains the context required by the
-   * key's cryptographic suite.
-   * @param {boolean} _checkRevoked Whether to check that the fetched document contains a `revoked` timestamp.
+   * @param {Options.Import} _options Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static fromDocument(
-    _document: PlainDocument,
-    _checkContext: boolean = false,
-    _checkRevoked: boolean = false,
-  ): Promise<Keypair> {
+  static import(_document: PlainDocument, _options: Options.Import): Promise<Keypair> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
-      "Keypair.fromDocument",
+      "Keypair.import",
       "This method should be implemented by sub-classes!",
     )
   }

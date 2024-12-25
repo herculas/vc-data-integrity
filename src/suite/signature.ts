@@ -10,13 +10,14 @@ import type { CachedDocument, VerificationResult } from "../types/interface/suit
 import type { ContextURL } from "../types/jsonld/keywords.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { MethodMap } from "../types/did/method.ts"
+import type { VerificationMethodMap } from "../types/did/method.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
 import type * as Options from "../types/interface/options.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.
+ * 
  * This class should not be used directly, but should be extended by sub-classes.
  */
 export class Signature extends Suite {
@@ -141,7 +142,7 @@ export class Signature extends Suite {
     _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
-    _method: MethodMap,
+    _method: VerificationMethodMap,
     _loader?: Loader,
   ) {
     throw new LDError(
@@ -152,9 +153,9 @@ export class Signature extends Suite {
   }
 
   /**
-   * Ensure the document to be signed contains the required signature suite specific context.
-   * If `add` is set to true, the context will be added to the document if it is missing.
-   * Else, if `add` is set to false, an error will be thrown if the context is missing.
+   * Ensure the document to be signed contains the required signature suite specific context. If `add` is set to true,
+   * the context will be added to the document if it is missing. Else, if `add` is set to false, an error will be thrown
+   * if the context is missing.
    *
    * @param {PlainDocument} document The document to be signed.
    * @param {boolean} add Whether to add the context if it is missing.

@@ -73,9 +73,9 @@ export class Keypair {
    *
    * This method is frequently used to initialize the key identifier or generate some types of cryptonym DIDs.
    *
-   * @returns {string} The fingerprint.
+   * @returns {string} Resolve to the fingerprint.
    */
-  generateFingerprint(): string {
+  generateFingerprint(): Promise<string> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.fingerprint",
@@ -103,9 +103,9 @@ export class Keypair {
    *
    * @param {Options.Export} _options Options for keypair export.
    *
-   * @returns {object} The serialized keypair to be exported.
+   * @returns {Promise<PlainDocument>} Resolve to a serialized keypair document.
    */
-  export(_options: Options.Export): PlainDocument {
+  export(_options: Options.Export): Promise<PlainDocument> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.export",

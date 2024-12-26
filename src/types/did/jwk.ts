@@ -151,6 +151,19 @@ export interface JWK extends NodeObject {
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.9
    */
   "x5t#S256"?: string
+
+  /**
+   * The `ext` (extractable) parameter is a boolean value that indicates whether the key is extractable. This parameter
+   * is intended to be used to prevent the private key from being exported. If the key is extractable, the value is
+   * `true`. If the key is not extractable, the value is `false`.
+   * 
+   * This parameter is defined in the IANA JSON Web Key Extension Parameters Registration.
+   * 
+   * The `ext` value is a boolean value.
+   * 
+   * @see https://www.w3.org/TR/WebCryptoAPI/#iana-section-jwk
+   */
+  ext?: boolean
 }
 
 /**
@@ -178,7 +191,6 @@ export interface JWKSet extends NodeObject {
  * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2
  */
 export interface JWKEC extends JWK {
-  kty: "EC"
   /**
    * The `crv` (curve) parameter identifies the cryptographic curve used with the key.
    *
@@ -239,7 +251,6 @@ export interface JWKEC extends JWK {
  * @see https://datatracker.ietf.org/doc/html/rfc3447#section-3.2
  */
 export interface JWKRSA extends JWK {
-  kty: "RSA"
   /**
    * The `n` (modulus) parameter contains the modulus value for the RSA public key. It is represented as a
    * Base64urlUInt-encoded value.
@@ -404,7 +415,6 @@ export interface OtherPrimeInfo extends NodeObject {
  * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.4
  */
 export interface JWKOct extends JWK {
-  kty: "oct"
   /**
    * The `k` (key value) parameter contains the value of the symmetric (or other single-valued) key.
    *

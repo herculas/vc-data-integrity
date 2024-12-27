@@ -108,10 +108,11 @@ export class Signature extends Suite {
       _options.loader = _options.loader || defaultLoader
       const compressed = await this.compress(_document, _proof, _options.loader, _options.proofs)
       const method = await expandVerificationMethod(_proof.verificationMethod!, _options.loader)
-      this.verify(_document, _proof, compressed, method, _options.loader)
+      const result = await this.verify(_document, _proof, compressed, method, _options.loader)
       return {
-        verified: true,
+        verified: result.verified,
         verifiedDocument: _document,
+        errors: result.errors,
       }
     } catch (error) {
       return {
@@ -144,7 +145,7 @@ export class Signature extends Suite {
     _verifyData: Uint8Array,
     _method: VerificationMethodMap,
     _loader?: Loader,
-  ) {
+  ): Promise<VerificationResult> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Signature.verify",

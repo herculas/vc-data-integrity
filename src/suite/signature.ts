@@ -141,7 +141,7 @@ export class Signature extends Suite {
     _document: PlainDocument,
     _proof: Proof,
     _verifyData: Uint8Array,
-    _method: VerificationMethodMap,
+    _method?: VerificationMethodMap,
     _loader?: Loader,
   ): Promise<VerificationResult> {
     throw new LDError(
@@ -176,14 +176,24 @@ export class Signature extends Suite {
 
   /**
    * Expand the verification method from the given method ID.
-   * @param {DIDURL} methodId The method ID to be expanded.
-   * @param {Loader} loader A loader for external documents.
+   * @param {DIDURL} [methodId] The method ID to be expanded.
+   * @param {Loader} [loader] A loader for external documents.
    *
    * @returns {Promise<VerificationMethodMap>} Resolve to the expanded verification method.
    */
-  async expandMethod(methodId: DIDURL, loader: Loader): Promise<VerificationMethodMap> {
-    const result = await loader(methodId)
-    return result.document! as VerificationMethodMap
+  async expandMethod(methodId?: DIDURL, loader?: Loader): Promise<VerificationMethodMap | undefined> {
+    if (methodId) {
+      if (!loader) {
+        throw new LDError(
+          LDErrorCode.LOADER_ERROR,
+          "Signature.expandMethod",
+          "A loader must be provided to expand the verification method!",
+        )
+      }
+      const result = await loader(methodId)
+      return result.document! as VerificationMethodMap
+    }
+    return
   }
 
   /**

@@ -1,7 +1,7 @@
 import { LDErrorCode } from "../error/constants.ts"
 import { LDError } from "../error/error.ts"
 import type { LoadedDocument } from "../types/interface/loader.ts"
-import type { URL } from "../types/jsonld/keywords.ts"
+import type { URL } from "../types/jsonld/document.ts"
 
 /**
  * Construct the default document loader for fetching JSON-LD documents.

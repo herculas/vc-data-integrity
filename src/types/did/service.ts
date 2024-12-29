@@ -1,6 +1,7 @@
-import type { OneOrMany } from "../jsonld/base.ts"
-import type { Types, URL } from "../jsonld/keywords.ts"
 import type { NodeObject } from "../jsonld/node.ts"
+import type { OneOrMany } from "../jsonld/base.ts"
+import type { Types } from "../jsonld/keywords.ts"
+import type { URL } from "../jsonld/document.ts"
 
 /**
  * Service are used to express ways of communicating with the DID subject or associated entities. A service can be any

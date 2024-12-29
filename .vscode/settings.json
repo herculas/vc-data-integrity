@@ -19,6 +19,7 @@
     "rdfc",
     "recompact",
     "unlinkable",
-    "URDNA"
+    "URDNA",
+    "URGNA"
   ]
 }

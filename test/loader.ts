@@ -7,8 +7,8 @@ import * as keypair from "../data/test/keypair.json" with { type: "json" }
 
 const customLoader: Loader = (url: string) => {
   const document = new Map<string, PlainDocument>([
-    ["did:example:489398593#test", keypair.default],
-    ["did:example:489398593", controller.default],
+    ["did:example:1145141919810#test", keypair.default],
+    ["did:example:1145141919810", controller.default],
   ])
 
   if (document.has(url)) {

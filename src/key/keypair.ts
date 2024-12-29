@@ -1,9 +1,10 @@
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
+import type { KeypairExportOptions, KeypairImportOptions } from "../types/interface/keypair.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { Type, URL } from "../types/jsonld/keywords.ts"
-import type * as Options from "../types/interface/options.ts"
+import type { Type } from "../types/jsonld/keywords.ts"
+import type { URL } from "../types/jsonld/document.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
 
 /**
@@ -101,11 +102,11 @@ export class Keypair {
   /**
    * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {Options.Export} _options Options for keypair export.
+   * @param {KeypairExportOptions} _options Options for keypair export.
    *
    * @returns {Promise<PlainDocument>} Resolve to a serialized keypair document.
    */
-  export(_options: Options.Export): Promise<PlainDocument> {
+  export(_options: KeypairExportOptions): Promise<PlainDocument> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.export",
@@ -117,11 +118,11 @@ export class Keypair {
    * Import a keypair from a serialized representation of a keypair.
    *
    * @param {PlainDocument} _document An externally fetched key document.
-   * @param {Options.Import} _options Options for keypair import.
+   * @param {KeypairImportOptions} _options Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: PlainDocument, _options: Options.Import): Promise<Keypair> {
+  static import(_document: PlainDocument, _options: KeypairImportOptions): Promise<Keypair> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.import",

@@ -1,32 +1,30 @@
-import { concatenate } from "../utils/format.ts"
-import { sha256 } from "../utils/crypto.ts"
-import { canonizeDocument, canonizeProof, expandVerificationMethod, includeContext } from "../utils/jsonld.ts"
-import { toW3CTimestampString } from "../utils/time.ts"
+import { canonizeDocument, canonizeProof } from "../jsonld/canonize.ts"
+import { concatenate, includeContext } from "../utils/format.ts"
 import { defaultLoader } from "../loader/default.ts"
-import { Suite } from "./suite.ts"
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
-import type { CachedDocument, VerificationResult } from "../types/interface/suite.ts"
-import type { ContextURL } from "../types/jsonld/keywords.ts"
+import { sha256 } from "../utils/crypto.ts"
+import { Suite } from "./suite.ts"
+import { toW3CTimestampString } from "../utils/time.ts"
+import type { ContextURL } from "../types/jsonld/document.ts"
+import type { DIDURL } from "../types/did/keywords.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { VerificationMethodMap } from "../types/did/method.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type * as Options from "../types/interface/options.ts"
+import type { SuiteOptions, VerificationResult } from "../types/interface/suite.ts"
+import type { VerificationMethodMap } from "../types/did/method.ts"
 
 /**
  * Base class from which various linked data signature suites inherit.
- * 
+ *
  * This class should not be used directly, but should be extended by sub-classes.
  */
 export class Signature extends Suite {
   keypair: Keypair
   context: ContextURL
   time: Date
-
   proof?: Proof
-  private cache?: CachedDocument
 
   /**
    * @param {string} _suite The identifier of the cryptographic suite, should be provided by sub-classes.
@@ -47,13 +45,13 @@ export class Signature extends Suite {
    * Create a signature with respect to the given document.
    *
    * @param {PlainDocument} _document The document to be signed.
-   * @param {Options.Suite} _options Options for the signature suite.
+   * @param {SuiteOptions} _options Options for the signature suite.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
   override async createProof(
     _document: PlainDocument,
-    _options: Options.Suite,
+    _options: SuiteOptions,
   ): Promise<Proof> {
     // construct a proof instance, fill in the signature options
     let proof: Proof
@@ -90,7 +88,7 @@ export class Signature extends Suite {
 
   override deriveProof(
     _document: PlainDocument,
-    _options: Options.Suite,
+    _options: SuiteOptions,
   ): Promise<Proof> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
@@ -102,12 +100,12 @@ export class Signature extends Suite {
   override async verifyProof(
     _document: PlainDocument,
     _proof: Proof,
-    _options: Options.Suite,
+    _options: SuiteOptions,
   ): Promise<VerificationResult> {
     try {
       _options.loader = _options.loader || defaultLoader
       const compressed = await this.compress(_document, _proof, _options.loader, _options.proofs)
-      const method = await expandVerificationMethod(_proof.verificationMethod!, _options.loader)
+      const method = await this.expandMethod(_proof.verificationMethod!, _options.loader)
       const result = await this.verify(_document, _proof, compressed, method, _options.loader)
       return {
         verified: result.verified,
@@ -177,6 +175,18 @@ export class Signature extends Suite {
   }
 
   /**
+   * Expand the verification method from the given method ID.
+   * @param {DIDURL} methodId The method ID to be expanded.
+   * @param {Loader} loader A loader for external documents.
+   *
+   * @returns {Promise<VerificationMethodMap>} Resolve to the expanded verification method.
+   */
+  async expandMethod(methodId: DIDURL, loader: Loader): Promise<VerificationMethodMap> {
+    const result = await loader(methodId)
+    return result.document! as VerificationMethodMap
+  }
+
+  /**
    * Create the data to be signed and verified.
    *
    * @param {PlainDocument} document The document to be signed.
@@ -184,26 +194,18 @@ export class Signature extends Suite {
    * @param {Array} _proofs Any existing proofs.
    * @param {Loader} loader A loader for external documents.
    */
-  protected async compress(
+  async compress(
     document: PlainDocument,
     proof: Proof,
     loader: Loader,
     _proofs?: Array<Proof>,
   ): Promise<Uint8Array> {
-    let documentHash: Uint8Array
-    if (this.cache && this.cache.document === document) {
-      documentHash = this.cache.hash
-    } else {
-      const canonizedDocument = await canonizeDocument(document, loader)
-      const docBytes = await sha256(canonizedDocument)
-      this.cache = {
-        document: document,
-        hash: docBytes,
-      }
-      documentHash = docBytes
-    }
-    const canonizedProof = await canonizeProof(proof, loader)
+    const canonizedDocument = await canonizeDocument(document, loader)
+    const canonizedProof = await canonizeProof(proof, loader, document["@context"])
+
+    const documentHash = await sha256(canonizedDocument)
     const proofHash = await sha256(canonizedProof)
+
     return concatenate(proofHash, documentHash)
   }
 }

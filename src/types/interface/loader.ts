@@ -1,4 +1,4 @@
-import type { URL } from "../jsonld/keywords.ts"
+import type { URL } from "../jsonld/document.ts"
 
 export type LoadedDocument = {
   contextUrl?: URL

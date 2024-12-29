@@ -1,6 +1,8 @@
-import type { OneOrMany } from "./base.ts"
-import type { Type, URL } from "./keywords.ts"
+import type { DIDURL } from "../did/keywords.ts"
 import type { NodeObject } from "./node.ts"
+import type { OneOrMany } from "./base.ts"
+import type { Type } from "./keywords.ts"
+import type { URL } from "./document.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and
@@ -45,7 +47,7 @@ export interface Proof extends NodeObject {
    *
    * The value of this property MUST be a string that maps to a URL.
    */
-  verificationMethod?: string
+  verificationMethod?: DIDURL
 
   /**
    * An identifier for the cryptographic suite that can be used to verify the proof.

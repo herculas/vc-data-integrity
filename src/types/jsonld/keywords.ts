@@ -1,11 +1,12 @@
-import type { JsonObject, OneOrMany } from "./base.ts"
+import type { ContextURL, IRIReference } from "./document.ts"
 import type { ContainerType, ContainerTypeCombination, ContextDefinition } from "./misc.ts"
+import type { JsonObject, OneOrMany } from "./base.ts"
 import type { NodeObject } from "./node.ts"
 import type { ValueObject } from "./objects.ts"
 
 /**
  * A list of keywords used in JSON-LD documents.
- * 
+ *
  * @see https://www.w3.org/TR/json-ld11/#keywords
  */
 export type Base = IRIReference | null
@@ -24,6 +25,7 @@ export type Propagate = boolean
 export type Protected = boolean
 export type Reverse = { [key: string]: OneOrMany<string> }
 export type LdSet = OneOrMany<Primitive | NodeObject | ValueObject>
+export type Type = string
 export type Types = OneOrMany<Type>
 export type Primitive = string | number | boolean | null
 export type Version = "1.1"
@@ -36,9 +38,3 @@ export type Vocab = string | null
  * @see https://www.w3.org/TR/json-ld11/#included-blocks
  */
 export type IncludedBlock = OneOrMany<NodeObject>
-
-export type DOMString = string
-export type Type = string
-export type URL = DOMString
-export type IRIReference = URL
-export type ContextURL = URL

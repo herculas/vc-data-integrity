@@ -1,9 +1,9 @@
-import type { OneOrMany } from "../jsonld/base.ts"
-import type { URL } from "../jsonld/keywords.ts"
-import type { NodeObject } from "../jsonld/node.ts"
 import type { DID } from "./keywords.ts"
-import type { VerificationMethod, VerificationMethodMap } from "./method.ts"
+import type { NodeObject } from "../jsonld/node.ts"
+import type { OneOrMany } from "../jsonld/base.ts"
 import type { Service } from "./service.ts"
+import type { URL } from "../jsonld/document.ts"
+import type { VerificationMethod, VerificationMethodMap } from "./method.ts"
 
 /**
  * A set od data describing a DID subject, including mechanisms, such as cryptographic keys, that the DID subject or a

@@ -2,7 +2,7 @@ import { assertTime } from "../utils/time.ts"
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
 import type { Proof } from "../types/jsonld/proof.ts"
-import type * as Options from "../types/interface/options.ts"
+import type { PurposeOptions } from "../types/interface/purpose.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
 
 /**
@@ -29,13 +29,13 @@ export class Purpose {
    * proof value been generated, such that any properties added may be included in the proof value.
    *
    * @param {Proof} _proof A proof with the matching purpose.
-   * @param {Options.Purpose} _options The options for the purpose.
+   * @param {PurposeOptions} _options The options for the purpose.
    *
    * @returns {Promise<Proof>} Resolve to the proof instance.
    */
   update(
     _proof: Proof,
-    _options: Options.Purpose,
+    _options: PurposeOptions,
   ): Promise<Proof> {
     _proof.proofPurpose = this.proofPurpose
     return Promise.resolve(_proof)
@@ -49,13 +49,13 @@ export class Purpose {
    * against the public key.
    *
    * @param {Proof} _proof A proof with the matching purpose.
-   * @param {Options.Purpose} _options The options for the purpose.
+   * @param {PurposeOptions} _options The options for the purpose.
    *
    * @returns {Promise<VerificationResult>} Resolve to an object with `valid` and `error` properties.
    */
   validate(
     _proof: Proof,
-    _options: Options.Purpose,
+    _options: PurposeOptions,
   ): Promise<VerificationResult> {
     try {
       assertTime(this.date, this.delta, _proof.created)

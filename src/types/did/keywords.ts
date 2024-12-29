@@ -1,4 +1,4 @@
-import type { URL } from "../jsonld/keywords.ts"
+import type { URL } from "../jsonld/document.ts"
 
 /**
  * A decentralized identifier (DID) is a globally unique persistent identifier that does not require a centralized

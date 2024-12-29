@@ -16,21 +16,21 @@ export { Purpose } from "./purpose/purpose.ts"
 export { Suite } from "./suite/suite.ts"
 export { Signature } from "./suite/signature.ts"
 
+// json-ld operations
+export { canonize } from "./jsonld/canonize.ts"
+export { frame } from "./jsonld/frame.ts"
+
 // utilities
 export { sha256 } from "./utils/crypto.ts"
 export { concatenate, severalToMany } from "./utils/format.ts"
-export { canonize } from "./utils/jsonld.ts"
 export { toW3CTimestampString } from "./utils/time.ts"
 
-// interfaces
+// interfaces and options
+export type { CanonizeOptions } from "./types/interface/jsonld.ts"
+export type { KeypairExportOptions, KeypairImportOptions } from "./types/interface/keypair.ts"
 export type { LoadedDocument, Loader } from "./types/interface/loader.ts"
-export type {
-  Export as KeypairExportOptions,
-  Import as KeypairImportOptions,
-  Purpose as PurposeOptions,
-  Suite as SuiteOptions,
-} from "./types/interface/options.ts"
-export type { VerificationResult } from "./types/interface/suite.ts"
+export type { PurposeOptions } from "./types/interface/purpose.ts"
+export type { SuiteOptions, VerificationResult } from "./types/interface/suite.ts"
 
 // DID type definitions
 export type { DIDDocument } from "./types/did/document.ts"
@@ -41,7 +41,16 @@ export type { Service } from "./types/did/service.ts"
 
 // JSON-LD type definitions
 export type { OneOrMany } from "./types/jsonld/base.ts"
-export type { JsonLdDocument, PlainDocument } from "./types/jsonld/document.ts"
-export type { ContextURL, DOMString, IRIReference, Type, URL } from "./types/jsonld/keywords.ts"
+export type {
+  ContextURL,
+  DOMString,
+  Frame,
+  IRI,
+  IRIReference,
+  JsonLdDocument,
+  PlainDocument,
+  URL,
+} from "./types/jsonld/document.ts"
+export type { Type } from "./types/jsonld/keywords.ts"
 export type { NodeObject } from "./types/jsonld/node.ts"
 export type { Proof } from "./types/jsonld/proof.ts"

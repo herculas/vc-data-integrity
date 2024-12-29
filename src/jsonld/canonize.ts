@@ -60,15 +60,18 @@ export async function canonizeProof(
   context?: Context,
   skipExpansion: boolean = false,
 ): Promise<string> {
+  // make a copy of the proof
+  const proofCopy = { ...proof }
+
   // set the context of the proof
-  proof["@context"] = context || CONTEXT_URL.CREDENTIAL_V2
+  proofCopy["@context"] = context || CONTEXT_URL.CREDENTIAL_V2
 
   // delete the nonce and proofValue fields
-  delete proof.nonce
-  delete proof.proofValue
+  delete proofCopy.nonce
+  delete proofCopy.proofValue
 
   // canonize the proof
-  return await canonize(proof, {
+  return await canonize(proofCopy, {
     algorithm: "URDNA2015",
     format: "application/n-quads",
     documentLoader: loader,

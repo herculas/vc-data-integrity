@@ -4,12 +4,18 @@ import type { PlainDocument } from "../jsonld/document.ts"
 import type { Purpose } from "../../purpose/purpose.ts"
 import type { Proof } from "../jsonld/proof.ts"
 
+/**
+ * Options for a cryptographic suite.
+ */
 export type SuiteOptions = {
   purpose: Purpose
   proofs?: Array<Proof>
   loader?: Loader
 }
 
+/**
+ * The result of a cryptographic verification.
+ */
 export type VerificationResult = {
   verified: boolean
   verifiedDocument?: PlainDocument

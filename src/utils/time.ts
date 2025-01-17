@@ -1,3 +1,9 @@
+/**
+ * Converts a Date object, a number, or a string to a W3C timestamp string.
+ * @param {Date | number | string} [date] The date to convert.
+ *
+ * @returns {string} The W3C timestamp string.
+ */
 export function toW3CTimestampString(date?: Date | number | string): string {
   if (!date) {
     date = new Date()

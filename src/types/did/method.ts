@@ -3,6 +3,11 @@ import type { JWK } from "./jwk.ts"
 import type { NodeObject } from "../jsonld/node.ts"
 import type { Type } from "../jsonld/keywords.ts"
 
+/**
+ * A verification method is a set of data describing a cryptographic key, key pair, or other verification material that
+ * can be used to authenticate or authorize a DID subject or associated parties. It can also be a reference to a
+ * verification method.
+ */
 export type VerificationMethod = VerificationMethodMap | DIDURL
 
 /**

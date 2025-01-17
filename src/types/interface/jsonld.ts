@@ -1,6 +1,9 @@
 import type { Context } from "../jsonld/keywords.ts"
 import type { Loader } from "./loader.ts"
 
+/**
+ * Common options for canonizing or framing a JSON-LD document.
+ */
 interface Common {
   /**
    * The base IRI to use when expanding relative IRIs. This property is set to `null` by default, which means that
@@ -14,6 +17,9 @@ interface Common {
   expandContext?: Context
 }
 
+/**
+ * Options for canonizing a JSON-LD document.
+ */
 interface Canonize extends Common {
   /**
    * The canonization algorithm to be used, either 'URDNA2015' or 'URGNA2012'. The default is 'URDNA2015'.
@@ -57,6 +63,9 @@ interface Canonize extends Common {
   safe?: boolean
 }
 
+/**
+ * Options for framing a JSON-LD document.
+ */
 interface Frame extends Common {
   /**
    * Set the default `@embed` flag for the frame, could be `@last`, `@always`, `@never`, or `@link`. The default is

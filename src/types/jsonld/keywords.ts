@@ -25,11 +25,15 @@ export type Propagate = boolean
 export type Protected = boolean
 export type Reverse = { [key: string]: OneOrMany<string> }
 export type LdSet = OneOrMany<Primitive | NodeObject | ValueObject>
-export type Type = string
 export type Types = OneOrMany<Type>
 export type Primitive = string | number | boolean | null
 export type Version = "1.1"
 export type Vocab = string | null
+
+/**
+ * A type is a string that represents a type IRI or a compact IRI.
+ */
+export type Type = string
 
 /**
  * An included block is used to provide a set of node objects. An included block MAY appear as the value of a member

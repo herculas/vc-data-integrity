@@ -1,5 +1,7 @@
 # ld-crypto-syntax
 
+[![Push-Release](https://github.com/herculas/ld-crypto-syntax/actions/workflows/push-release.yml/badge.svg)](https://github.com/herculas/ld-crypto-syntax/actions/workflows/push-release.yml)
+
 The syntax of JSON-LD cryptographic suites and associated entities. The interface is compatible with the W3C
 specification of [JSON-LD](https://www.w3.org/TR/json-ld11/) and
 [Verifiable Credentials](https://www.w3.org/TR/vc-data-model-2.0/).

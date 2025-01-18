@@ -1,6 +1,6 @@
 // contexts and URLs
-export * as CONTEXT_CONSTANTS from "./context/constants.ts"
-export { URL_CONTEXT_MAP } from "./context/context.ts"
+// export * as CONTEXT_CONSTANTS from "./context/constants.ts"
+// export { URL_CONTEXT_MAP } from "./context/context.ts"
 
 // cryptographic keypairs
 export { Keypair } from "./key/keypair.ts"

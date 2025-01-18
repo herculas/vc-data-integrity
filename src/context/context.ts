@@ -1,6 +1,6 @@
 import * as CREDENTIAL_V1 from "../../data/contexts/credential-v1.json" with { type: "json" }
 import * as CREDENTIAL_V2 from "../../data/contexts/credential-v2.json" with { type: "json" }
-import * as CREDENTIAL_EXAMPLES_V2 from "../../data/contexts/credential-example.json" with { type: "json" }
+import * as CREDENTIAL_EXAMPLES_V2 from "../../data/contexts/credential-example-v2.json" with { type: "json" }
 
 import * as SECURITY_V1 from "../../data/contexts/security-v1.json" with { type: "json" }
 import * as SECURITY_V2 from "../../data/contexts/security-v2.json" with { type: "json" }

@@ -1,5 +1,5 @@
 import type { OneOrMany } from "./base.ts"
-import type { Primitive } from "./keywords.ts"
+import type { Scalar } from "./keywords.ts"
 import type { NodeObject } from "./node.ts"
 import type { ListObject, SetObject, ValueObject } from "./objects.ts"
 
@@ -21,7 +21,7 @@ export interface LanguageMap {
  * @see https://www.w3.org/TR/json-ld11/#data-indexing
  */
 export interface IndexMap {
-  [key: string]: OneOrMany<Primitive | NodeObject | ValueObject | ListObject | SetObject>
+  [key: string]: OneOrMany<Scalar | NodeObject | ValueObject | ListObject | SetObject>
 }
 
 /**

@@ -74,3 +74,5 @@ export class Purpose {
     }
   }
 }
+
+// TODO: Add more purpose classes

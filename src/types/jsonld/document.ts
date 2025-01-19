@@ -42,3 +42,5 @@ export type ContextURL = URL
  * A frame is a JSON object that represents a frame.
  */
 export type Frame = NodeObject | URL
+
+// TODO: review the types defined above

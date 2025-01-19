@@ -1,5 +1,5 @@
 import type { OneOrMany } from "./base.ts"
-import type { Context, Graph, Id, IncludedBlock, Index, Nest, Primitive, Reverse, Types } from "./keywords.ts"
+import type { Context, Graph, Id, IncludedBlock, Index, Nest, Scalar, Reverse, Types } from "./keywords.ts"
 import type { IdMap, IndexMap, LanguageMap, TypeMap } from "./maps.ts"
 import type { GraphObject, ListObject, SetObject, ValueObject } from "./objects.ts"
 
@@ -18,7 +18,7 @@ export interface NodeObject {
   "@reverse"?: Reverse
   "@index"?: Index
   [key: string]:
-    | OneOrMany<Primitive | NodeObject | GraphObject | ValueObject | ListObject | SetObject>
+    | OneOrMany<Scalar | NodeObject | GraphObject | ValueObject | ListObject | SetObject>
     | IncludedBlock
     | LanguageMap
     | IndexMap

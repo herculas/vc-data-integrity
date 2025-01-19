@@ -42,4 +42,4 @@ export interface Service extends NodeObject {
   serviceEndpoint: OneOrMany<URL>
 }
 
-// TODO: service endpoint can be a map, but we don't have a way to represent that yet
+// FIXME: service endpoint can be a map, but we don't have a way to represent that yet

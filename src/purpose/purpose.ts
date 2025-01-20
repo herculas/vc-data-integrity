@@ -1,7 +1,7 @@
 import { assertTime } from "../utils/time.ts"
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
-import type { Proof } from "../types/jsonld/proof.ts"
+import type { Proof } from "../types/interface/proof.ts"
 import type { PurposeOptions } from "../types/interface/purpose.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
 

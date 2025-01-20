@@ -1,8 +1,7 @@
 import type { DIDURL } from "../did/keywords.ts"
-import type { NodeObject } from "./node.ts"
-import type { OneOrMany } from "./base.ts"
-import type { Type } from "./keywords.ts"
-import type { URL } from "./document.ts"
+import type { OneOrMany, Type } from "../jsonld/base.ts"
+import type { URI } from "../jsonld/document.ts"
+import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and
@@ -17,7 +16,7 @@ export interface Proof extends NodeObject {
    *
    * The value of this property MUST be a URL such as UUID as a URN.
    */
-  id?: URL
+  id?: URI
 
   /**
    * The specific type of the proof. The type of the proof is used to determine what other fields are required to

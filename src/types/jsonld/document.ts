@@ -1,8 +1,8 @@
 import type { OneOrMany } from "./base.ts"
-import type { NodeObject } from "./node.ts"
+import type { NodeObject } from "./objects.ts"
 
 /**
- * A JSON-LD document is a valid JSON document that conforms to the JSON-LD grammar.
+ * A JSON-LD document is a serialization of an RDF dataset using JSON-LD.
  *
  * @see https://www.w3.org/TR/json-ld11/#json-ld-grammar
  */
@@ -14,33 +14,29 @@ export type JsonLdDocument = OneOrMany<NodeObject>
 export type PlainDocument = NodeObject
 
 /**
- * A DOMString is a sequence of Unicode characters.
+ * An Internationalized Resource Identifier (IRI) is defined to extend the syntax of URIs to a much wider repertoire of
+ * characters.
+ *
+ * The absolute form of an IRI contains a scheme, along with a path and optionally a query and fragment segments.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc3987
  */
-export type DOMString = string
+export type IRI = string
 
 /**
- * An URL is a DOMString that represents an absolute URL.
+ * A Uniform Resource Identifier (URI) is defined as a sequence of characters chosen from a limited subset of the
+ * repertoire of US-ASCII characters. The characters in URIs are frequently used for representing words of natural
+ * languages.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc3986
  */
-export type URL = DOMString
+export type URI = IRI
 
 /**
- * An IRI is a URL that conforms to the IRI specification.
+ * A frame is a JSON-LD document which describes the form for transforming another JSON-LD document using matching and
+ * embedding rules. A frame document allows additional keywords and certain map entries to describe the matching and
+ * transforming process.
+ *
+ * @see https://www.w3.org/TR/json-ld11-framing/#dfn-frame
  */
-export type IRI = URL
-
-/**
- * An IRI reference is an IRI or a relative reference.
- */
-export type IRIReference = URL
-
-/**
- * A context URL is an URL that represents a JSON-LD context.
- */
-export type ContextURL = URL
-
-/**
- * A frame is a JSON object that represents a frame.
- */
-export type Frame = NodeObject | URL
-
-// TODO: review the types defined above
+export type Frame = NodeObject | URI

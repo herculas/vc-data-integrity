@@ -2,7 +2,7 @@ import type { Loader } from "./loader.ts"
 import type { OneOrMany } from "../jsonld/base.ts"
 import type { PlainDocument } from "../jsonld/document.ts"
 import type { Purpose } from "../../purpose/purpose.ts"
-import type { Proof } from "../jsonld/proof.ts"
+import type { Proof } from "./proof.ts"
 
 /**
  * Options for a cryptographic suite.

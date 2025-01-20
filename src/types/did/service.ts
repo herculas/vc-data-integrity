@@ -1,7 +1,7 @@
-import type { NodeObject } from "../jsonld/node.ts"
 import type { OneOrMany } from "../jsonld/base.ts"
 import type { Types } from "../jsonld/keywords.ts"
-import type { URL } from "../jsonld/document.ts"
+import type { URI } from "../jsonld/document.ts"
+import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
  * Service are used to express ways of communicating with the DID subject or associated entities. A service can be any
@@ -19,7 +19,7 @@ export interface Service extends NodeObject {
    * service entries with the same `id`. A conforming consumer MUST produce an error if it detects multiple service
    * entries with the same `id`.
    */
-  id: URL
+  id: URI
 
   /**
    * The type of service.
@@ -39,7 +39,7 @@ export interface Service extends NodeObject {
    *
    * @see https://www.w3.org/TR/did-core/#dfn-serviceendpoint
    */
-  serviceEndpoint: OneOrMany<URL>
+  serviceEndpoint: OneOrMany<URI>
 }
 
 // FIXME: service endpoint can be a map, but we don't have a way to represent that yet

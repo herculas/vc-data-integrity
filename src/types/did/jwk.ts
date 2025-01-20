@@ -1,5 +1,5 @@
-import type { NodeObject } from "../jsonld/node.ts"
-import type { Type } from "../jsonld/keywords.ts"
+import type { Type } from "../jsonld/base.ts"
+import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
  * A JSON Web Key (JWK) is a JavaScript Object Notation (JSON) data structure that represents a cryptographic key.
@@ -156,11 +156,11 @@ export interface JWK extends NodeObject {
    * The `ext` (extractable) parameter is a boolean value that indicates whether the key is extractable. This parameter
    * is intended to be used to prevent the private key from being exported. If the key is extractable, the value is
    * `true`. If the key is not extractable, the value is `false`.
-   * 
+   *
    * This parameter is defined in the IANA JSON Web Key Extension Parameters Registration.
-   * 
+   *
    * The `ext` value is a boolean value.
-   * 
+   *
    * @see https://www.w3.org/TR/WebCryptoAPI/#iana-section-jwk
    */
   ext?: boolean

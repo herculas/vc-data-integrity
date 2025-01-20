@@ -3,9 +3,9 @@ import { LDErrorCode } from "../error/constants.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
 import type { KeypairExportOptions, KeypairImportOptions } from "../types/interface/keypair.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { Type } from "../types/jsonld/keywords.ts"
-import type { URL } from "../types/jsonld/document.ts"
+import type { URI } from "../types/jsonld/document.ts"
 import type { VerificationResult } from "../types/interface/suite.ts"
+import type { Type } from "../types/jsonld/base.ts"
 
 /**
  * The keypair base class. This class is used to represent a cryptographic keypair, which is used to sign and verify
@@ -16,7 +16,7 @@ export class Keypair {
    * The identifier of this keypair. If not otherwise specified, will be hashed from the controller and the key
    * fingerprint.
    */
-  id?: URL
+  id?: URI
 
   /**
    * The controller of this keypair.
@@ -46,7 +46,7 @@ export class Keypair {
    * @param {string} [_controller] The controller of the keypair.
    * @param {Date} [_revoked] The time when the key was revoked. If not present, the key is considered active.
    */
-  constructor(_type: Type, _id?: URL, _controller?: DIDURL, _revoked?: Date) {
+  constructor(_type: Type, _id?: URI, _controller?: DIDURL, _revoked?: Date) {
     this.type = _type
     this.id = _id
     this.controller = _controller

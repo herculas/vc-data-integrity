@@ -1,7 +1,7 @@
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { Proof } from "../types/jsonld/proof.ts"
+import type { Proof } from "../types/interface/proof.ts"
 import type { SuiteOptions, VerificationResult } from "../types/interface/suite.ts"
 
 export class Suite {

@@ -1,7 +1,7 @@
 import type { DID, DIDURL } from "./keywords.ts"
 import type { JWK } from "./jwk.ts"
-import type { NodeObject } from "../jsonld/node.ts"
-import type { Type } from "../jsonld/keywords.ts"
+import type { NodeObject } from "../jsonld/objects.ts"
+import type { Type } from "../jsonld/base.ts"
 
 /**
  * A verification method is a set of data describing a cryptographic key, key pair, or other verification material that

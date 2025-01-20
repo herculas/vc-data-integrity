@@ -1,7 +1,3 @@
-// contexts and URLs
-// export * as CONTEXT_CONSTANTS from "./context/constants.ts"
-// export { URL_CONTEXT_MAP } from "./context/context.ts"
-
 // cryptographic keypairs
 export { Keypair } from "./key/keypair.ts"
 
@@ -31,6 +27,7 @@ export type { KeypairExportOptions, KeypairImportOptions } from "./types/interfa
 export type { LoadedDocument, Loader } from "./types/interface/loader.ts"
 export type { PurposeOptions } from "./types/interface/purpose.ts"
 export type { SuiteOptions, VerificationResult } from "./types/interface/suite.ts"
+export type { Proof } from "./types/interface/proof.ts"
 
 // DID type definitions
 export type { DIDDocument } from "./types/did/document.ts"
@@ -40,17 +37,5 @@ export type { VerificationMethod, VerificationMethodMap } from "./types/did/meth
 export type { Service } from "./types/did/service.ts"
 
 // JSON-LD type definitions
-export type { OneOrMany } from "./types/jsonld/base.ts"
-export type {
-  ContextURL,
-  DOMString,
-  Frame,
-  IRI,
-  IRIReference,
-  JsonLdDocument,
-  PlainDocument,
-  URL,
-} from "./types/jsonld/document.ts"
-export type { Type } from "./types/jsonld/keywords.ts"
-export type { NodeObject } from "./types/jsonld/node.ts"
-export type { Proof } from "./types/jsonld/proof.ts"
+export type { OneOrMany, Type } from "./types/jsonld/base.ts"
+export type { Frame, IRI, JsonLdDocument, PlainDocument, URI } from "./types/jsonld/document.ts"

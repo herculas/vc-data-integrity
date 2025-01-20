@@ -6,12 +6,11 @@ import { LDErrorCode } from "../error/constants.ts"
 import { sha256 } from "../utils/crypto.ts"
 import { Suite } from "./suite.ts"
 import { toW3CTimestampString } from "../utils/time.ts"
-import type { ContextURL } from "../types/jsonld/document.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { Proof } from "../types/jsonld/proof.ts"
+import type { IRI, PlainDocument } from "../types/jsonld/document.ts"
+import type { Proof } from "../types/interface/proof.ts"
 import type { SuiteOptions, VerificationResult } from "../types/interface/suite.ts"
 import type { VerificationMethodMap } from "../types/did/method.ts"
 
@@ -22,18 +21,18 @@ import type { VerificationMethodMap } from "../types/did/method.ts"
  */
 export class Signature extends Suite {
   keypair: Keypair
-  context: ContextURL
+  context: IRI
   time: Date
   proof?: Proof
 
   /**
    * @param {string} _suite The identifier of the cryptographic suite, should be provided by sub-classes.
    * @param {Keypair} _keypair The keypair used to create the signature.
-   * @param {ContextURL} _context The json-ld context URL that defines the terms of this suite.
+   * @param {IRI} _context The json-ld context URL that defines the terms of this suite.
    * @param {Proof} _proof A json-ld document with options for this instance.
    * @param {Date} _time The time of the operation.
    */
-  constructor(_suite: string, _keypair: Keypair, _context: ContextURL, _time?: Date, _proof?: Proof) {
+  constructor(_suite: string, _keypair: Keypair, _context: IRI, _time?: Date, _proof?: Proof) {
     super(_suite)
     this.keypair = _keypair
     this.context = _context

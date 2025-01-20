@@ -1,5 +1,3 @@
-import type { Scalar } from "./keywords.ts"
-
 /**
  * One or multiple values of type `T`.
  */
@@ -11,3 +9,13 @@ type JsonValue = Scalar | JsonObject | JsonArray
 export interface JsonObject {
   [key: string]: JsonValue | undefined
 }
+
+/**
+ * A scalar is either a string, number, boolean, or null.
+ */
+export type Scalar = string | number | boolean | null
+
+/**
+ * A type is a string that represents a type IRI or a compact IRI.
+ */
+export type Type = string

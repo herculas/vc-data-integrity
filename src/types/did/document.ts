@@ -1,9 +1,9 @@
 import type { DID } from "./keywords.ts"
-import type { NodeObject } from "../jsonld/node.ts"
 import type { OneOrMany } from "../jsonld/base.ts"
 import type { Service } from "./service.ts"
-import type { URL } from "../jsonld/document.ts"
+import type { URI } from "../jsonld/document.ts"
 import type { VerificationMethod, VerificationMethodMap } from "./method.ts"
+import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
  * A set od data describing a DID subject, including mechanisms, such as cryptographic keys, that the DID subject or a
@@ -18,7 +18,7 @@ export interface DIDDocument extends NodeObject {
    * The DID for a particular DID subject.
    *
    * The value of this property MUST be a string that conforms to the DID syntax.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#did-subject
    */
   id: DID
@@ -29,16 +29,16 @@ export interface DIDDocument extends NodeObject {
    * property.
    *
    * The value of this property MUST be an set of strings that conform to the URL syntax.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#also-known-as
    */
-  alsoKnownAs?: Array<URL>
+  alsoKnownAs?: Array<URI>
 
   /**
    * An entity that is authorized to make changes to this DID document.
    *
    * The value of this property MUST be a string, or a set of strings, that conforms to the DID syntax.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#did-controller
    */
   controller?: OneOrMany<DID>
@@ -48,7 +48,7 @@ export interface DIDDocument extends NodeObject {
    * authenticate or authorize interactions with the DID subject or associated parties.
    *
    * The value of this property MUST be an set of verification methods, where each one is expressed using a map.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#verification-methods
    */
   verificationMethod?: Array<VerificationMethodMap>
@@ -59,7 +59,7 @@ export interface DIDDocument extends NodeObject {
    *
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#authentication
    */
   authentication?: Array<VerificationMethod>
@@ -70,7 +70,7 @@ export interface DIDDocument extends NodeObject {
    *
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#assertion
    */
   assertionMethod?: Array<VerificationMethod>
@@ -82,7 +82,7 @@ export interface DIDDocument extends NodeObject {
    *
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#key-agreement
    */
   keyAgreement?: Array<VerificationMethod>
@@ -93,7 +93,7 @@ export interface DIDDocument extends NodeObject {
    *
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#capability-invocation
    */
   capabilityInvocation?: Array<VerificationMethod>
@@ -105,7 +105,7 @@ export interface DIDDocument extends NodeObject {
    *
    * The value of this property MUST be a set of one or more verification methods. Each verification method MAY be
    * embedded directly or referenced by DID URL.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#capability-delegation
    */
   capabilityDelegation?: Array<VerificationMethod>
@@ -116,7 +116,7 @@ export interface DIDDocument extends NodeObject {
    * management services for further discovery, authentication, authorization, or interaction.
    *
    * The value of this property MUST be a set of services, where each one is expressed using a map.
-   * 
+   *
    * @see https://www.w3.org/TR/did-core/#services
    */
   service?: Array<Service>

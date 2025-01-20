@@ -1,4 +1,4 @@
-import type { URL } from "../jsonld/document.ts"
+import type { URI } from "../jsonld/document.ts"
 
 /**
  * A decentralized identifier (DID) is a globally unique persistent identifier that does not require a centralized
@@ -36,7 +36,7 @@ import type { URL } from "../jsonld/document.ts"
  * @see https://www.w3.org/TR/did-core/#dfn-did-schemes
  * @see https://www.w3.org/TR/did-core/#dfn-did-methods
  */
-export type DID = URL
+export type DID = URI
 
 /**
  * A DID URL is a network location identifier for a specific resource. It can be used to retrieve things like 
@@ -56,4 +56,4 @@ export type DID = URL
  * @see https://www.w3.org/TR/did-core
  * @see https://www.w3.org/TR/did-core/#did-url-syntax
  */
-export type DIDURL = URL
+export type DIDURL = URI

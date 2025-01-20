@@ -1,4 +1,4 @@
-import type { Type } from "../jsonld/keywords.ts"
+import type { Type } from "../jsonld/base.ts"
 
 /**
  * The options for exporting a keypair.

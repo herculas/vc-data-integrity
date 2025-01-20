@@ -23,7 +23,7 @@ export { toW3CTimestampString } from "./utils/time.ts"
 
 // interfaces and options
 export type { CanonizeOptions } from "./types/interface/jsonld.ts"
-export type { KeypairExportOptions, KeypairImportOptions } from "./types/interface/keypair.ts"
+export type { KeypairDocument, KeypairExportOptions, KeypairImportOptions } from "./types/interface/keypair.ts"
 export type { LoadedDocument, Loader } from "./types/interface/loader.ts"
 export type { PurposeOptions } from "./types/interface/purpose.ts"
 export type { SuiteOptions, VerificationResult } from "./types/interface/suite.ts"

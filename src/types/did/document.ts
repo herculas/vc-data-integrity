@@ -6,16 +6,21 @@ import type { VerificationMethod, VerificationMethodMap } from "./method.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
- * A set od data describing a DID subject, including mechanisms, such as cryptographic keys, that the DID subject or a
- * DID delegate can use to authenticate itself and prove its association with the DID.
+ * A controlled identifier document describing a DID subject, including mechanisms, such as cryptographic keys, that the
+ * DID subject or a DID delegate can use to authenticate itself and prove its association with the DID.
+
+ * A controlled identifier document specifies one or more relationships between an identifier and a set of verification
+ * methods and/or service endpoints. The controlled identifier document SHOULD contain verification relationships that
+ * explicitly permit the use of certain verification methods for specific purposes.
  *
+ * @see https://www.w3.org/TR/controller-document
  * @see https://www.w3.org/TR/did-core/#did-document-properties
  * @see https://www.w3.org/TR/did-core/#did-documents
  * @see https://www.w3.org/TR/did-core/#did-subject
  */
 export interface DIDDocument extends NodeObject {
   /**
-   * The DID for a particular DID subject.
+   * The basic identifier for the controlled identifier document.
    *
    * The value of this property MUST be a string that conforms to the DID syntax.
    *
@@ -24,9 +29,8 @@ export interface DIDDocument extends NodeObject {
   id: DID
 
   /**
-   * A DID subject can have multiple identifiers for different purposes, or at different times.
-   * The assertion that two or more DIDs (or other types of URIs) refer to the same DID subject can be made using this
-   * property.
+   * A subject can have multiple identifiers that are used for different purposes or at different times. The assertion
+   * that two or more identifiers refer to the same subject can be made using the `alsoKnownAs` property.
    *
    * The value of this property MUST be an set of strings that conform to the URL syntax.
    *
@@ -35,7 +39,10 @@ export interface DIDDocument extends NodeObject {
   alsoKnownAs?: Array<URI>
 
   /**
-   * An entity that is authorized to make changes to this DID document.
+   * An entity that is authorized to make changes to this document. Whoever can update the content of the resource
+   * returned from dereferencing the controller document's canonical URL is, by definition, a controller of the document
+   * and its canonical identifier. Proofs that satisfy a controlled identifier document's verification methods are taken
+   * as cryptographic assurance that the controller of the identifier created those proofs.
    *
    * The value of this property MUST be a string, or a set of strings, that conforms to the DID syntax.
    *

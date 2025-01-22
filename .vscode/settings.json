@@ -16,11 +16,13 @@
     "linkability",
     "multibase",
     "multicodec",
+    "Multikey",
     "PKIX",
     "rdfc",
     "recompact",
     "unlinkable",
     "URDNA",
-    "URGNA"
+    "URGNA",
+    "varint"
   ]
 }

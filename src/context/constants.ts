@@ -27,3 +27,8 @@ export const SECURITY_V2 = "https://w3id.org/security/v2"
  * Context URL for the version 1 of the Decentralized Identifiers (DIDs) data model.
  */
 export const DID_V1 = "https://www.w3.org/ns/did/v1"
+
+/**
+ * Context URL for the version 1 of the Controlled Identifiers (CIDs) data model.
+ */
+export const CID_V1 = "https://www.w3.org/ns/cid/v1"

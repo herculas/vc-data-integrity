@@ -4,13 +4,13 @@ import { defaultLoader } from "../loader/default.ts"
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
 import { sha256 } from "../utils/crypto.ts"
-import { Suite } from "./suite.ts"
+import { Cryptosuite } from "./suite.ts"
 import { toW3CTimestampString } from "../utils/time.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
 import type { Keypair } from "../key/keypair.ts"
 import type { Loader } from "../types/interface/loader.ts"
 import type { IRI, PlainDocument } from "../types/jsonld/document.ts"
-import type { Proof } from "../types/interface/proof.ts"
+import type { Proof } from "../types/did/proof.ts"
 import type { SuiteOptions, VerificationResult } from "../types/interface/suite.ts"
 import type { VerificationMethodMap } from "../types/did/method.ts"
 
@@ -19,11 +19,10 @@ import type { VerificationMethodMap } from "../types/did/method.ts"
  *
  * This class should not be used directly, but should be extended by sub-classes.
  */
-export class Signature extends Suite {
-  keypair: Keypair
+export class DataIntegrityProof extends Cryptosuite {
   context: IRI
+  keypair: Keypair
   time: Date
-  proof?: Proof
 
   /**
    * @param {string} _suite The identifier of the cryptographic suite, should be provided by sub-classes.
@@ -36,7 +35,7 @@ export class Signature extends Suite {
     super(_suite)
     this.keypair = _keypair
     this.context = _context
-    this.proof = _proof
+    this.proofValue = _proof
     this.time = _time || new Date()
   }
 
@@ -54,13 +53,13 @@ export class Signature extends Suite {
   ): Promise<Proof> {
     // construct a proof instance, fill in the signature options
     let proof: Proof
-    if (this.proof) {
+    if (this.proofValue) {
       proof = Object.assign({
         type: "DataIntegrityProof",
-        cryptosuite: this.proof.cryptosuite,
-        proofPurpose: this.proof.proofPurpose,
+        cryptosuite: this.proofValue.cryptosuite,
+        proofPurpose: this.proofValue.proofPurpose,
         proofValue: "",
-      }, this.proof)
+      }, this.proofValue)
     } else {
       proof = {
         type: "DataIntegrityProof",

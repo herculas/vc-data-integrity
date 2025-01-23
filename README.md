@@ -1,6 +1,6 @@
-# ld-crypto-syntax
+# Verifiable Credential Data Integrity
 
-[![Release](https://github.com/herculas/ld-crypto-syntax/actions/workflows/release.yml/badge.svg)](https://github.com/herculas/ld-crypto-syntax/actions/workflows/release.yml)
+[![Release](https://github.com/herculas/vc-data-integrity/actions/workflows/release.yml/badge.svg)](https://github.com/herculas/vc-data-integrity/actions/workflows/release.yml)
 
 The syntax of JSON-LD cryptographic suites and associated entities. The interface is compatible with the W3C
 specification of [JSON-LD](https://www.w3.org/TR/json-ld11/) and
@@ -16,7 +16,7 @@ is designed to provide a fundamental and general interface for signature impleme
 To use this package within your own Deno project, run:
 
 ```shell
-deno add jsr:@crumble-jon/ld-crypto-syntax
+deno add jsr:@herculas/vc-data-integrity
 ```
 
 ## Usage

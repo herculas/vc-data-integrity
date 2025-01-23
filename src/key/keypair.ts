@@ -1,11 +1,11 @@
 import { LDError } from "../error/error.ts"
 import { LDErrorCode } from "../error/constants.ts"
+import type { DIDDocument } from "../types/did/document.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
-import type { KeypairExportOptions, KeypairImportOptions } from "../types/interface/keypair.ts"
-import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { URI } from "../types/jsonld/document.ts"
-import type { VerificationResult } from "../types/interface/suite.ts"
 import type { Type } from "../types/jsonld/base.ts"
+import type { URI } from "../types/jsonld/document.ts"
+import type { KeypairExportOptions, KeypairImportOptions } from "../types/interface/keypair.ts"
+import type { VerificationResult } from "../types/interface/suite.ts"
 
 /**
  * The keypair base class. This class is used to represent a cryptographic keypair, which is used to sign and verify
@@ -104,9 +104,9 @@ export class Keypair {
    *
    * @param {KeypairExportOptions} _options Options for keypair export.
    *
-   * @returns {Promise<PlainDocument>} Resolve to a serialized keypair document.
+   * @returns {Promise<DIDDocument>} Resolve to a serialized keypair document.
    */
-  export(_options: KeypairExportOptions): Promise<PlainDocument> {
+  export(_options: KeypairExportOptions): Promise<DIDDocument> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.export",
@@ -117,12 +117,12 @@ export class Keypair {
   /**
    * Import a keypair from a serialized representation of a keypair.
    *
-   * @param {PlainDocument} _document An externally fetched key document.
+   * @param {DIDDocument} _document An externally fetched controlled identifier document.
    * @param {KeypairImportOptions} _options Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: PlainDocument, _options: KeypairImportOptions): Promise<Keypair> {
+  static import(_document: DIDDocument, _options: KeypairImportOptions): Promise<Keypair> {
     throw new LDError(
       LDErrorCode.NOT_IMPLEMENTED,
       "Keypair.import",

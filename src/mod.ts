@@ -9,8 +9,8 @@ export { extend } from "./loader/extend.ts"
 export { Purpose } from "./purpose/purpose.ts"
 
 // cryptographic suites
-export { Suite } from "./suite/suite.ts"
-export { Signature } from "./suite/signature.ts"
+export { Cryptosuite } from "./suite/suite.ts"
+export { DataIntegrityProof } from "./suite/proof.ts"
 
 // json-ld operations
 export { canonize } from "./jsonld/canonize.ts"
@@ -27,7 +27,7 @@ export type { KeypairExportOptions, KeypairImportOptions } from "./types/interfa
 export type { LoadedDocument, Loader } from "./types/interface/loader.ts"
 export type { PurposeOptions } from "./types/interface/purpose.ts"
 export type { SuiteOptions, VerificationResult } from "./types/interface/suite.ts"
-export type { Proof } from "./types/interface/proof.ts"
+export type { Proof } from "./types/did/proof.ts"
 
 // DID type definitions
 export type { DIDDocument } from "./types/did/document.ts"

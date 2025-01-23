@@ -8,7 +8,9 @@ import * as SECURITY_V2 from "../../data/contexts/security-v2.json" with { type:
 import * as CID_V1 from "../../data/contexts/cid-v1.json" with { type: "json" }
 import * as DID_V1 from "../../data/contexts/did-v1.json" with { type: "json" }
 
-import * as CONTEXT_URL from "./constants.ts"
+import * as DATA_INTEGRITY_V2 from "../../data/contexts/data-integrity-v2.json" with { type: "json" }
+
+import * as CONTEXT_URL from "./url.ts"
 
 /**
  * The map of context URLs to the context contents.
@@ -21,4 +23,5 @@ export const URL_CONTEXT_MAP: Map<string, object> = new Map<string, object>([
   [CONTEXT_URL.SECURITY_V2, SECURITY_V2.default],
   [CONTEXT_URL.CID_V1, CID_V1.default],
   [CONTEXT_URL.DID_V1, DID_V1.default],
+  [CONTEXT_URL.DATA_INTEGRITY_V2, DATA_INTEGRITY_V2.default],
 ])

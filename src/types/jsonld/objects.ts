@@ -68,11 +68,7 @@ export type ValueObject =
     "@index"?: Index
     "@context"?: Context
   }
-  & ({
-    "@value": Scalar
-    "@language"?: Language
-    "@direction"?: Direction
-  } | {
+  & (LanguageObject | {
     "@value": Scalar
     "@type": Types
   } | {
@@ -96,4 +92,13 @@ export interface ListObject {
 export interface SetObject {
   "@set": LdSet
   "@index"?: Index
+}
+
+/**
+ * A language object is used to associate a language tag with a string value.
+ */
+export interface LanguageObject {
+  "@value": Scalar
+  "@language"?: Language
+  "@direction"?: Direction
 }

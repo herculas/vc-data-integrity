@@ -32,3 +32,8 @@ export const DID_V1 = "https://www.w3.org/ns/did/v1"
  * Context URL for the version 1 of the Controlled Identifiers (CIDs) data model.
  */
 export const CID_V1 = "https://www.w3.org/ns/cid/v1"
+
+/**
+ * Context URL for the version 2 of the data integrity specification of verifiable credentials.
+ */
+export const DATA_INTEGRITY_V2 = "https://w3id.org/security/data-integrity/v2"

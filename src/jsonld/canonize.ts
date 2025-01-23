@@ -1,11 +1,11 @@
 import * as jsonld from "jsonld"
 
-import * as CONTEXT_URL from "../context/constants.ts"
+import * as CONTEXT_URL from "../context/url.ts"
 import type { CanonizeOptions } from "../types/interface/jsonld.ts"
 import type { Context } from "../types/jsonld/keywords.ts"
 import type { Loader } from "../types/interface/loader.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { Proof } from "../types/interface/proof.ts"
+import type { Proof } from "../types/did/proof.ts"
 
 /**
  * Perform the RDF dataset canonicalization on the specified input, which should be a JSON-LD document unless the

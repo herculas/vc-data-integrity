@@ -1,4 +1,4 @@
-import type { DIDURL } from "../did/keywords.ts"
+import type { DIDURL } from "./keywords.ts"
 import type { OneOrMany, Type } from "../jsonld/base.ts"
 import type { URI } from "../jsonld/document.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
@@ -35,7 +35,22 @@ export interface Proof extends NodeObject {
    * would then result in the creation of a verifiable credential they never meant to create instead of the intended
    * action, which was to merely log in to a website.
    *
-   * The value of this property MUST be a string that maps to a URL.
+   * It is important to note that proof purposes are a different mechanism from the `key_ops`  restrictions in JSON Web
+   * Key (JWK), the `KeyUsage` restriction in the Web Cryptography API, and the Internet X.509 Public Key Infrastructure
+   * Certificate and Certificate Revocation List (CRL) Profile. Proof purposes are expressions on why a proof was 
+   * created and its intended domain of usage whereas the other mechanism mentioned are intended to limit what a private
+   * key can be used to do. A proof purpose "travels" with the proof while a key restriction does not.
+   * 
+   * The value of this property MUST be a string that maps to a URL. The following is a list of commonly used proof
+   * purpose values:
+   * 
+   *    - `authentication`: indicates that a proof is only to be used for the purposes of an authentication protocol.
+   *    - `assertionMethod`: indicates that a proof can only be used for making assertions, for example, signing a 
+   *      verifiable credential.
+   *    - `keyAgreement`: indicates that a proof is used for key agreement protocols, such as Elliptic Curve Diffie
+   *      Hellman (ECDH) key agreement used by popular encryption libraries.
+   *    - `capabilityDelegation`: indicates that a proof can only be used to for delegating capabilities.
+   *    - `capabilityInvocation`: indicates that a proof can only be used for invoking capabilities.
    */
   proofPurpose: string
 

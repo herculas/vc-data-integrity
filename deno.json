@@ -1,6 +1,6 @@
 {
-  "name": "@crumble-jon/ld-crypto-syntax",
-  "version": "0.3.7",
+  "name": "@herculas/vc-data-integrity",
+  "version": "0.0.1",
   "license": "MIT",
   "exports": "./src/mod.ts",
   "tasks": {

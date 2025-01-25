@@ -15,6 +15,8 @@ import type { Cryptosuite } from "./cryptosuite.ts"
  * @param {AddOneOptions} options The options to use for creating the proof.
  *
  * @returns {Promise<PlainDocument>} Resolve to a secured data document with a digital proof.
+ * 
+ * @see https://www.w3.org/TR/vc-data-integrity/#add-proof
  */
 export async function addProof(
   inputDocument: PlainDocument,
@@ -75,6 +77,8 @@ export async function addProof(
  * @param {AddManyOptions} options The options to use for creating the proof.
  *
  * @returns {Promise<PlainDocument>} Resolve to a secured data document with digital proofs.
+ * 
+ * @see https://www.w3.org/TR/vc-data-integrity/#add-proof-set-chain
  */
 export async function addProofs(
   securedDocument: PlainDocument,
@@ -142,6 +146,8 @@ export async function addProofs(
  * @param {VerifyOptions} options The options to use for verifying the proof.
  *
  * @returns {Promise<VerificationResult>} Resolve to a verification result.
+ * 
+ * @see https://www.w3.org/TR/vc-data-integrity/#verify-proof
  */
 export async function verifyProof(
   securedDocument: PlainDocument,
@@ -217,6 +223,10 @@ export async function verifyProof(
 //  * @param securedDocument 
 //  * @param cryptosuite 
 //  * @param options 
+//  *
+//  * @returns {Promise<VerificationResult>} Resolve to a verification result.
+//  *
+//  * @see https://www.w3.org/TR/vc-data-integrity/#verify-proof-sets-and-chains
 //  */
 // export async function verifyProofs(
 //   securedDocument: PlainDocument,

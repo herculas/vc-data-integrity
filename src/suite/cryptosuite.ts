@@ -7,6 +7,8 @@ import type { Type } from "../types/jsonld/base.ts"
 
 /**
  * Base class from which various linked data cryptographic suites inherit.
+ * 
+ * @see https://www.w3.org/TR/vc-data-integrity/
  */
 export class Cryptosuite {
   /**

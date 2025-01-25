@@ -14,6 +14,7 @@ export interface JWK extends NodeObject {
    * contains a Collision-Resistant Name.
    *
    * Values defined by this specification are:
+   * 
    *    - `EC`: Elliptic Curve,
    *    - `RSA`: RSA, and
    *    - `oct`: Octet sequence (used to represent symmetric keys).
@@ -21,6 +22,12 @@ export interface JWK extends NodeObject {
    * The `kty` value is a case-sensitive string.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.1
+   * 
+   * @example
+   * ```json
+   * "EC"
+   * "RSA"
+   * ```
    */
   kty: Type
 
@@ -30,6 +37,7 @@ export interface JWK extends NodeObject {
    * signature on data.
    *
    * Values defined by this specification are:
+   * 
    *    - `sig`: signature, and
    *    - `enc`: encryption.
    *
@@ -40,6 +48,12 @@ export interface JWK extends NodeObject {
    * The `use` value is a case-sensitive string.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.2
+   * 
+   * @example
+   * ```json
+   * "sig"
+   * "enc"
+   * ```
    */
   use?: string
 
@@ -48,6 +62,7 @@ export interface JWK extends NodeObject {
    * The `key_ops` parameter is intended for use cases in which public, private, or symmetric keys may be present.
    *
    * Its value is an array of key operation values. Values defined by this specification are:
+   * 
    *    - `sign`: compute digital signature or MAC,
    *    - `verify`: verify digital signature or MAC,
    *    - `encrypt`: encrypt content,
@@ -68,6 +83,14 @@ export interface JWK extends NodeObject {
    * convey MUST be consistent. Applications should specify which of these members they use, if either is to be used.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.3
+   * 
+   * @example
+   * ```json
+   * ["sign", "verify"]
+   * ["encrypt", "decrypt"]
+   * ["wrapKey", "unwrapKey"]
+   * ["deriveKey", "deriveBits"]
+   * ```
    */
   key_ops?: Array<string>
 
@@ -77,6 +100,12 @@ export interface JWK extends NodeObject {
    * The `alg` value is a case-sensitive ASCII string.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.4
+   * 
+   * @example
+   * ```json
+   * "ES256"
+   * "RS256"
+   * ```
    */
   alg?: string
 
@@ -94,6 +123,13 @@ export interface JWK extends NodeObject {
    * When used with JWS or JWE, the `kid` value should match a JWS or JWE `kid` Header Parameter value.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.5
+   * 
+   * @example
+   * ```json
+   * "Public key used in JWS spec Appendix A.3 example"
+   * "2011-04-29"
+   * "1"
+   * ```
    */
   kid?: string
 
@@ -126,6 +162,11 @@ export interface JWK extends NodeObject {
    * certificate MUST match the public key represented by other members of the JWK.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.7
+   * 
+   * @example
+   * ```json
+   * ["MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqX8XzQzvZt+hyzf7bnueSzaV1uqQsk7YmJyliMoiFjlrQ=="]
+   * ```
    */
   x5c?: Array<string>
 
@@ -195,14 +236,23 @@ export interface JWKEC extends JWK {
    * The `crv` (curve) parameter identifies the cryptographic curve used with the key.
    *
    * Values defined by this specification are:
+   * 
    *    - `P-256`: NIST P-256 curve,
    *    - `P-384`: NIST P-384 curve, and
    *    - `P-521`: NIST P-521 curve.
+   * 
    * Additional `crv` values can be registered by other specifications.
    *
    * The `crv` value is a case-sensitive string.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.1.1
+   * 
+   * @example
+   * ```json
+   * "P-256"
+   * "P-384"
+   * "P-521"
+   * ```
    */
   crv: string
 
@@ -214,6 +264,11 @@ export interface JWKEC extends JWK {
    * is `P-521`, the octet string must be 66 octets long.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.1.2
+   * 
+   * @example
+   * ```json
+   * "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU"
+   * ```
    */
   x: string
 
@@ -225,6 +280,11 @@ export interface JWKEC extends JWK {
    * is `P-521`, the octet string must be 66 octets long.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.1.3
+   * 
+   * @example
+   * ```json
+   * "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+   * ```
    */
   y: string
 
@@ -235,6 +295,11 @@ export interface JWKEC extends JWK {
    * be `ceiling(log-base-2(n)/8)` octets (where `n` is the order of the curve).
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.2.1
+   * 
+   * @example
+   * ```json
+   * "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE"
+   * ```
    */
   d?: string
 }
@@ -261,6 +326,11 @@ export interface JWKRSA extends JWK {
    * representation.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.1.1
+   * 
+   * @example
+   * ```json
+   * "0vx7a8jJ0OZIj9u8aPzb3A5f6L1Hq8MjtFjT3T0Cp9Hc1TmJQ4W_9mOpcOy0adu4U3j_YsN4w4W5JY1MjT5Bjw"
+   * ```
    */
   n: string
 
@@ -272,6 +342,11 @@ export interface JWKRSA extends JWK {
    * three octets [0x01, 0x00, 0x01]; the resulting representation for this value is "AQAB".
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.1.2
+   * 
+   * @example
+   * ```json
+   * "AQAB"
+   * ```
    */
   e: string
 
@@ -283,6 +358,11 @@ export interface JWKRSA extends JWK {
    * The parameter `d` is REQUIRED for RSA private keys.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.1
+   * 
+   * @example
+   * ```json
+   * "X4cTteJY_gn4FYPsXB8rdXix5vwsg1FLN5E3EaG6RJoVH-HLLKD9...me1z0HbIkfz0Y6mqnOYtqc0X4jfcKoAC8Q"
+   * ```
    */
   d?: string
 
@@ -296,6 +376,11 @@ export interface JWKRSA extends JWK {
    * `dp`, `dq`, and `qi` parameters.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.2
+   * 
+   * @example
+   * ```json
+   * "83i-7IvMGXoMXCskv73TKr8637FiO7Z27zv8oj6pbWUQyLPQBQxtPV...WlWEh6dN36GVZYk93N8Bc9vY41xy8B9RzzOGVQzXvNEvn7O0nVbfs"
+   * ```
    */
   p?: string
 
@@ -309,6 +394,11 @@ export interface JWKRSA extends JWK {
    * `dp`, `dq`, and `qi` parameters.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.3
+   * 
+   * @example
+   * ```json
+   * "3dfOR9cuYq-0S-mkFLzgItgMEfFzB2q3hWehMuG0oCuqnb3vobLyum...kIdrecRezsZ-1kYd_s1qDbxtkDEgfAITAG9LUnADun4vIcb6yelxk"
+   * ```
    */
   q?: string
 
@@ -323,6 +413,11 @@ export interface JWKRSA extends JWK {
    * `q`, `dq`, and `qi` parameters.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.4
+   * 
+   * @example
+   * ```json
+   * "G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX3coE0oim...YZc3C3m3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0"
+   * ```
    */
   dp?: string
 
@@ -337,6 +432,11 @@ export interface JWKRSA extends JWK {
    * `q`, `dp`, and `qi` parameters.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.5
+   * 
+   * @example
+   * ```json
+   * "s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUU...GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk"
+   * ```
    */
   dq?: string
 
@@ -351,6 +451,11 @@ export interface JWKRSA extends JWK {
    * `q`, `dp`, and `dq` parameters.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.6
+   * 
+   * @example
+   * ```json
+   * "GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzg...yR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU"
+   * ```
    */
   qi?: string
 

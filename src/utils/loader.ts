@@ -1,5 +1,34 @@
 import { URL_CONTEXT_MAP } from "../context/context.ts"
+import { ErrorCode } from "../error/constants.ts"
+import { DataIntegrityError } from "../error/error.ts"
+import type { LoadedDocument } from "../types/interface/loader.ts"
 import type { Loader } from "../types/interface/loader.ts"
+import type { URI } from "../types/jsonld/document.ts"
+
+/**
+ * Construct the default document loader for fetching JSON-LD documents.
+ *
+ * @param {URI} url The URL to fetch.
+ *
+ * @returns {Promise<LoadedDocument>} Resolve to the loaded document.
+ */
+export async function defaultLoader(url: URI): Promise<LoadedDocument> {
+  try {
+    const response = await fetch(url)
+    const document = await response.json()
+    return {
+      contextUrl: url,
+      documentUrl: url,
+      document: document,
+    }
+  } catch (error) {
+    throw new DataIntegrityError(
+      ErrorCode.NETWORK_CONNECTION_ERROR,
+      "loader.defaultLoader",
+      `Failed to fetch the resource from ${url}: ${error}!`,
+    )
+  }
+}
 
 /**
  * Given a existing document loader function, return a new document loader function. The new function will first check
@@ -12,7 +41,7 @@ import type { Loader } from "../types/interface/loader.ts"
  * @returns {Loader} A new document loader that will first check the built-in context map before using the passed
  * fallback loader.
  */
-export function extend(loader: Loader): Loader {
+export function extendLoader(loader: Loader): Loader {
   return (url: string) => {
     if (URL_CONTEXT_MAP.has(url)) {
       return Promise.resolve({

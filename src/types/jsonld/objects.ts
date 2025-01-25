@@ -68,7 +68,11 @@ export type ValueObject =
     "@index"?: Index
     "@context"?: Context
   }
-  & (LanguageObject | {
+  & ({
+    "@value": Scalar
+    "@language"?: Language
+    "@direction"?: Direction
+  } | {
     "@value": Scalar
     "@type": Types
   } | {

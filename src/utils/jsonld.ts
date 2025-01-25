@@ -3,15 +3,17 @@ import * as jsonld from "jsonld"
 import * as CONTEXT_URL from "../context/url.ts"
 import type { CanonizeOptions } from "../types/interface/jsonld.ts"
 import type { Context } from "../types/jsonld/keywords.ts"
+import type { DIDURL } from "../types/did/keywords.ts"
+import type { Frame, PlainDocument } from "../types/jsonld/document.ts"
+import type { FrameOptions } from "../types/interface/jsonld.ts"
 import type { Loader } from "../types/interface/loader.ts"
-import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/did/proof.ts"
 
 /**
  * Perform the RDF dataset canonicalization on the specified input, which should be a JSON-LD document unless the
  * `inputFormat` field is specified in the options. The output should be an RDF dataset unless the `format` field is
  * specified in the options.
- * 
+ *
  * The canonization process sets `safe` to `true` and `base` to `null` by default, in order to produce safe outputs
  * and "fail closed".
  *
@@ -77,4 +79,21 @@ export async function canonizeProof(
     documentLoader: loader,
     skipExpansion: skipExpansion,
   })
+}
+
+/**
+ * Perform the JSON-LD framing.
+ *
+ * @param {PlainDocument | DIDURL} input The document to frame.
+ * @param {Frame} frame The frame to use.
+ * @param {FrameOptions} options The options.
+ *
+ * @returns {Promise<PlainDocument>} Resolve to the framed object.
+ */
+export async function frame(
+  input: PlainDocument | DIDURL,
+  frame: Frame,
+  options: FrameOptions,
+): Promise<PlainDocument> {
+  return await jsonld.default.frame(input, frame, options)
 }

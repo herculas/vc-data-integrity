@@ -1,8 +1,6 @@
-import type { DID } from "./keywords.ts"
-import type { OneOrMany } from "../jsonld/base.ts"
-import type { Service } from "./service.ts"
+import type { OneOrMany, Type } from "../jsonld/base.ts"
 import type { URI } from "../jsonld/document.ts"
-import type { VerificationMethod, VerificationMethodMap } from "./method.ts"
+import type { VerificationMethodRef, VerificationMethod } from "./method.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
@@ -18,15 +16,21 @@ import type { NodeObject } from "../jsonld/objects.ts"
  * @see https://www.w3.org/TR/did-core/#did-documents
  * @see https://www.w3.org/TR/did-core/#did-subject
  */
-export interface DIDDocument extends NodeObject {
+export interface CIDDocument extends NodeObject {
   /**
    * The basic identifier for the controlled identifier document.
    *
    * The value of this property MUST be a string that conforms to the DID syntax.
    *
    * @see https://www.w3.org/TR/did-core/#did-subject
+   * 
+   * @example
+   * ```json
+   * "did:example:123456789abcdefghijk"
+   * "https://controller.example"
+   * ```
    */
-  id: DID
+  id: URI
 
   /**
    * A subject can have multiple identifiers that are used for different purposes or at different times. The assertion
@@ -35,6 +39,13 @@ export interface DIDDocument extends NodeObject {
    * The value of this property MUST be an set of strings that conform to the URL syntax.
    *
    * @see https://www.w3.org/TR/did-core/#also-known-as
+   * 
+   * @example
+   * ```json
+   * [
+   *    "https://someOtherIdentifier.example/xyz",
+   *    "https://yetAnotherIdentifier.example/987"
+   * ]
    */
   alsoKnownAs?: Array<URI>
 
@@ -47,8 +58,14 @@ export interface DIDDocument extends NodeObject {
    * The value of this property MUST be a string, or a set of strings, that conforms to the DID syntax.
    *
    * @see https://www.w3.org/TR/did-core/#did-controller
+   * 
+   * @example
+   * ```json
+   * "did:example:bcehfew7h32f32h7af3"
+   * "https://controllerB.example/abc"
+   * ```
    */
-  controller?: OneOrMany<DID>
+  controller?: OneOrMany<URI>
 
   /**
    * A DID document can express verification methods, such as cryptographic public keys, which can be used to
@@ -57,8 +74,31 @@ export interface DIDDocument extends NodeObject {
    * The value of this property MUST be an set of verification methods, where each one is expressed using a map.
    *
    * @see https://www.w3.org/TR/did-core/#verification-methods
+   * 
+   * @example
+   * ```json
+   * [{
+   *    "id": "https://controller.example#authn-key-123",
+   *    "type": "Multikey",
+   *    "controller": "https://controller.example",
+   *    "expires": "2025-12-01T00:00:00Z",
+   *    "publicKeyMultibase": "z6MkmM42vxfqZQsv4ehtTjFFxQ4sQKS2w6WR7emozFAn5cxu"
+   * }, {
+   *    "id": "https://controller.example/101#key-20240828",
+   *    "type": "JsonWebKey",
+   *    "controller": "https://controller.example/101",
+   *    "revoked": "2024-12-10T15:28:32Z",
+   *    "publicKeyJwk": {
+   *        "kid": "key-20240828",
+   *        "kty": "EC",
+   *        "crv": "P-256",
+   *        "alg": "ES256",
+   *        "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+   *        "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
+   * }]
+   * ```
    */
-  verificationMethod?: Array<VerificationMethodMap>
+  verificationMethod?: Array<VerificationMethod>
 
   /**
    * The authentication property is used to specify how the DID subject is expected to be authenticated, for purposes
@@ -68,8 +108,21 @@ export interface DIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#authentication
+   * 
+   * @example
+   * ```json
+   * [
+   *    "did:example:123456789abcdefghi#keys-1",
+   *    {
+   *        "id": "did:example:123456789abcdefghi#keys-2",
+   *        "type": "Ed25519VerificationKey2020",
+   *        "controller": "did:example:123456789abcdefghi",
+   *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+   *    }
+   * ]
+   * ```
    */
-  authentication?: Array<VerificationMethod>
+  authentication?: Array<VerificationMethodRef>
 
   /**
    * The assertionMethod property is used to specify how the DID subject is expected to express claims, such as
@@ -79,8 +132,21 @@ export interface DIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#assertion
+   * 
+   * @example
+   * ```json
+   * [
+   *    "did:example:123456789abcdefghi#keys-1",
+   *    {
+   *        "id": "did:example:123456789abcdefghi#keys-2",
+   *        "type": "Ed25519VerificationKey2020",
+   *        "controller": "did:example:123456789abcdefghi",
+   *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+   *    } 
+   * ]
+   * ```
    */
-  assertionMethod?: Array<VerificationMethod>
+  assertionMethod?: Array<VerificationMethodRef>
 
   /**
    * The keyAgreement property is used to specify how an entity can generate encryption material in order to transmit
@@ -91,8 +157,21 @@ export interface DIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#key-agreement
+   * 
+   * @example
+   * ```json
+   * [
+   *    "did:example:123456789abcdefghi#keys-1",
+   *    {
+   *        "id": "did:example:123#zC9ByQ8aJs8vrNXyDhPHHNNMSHPcaSgNpjjsBYpMMjsTdS",
+   *        "type": "X25519KeyAgreementKey2019",
+   *        "controller": "did:example:123",
+   *        "publicKeyMultibase": "z9hFgmPVfmBZwRvFEyniQDBkz9LmV7gDEqytWyGZLmDXE"
+   *    } 
+   * ]
+   * ```
    */
-  keyAgreement?: Array<VerificationMethod>
+  keyAgreement?: Array<VerificationMethodRef>
 
   /**
    * The capabilityInvocation property is used to specify a verification method that might be used by the DID subject
@@ -102,8 +181,21 @@ export interface DIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#capability-invocation
+   * 
+   * @example
+   * ```json
+   * [
+   *    "did:example:123456789abcdefghi#keys-1",
+   *    {
+   *        "id": "did:example:123456789abcdefghi#keys-2",
+   *        "type": "Ed25519VerificationKey2020",
+   *        "controller": "did:example:123456789abcdefghi",
+   *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+   *    } 
+   * ]
+   * ```
    */
-  capabilityInvocation?: Array<VerificationMethod>
+  capabilityInvocation?: Array<VerificationMethodRef>
 
   /**
    * The capabilityDelegation property is used to specify a mechanism that might be used by the DID subject to delegate
@@ -114,8 +206,21 @@ export interface DIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#capability-delegation
+   * 
+   * @example
+   * ```json
+   * [
+   *    "did:example:123456789abcdefghi#keys-1",
+   *    {
+   *        "id": "did:example:123456789abcdefghi#keys-2",
+   *        "type": "Ed25519VerificationKey2020",
+   *        "controller": "did:example:123456789abcdefghi",
+   *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
+   *    } 
+   * ]
+   * ```
    */
-  capabilityDelegation?: Array<VerificationMethod>
+  capabilityDelegation?: Array<VerificationMethodRef>
 
   /**
    * Services are used in DID documents to express ways of communicating with the DID subject or associated entities.
@@ -125,6 +230,56 @@ export interface DIDDocument extends NodeObject {
    * The value of this property MUST be a set of services, where each one is expressed using a map.
    *
    * @see https://www.w3.org/TR/did-core/#services
+   * 
+   * @example
+   * ```json
+   * [{
+   *    "id": "did:example:123#linked-domain",
+   *    "type": "LinkedDomains",
+   *    "serviceEndpoint": "https://bar.example.com"
+   * }]
+   * ```
    */
   service?: Array<Service>
 }
+
+/**
+ * Service are used to express ways of communicating with the DID subject or associated entities. A service can be any
+ * type of service the DID subject wants to advertise, including decentralized identity management services for further
+ * discovery, authentication, authorization, or interaction.
+ *
+ * @see https://www.w3.org/TR/did-core/#services
+ */
+export interface Service extends NodeObject {
+  /**
+   * The identifier of the service.
+   *
+   * The value of this property MUST be a URI conforming to
+   * {@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}. A conforming producer MUST NOT produce multiple
+   * service entries with the same `id`. A conforming consumer MUST produce an error if it detects multiple service
+   * entries with the same `id`.
+   */
+  id: URI
+
+  /**
+   * The type of service.
+   *
+   * The value of this property MUST be a string, or a set of strings.
+   */
+  type: OneOrMany<Type>
+
+  /**
+   * The service endpoint.
+   *
+   * The value of this property MUST be a string, a map, or a set composed of one or more strings and/or maps. All
+   * string values MUST be valid URIs conforming to {@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}
+   * and normalized according to the rules in Section 6 of
+   * {@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}, and to any normalization rules in its applicable
+   * URI scheme specification.
+   *
+   * @see https://www.w3.org/TR/did-core/#dfn-serviceendpoint
+   */
+  serviceEndpoint: OneOrMany<URI>
+}
+
+// FIXME: service endpoint can be a map, but we don't have a way to represent that yet

@@ -1,5 +1,5 @@
 import type { DIDURL } from "./keywords.ts"
-import type { OneOrMany, Type } from "../jsonld/base.ts"
+import type { DateTime, OneOrMany, Type } from "../jsonld/base.ts"
 import type { URI } from "../jsonld/document.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
 
@@ -37,15 +37,15 @@ export interface Proof extends NodeObject {
    *
    * It is important to note that proof purposes are a different mechanism from the `key_ops`  restrictions in JSON Web
    * Key (JWK), the `KeyUsage` restriction in the Web Cryptography API, and the Internet X.509 Public Key Infrastructure
-   * Certificate and Certificate Revocation List (CRL) Profile. Proof purposes are expressions on why a proof was 
+   * Certificate and Certificate Revocation List (CRL) Profile. Proof purposes are expressions on why a proof was
    * created and its intended domain of usage whereas the other mechanism mentioned are intended to limit what a private
    * key can be used to do. A proof purpose "travels" with the proof while a key restriction does not.
-   * 
+   *
    * The value of this property MUST be a string that maps to a URL. The following is a list of commonly used proof
    * purpose values:
-   * 
+   *
    *    - `authentication`: indicates that a proof is only to be used for the purposes of an authentication protocol.
-   *    - `assertionMethod`: indicates that a proof can only be used for making assertions, for example, signing a 
+   *    - `assertionMethod`: indicates that a proof can only be used for making assertions, for example, signing a
    *      verifiable credential.
    *    - `keyAgreement`: indicates that a proof is used for key agreement protocols, such as Elliptic Curve Diffie
    *      Hellman (ECDH) key agreement used by popular encryption libraries.
@@ -79,7 +79,7 @@ export interface Proof extends NodeObject {
    *
    * @see https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
    */
-  created?: string
+  created?: DateTime
 
   /**
    * The date and time the proof expires.
@@ -89,7 +89,7 @@ export interface Proof extends NodeObject {
    *
    * @see https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
    */
-  expires?: string
+  expires?: DateTime
 
   /**
    * One or more security domains in which the proof is meant to be used.

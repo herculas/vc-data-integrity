@@ -1,10 +1,7 @@
-export enum LDErrorCode {
-  NETWORK_FAILURE = 10,
-  NOT_IMPLEMENTED = 11,
-  CONTEXT_MISMATCH = 12,
-  LOADER_ERROR = 13,
-  PURPOSE_VALIDATION_FAILURE = 21,
-  PROOF_VERIFICATION_FAILURE = 31,
+export enum ErrorCode {
+  NETWORK_CONNECTION_ERROR = 0,
+  NOT_IMPLEMENTED_ERROR = 1,
+  CONTEXT_MISMATCH_ERROR = 2,
 
   /**
    * A request to generate a proof failed.

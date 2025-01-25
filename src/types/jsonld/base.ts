@@ -19,3 +19,8 @@ export type Scalar = string | number | boolean | null
  * A type is a string that represents a type IRI or a compact IRI.
  */
 export type Type = string
+
+/**
+ * A dateTimeStamp is a string that represents a date and time in the `dateTimeStamp` format.
+ */
+export type DateTime = string

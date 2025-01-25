@@ -1,7 +1,6 @@
 import type { Loader } from "./loader.ts"
 import type { OneOrMany } from "../jsonld/base.ts"
 import type { PlainDocument } from "../jsonld/document.ts"
-import type { Purpose } from "../../purpose/purpose.ts"
 import type { Proof } from "../did/proof.ts"
 import type { DID } from "../did/keywords.ts"
 
@@ -9,7 +8,6 @@ import type { DID } from "../did/keywords.ts"
  * Options for a cryptographic suite.
  */
 export type SuiteOptions = {
-  purpose: Purpose
   proofs?: Array<Proof>
   loader?: Loader
 }

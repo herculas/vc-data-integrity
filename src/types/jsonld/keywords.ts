@@ -46,7 +46,7 @@ export type Graph = OneOrMany<NodeObject>
  *
  * @see https://www.w3.org/TR/json-ld11/#node-identifiers
  */
-export type Id = OneOrMany<URL>
+export type Id = OneOrMany<IRI>
 
 /**
  * Used in a context definition to load an external context within which the containing context definition is merged.

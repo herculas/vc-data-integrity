@@ -1,6 +1,6 @@
-import { LDError } from "../error/error.ts"
-import { LDErrorCode } from "../error/constants.ts"
-import type { DIDDocument } from "../types/did/document.ts"
+import { DataIntegrityError } from "../error/error.ts"
+import { ErrorCode } from "../error/constants.ts"
+import type { CIDDocument } from "../types/did/cid.ts"
 import type { DIDURL } from "../types/did/keywords.ts"
 import type { Type } from "../types/jsonld/base.ts"
 import type { URI } from "../types/jsonld/document.ts"
@@ -60,8 +60,8 @@ export class Keypair {
    * @param {Uint8Array} [_seed] A seed to generate the keypair from. If not specified, a random one will be used.
    */
   initialize(_seed?: Uint8Array) {
-    throw new LDError(
-      LDErrorCode.NOT_IMPLEMENTED,
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Keypair.generate",
       "This method should be implemented by sub-classes!",
     )
@@ -77,8 +77,8 @@ export class Keypair {
    * @returns {string} Resolve to the fingerprint.
    */
   generateFingerprint(): Promise<string> {
-    throw new LDError(
-      LDErrorCode.NOT_IMPLEMENTED,
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Keypair.fingerprint",
       "This method should be implemented by sub-classes!",
     )
@@ -92,8 +92,8 @@ export class Keypair {
    * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
   verifyFingerprint(_fingerprint: string): Promise<VerificationResult> {
-    throw new LDError(
-      LDErrorCode.NOT_IMPLEMENTED,
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Keypair.verifyFingerprint",
       "This method should be implemented by sub-classes!",
     )
@@ -104,11 +104,11 @@ export class Keypair {
    *
    * @param {KeypairExportOptions} _options Options for keypair export.
    *
-   * @returns {Promise<DIDDocument>} Resolve to a serialized keypair document.
+   * @returns {Promise<CIDDocument>} Resolve to a serialized keypair document.
    */
-  export(_options: KeypairExportOptions): Promise<DIDDocument> {
-    throw new LDError(
-      LDErrorCode.NOT_IMPLEMENTED,
+  export(_options: KeypairExportOptions): Promise<CIDDocument> {
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Keypair.export",
       "This method should be implemented by sub-classes!",
     )
@@ -117,14 +117,14 @@ export class Keypair {
   /**
    * Import a keypair from a serialized representation of a keypair.
    *
-   * @param {DIDDocument} _document An externally fetched controlled identifier document.
+   * @param {CIDDocument} _document An externally fetched controlled identifier document.
    * @param {KeypairImportOptions} _options Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: DIDDocument, _options: KeypairImportOptions): Promise<Keypair> {
-    throw new LDError(
-      LDErrorCode.NOT_IMPLEMENTED,
+  static import(_document: CIDDocument, _options: KeypairImportOptions): Promise<Keypair> {
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Keypair.import",
       "This method should be implemented by sub-classes!",
     )

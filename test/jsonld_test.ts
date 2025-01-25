@@ -1,6 +1,6 @@
-import { canonizeDocument, canonizeProof } from "../src/jsonld/canonize.ts"
+import { canonizeDocument, canonizeProof } from "../src/utils/jsonld.ts"
 import { loader } from "./loader.ts"
-import type { VerificationMethodMap } from "../src/types/did/method.ts"
+import type { VerificationMethod } from "../src/types/did/method.ts"
 
 Deno.test("document canonization", async () => {
   const document = {
@@ -48,6 +48,6 @@ Deno.test("proof canonization", async () => {
 Deno.test("expand verification method", async () => {
   const methodId = "did:example:1145141919810#test"
   const result = await loader(methodId)
-  const method = result.document! as VerificationMethodMap
+  const method = result.document! as VerificationMethod
   console.log(method)
 })

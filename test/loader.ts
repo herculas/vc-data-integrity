@@ -1,4 +1,4 @@
-import { extend } from "../src/loader/extend.ts"
+import { extendLoader } from "../src/utils/loader.ts"
 import type { PlainDocument } from "../src/types/jsonld/document.ts"
 import type { Loader } from "../src/types/interface/loader.ts"
 
@@ -23,4 +23,4 @@ const customLoader: Loader = (url: string) => {
   )
 }
 
-export const loader = extend(customLoader)
+export const loader = extendLoader(customLoader)

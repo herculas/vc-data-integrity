@@ -8,27 +8,32 @@ Deno.test("document canonization", async () => {
       "https://www.w3.org/ns/credentials/v2",
       "https://www.w3.org/ns/credentials/examples/v2",
     ],
-    "id": "http://university.example/credentials/3732",
-    "type": ["VerifiableCredential", "ExampleDegreeCredential"],
-    "issuer": {
-      "id": "did:example:1145141919810",
-      "name": "Example University",
-      "description": "A public university focusing on teaching examples.",
-    },
-    "validFrom": "2015-05-10T12:30:00Z",
-    "name": "Example University Degree",
-    "description": "2015 Bachelor of Science and Arts Degree",
+    "id": "urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33",
+    "type": ["VerifiableCredential", "AlumniCredential"],
+    "name": "Alumni Credential",
+    "description": "A minimum viable example of an Alumni Credential.",
+    "issuer": "https://vc.example/issuers/5678",
+    "validFrom": "2023-01-01T00:00:00Z",
     "credentialSubject": {
-      "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
-      "degree": {
-        "type": "ExampleBachelorDegree",
-        "name": "Bachelor of Science and Arts",
-      },
+      "id": "did:example:abcdefgh",
+      "alumniOf": "The School of Examples",
     },
   }
 
   const result = await canonizeDocument(document, loader)
   console.log(result)
+
+  const expected =
+    `<did:example:abcdefgh> <https://www.w3.org/ns/credentials/examples#alumniOf> "The School of Examples" .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/credentials/examples#AlumniCredential> .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <https://schema.org/description> "A minimum viable example of an Alumni Credential." .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <https://schema.org/name> "Alumni Credential" .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <https://www.w3.org/2018/credentials#credentialSubject> <did:example:abcdefgh> .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <https://www.w3.org/2018/credentials#issuer> <https://vc.example/issuers/5678> .
+<urn:uuid:58172aac-d8ba-11ed-83dd-0b3aef56cc33> <https://www.w3.org/2018/credentials#validFrom> "2023-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+
+  console.log(expected)
 })
 
 Deno.test("proof canonization", async () => {

@@ -1,7 +1,6 @@
-import type { DID, DIDURL } from "./keywords.ts"
+import type { DateTime, DID, DIDURL, Type } from "../jsonld/literals.ts"
 import type { JWK } from "./jwk.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
-import type { DateTime, Type } from "../jsonld/base.ts"
 
 /**
  * A verification method is a set of data describing a cryptographic key, key pair, or other verification material that
@@ -102,14 +101,14 @@ export interface VerificationMethodJwk extends VerificationMethod {
 /**
  * The Multikey data model is a specific type of verification method that encodes key types into a single binary stream
  * that is encoded as a Multibase value.
- * 
+ *
  * A Multibase value encodes a binary value as a base-encoded string. The value starts with a single character hearer,
  * which identifies the base and encoding alphabet used to encode a binary value, followed by the encoded binary value.
  * The common Multibase header values and their associated base encoding alphabets, as provided below, are normative:
- * 
+ *
  *    - `u`: The base-64-url-no-pad alphabet is used to encode the bytes. The base-alphabet consists of the following
  *           characters, in order: `A-Z`, `a-z`, `0-9`, `-`, and `_`.
- *    - `z`: The base-58-btc alphabet is used to encode the bytes. The base-alphabet consists of the following 
+ *    - `z`: The base-58-btc alphabet is used to encode the bytes. The base-alphabet consists of the following
  *           characters, in order: `1-9`, `A-H`, `J-N`, `P-Z`, `a-k`, `m-z`.
  */
 export interface VerificationMethodMultibase extends VerificationMethod {

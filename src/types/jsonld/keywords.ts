@@ -1,7 +1,7 @@
-import type { IRI } from "./document.ts"
 import type { ContainerType, ContainerTypeCombination, ContextDefinition } from "./misc.ts"
 import type { JsonObject, OneOrMany, Scalar } from "./base.ts"
 import type { NodeObject, ValueObject } from "./objects.ts"
+import type { URI } from "./literals.ts"
 
 /**
  * Used to set the base IRI against which to resolve those relative IRI references which are otherwise interpreted
@@ -9,7 +9,7 @@ import type { NodeObject, ValueObject } from "./objects.ts"
  *
  * @see https://www.w3.org/TR/json-ld11/#base-iri
  */
-export type Base = IRI | null
+export type Base = URI | null
 
 /**
  * Used to set the default container type for a term.
@@ -22,7 +22,7 @@ export type Container = OneOrMany<"@list" | "@set" | ContainerType> | ContainerT
  *
  * @see https://www.w3.org/TR/json-ld11/#the-context
  */
-export type Context = OneOrMany<IRI | ContextDefinition>
+export type Context = OneOrMany<URI | ContextDefinition>
 
 /**
  * Used to set the base direction of a JSON-LD value, which are not typed values (e.g., strings, or language-tagged
@@ -46,7 +46,7 @@ export type Graph = OneOrMany<NodeObject>
  *
  * @see https://www.w3.org/TR/json-ld11/#node-identifiers
  */
-export type Id = OneOrMany<IRI>
+export type Id = OneOrMany<URI>
 
 /**
  * Used in a context definition to load an external context within which the containing context definition is merged.

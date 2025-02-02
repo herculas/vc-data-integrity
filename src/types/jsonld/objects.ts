@@ -1,4 +1,3 @@
-import type { JsonArray, JsonObject, OneOrMany, Scalar } from "./base.ts"
 import type {
   Context,
   Direction,
@@ -14,6 +13,7 @@ import type {
   Types,
 } from "./keywords.ts"
 import type { IdMap, IndexMap, LanguageMap, TypeMap } from "./maps.ts"
+import type { JsonArray, JsonObject, OneOrMany, Scalar } from "./base.ts"
 
 /**
  * A node object represents zero or more properties of a node in the graph serialized by the JSON-LD document. A map is

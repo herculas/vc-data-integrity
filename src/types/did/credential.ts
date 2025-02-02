@@ -1,7 +1,6 @@
-import type { OneOrMany } from "../../mod.ts"
-import type { DateTime, Type } from "../jsonld/base.ts"
-import type { URI } from "../jsonld/document.ts"
+import type { DateTime, Type, URI } from "../jsonld/literals.ts"
 import type { LanguageObject, NodeObject } from "../jsonld/objects.ts"
+import type { OneOrMany } from "../../mod.ts"
 import type { Proof } from "./proof.ts"
 
 /**

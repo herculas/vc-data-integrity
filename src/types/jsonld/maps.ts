@@ -1,5 +1,5 @@
-import type { OneOrMany, Scalar } from "./base.ts"
 import type { ListObject, NodeObject, SetObject, ValueObject } from "./objects.ts"
+import type { OneOrMany, Scalar } from "./base.ts"
 
 /**
  * A language map is a map value of a term defined with `@container` set to `@language`, whose keys MUST be strings

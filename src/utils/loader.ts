@@ -1,9 +1,21 @@
-import { URL_CONTEXT_MAP } from "../context/context.ts"
-import { ErrorCode } from "../error/constants.ts"
 import { DataIntegrityError } from "../error/error.ts"
-import type { LoadedDocument } from "../types/interface/loader.ts"
-import type { Loader } from "../types/interface/loader.ts"
-import type { URI } from "../types/jsonld/document.ts"
+import { ErrorCode } from "../error/constants.ts"
+import { URL_CONTEXT_MAP } from "../context/context.ts"
+import type { URI } from "../types/jsonld/literals.ts"
+
+/**
+ * The result of loading a document.
+ */
+export type LoadedDocument = {
+  contextUrl?: URI
+  documentUrl?: URI
+  document?: object
+}
+
+/**
+ * A `Loader` is a function that loads a document from a URL.
+ */
+export type Loader = (url: URI) => Promise<LoadedDocument>
 
 /**
  * Construct the default document loader for fetching JSON-LD documents.

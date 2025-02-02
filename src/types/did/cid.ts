@@ -1,7 +1,7 @@
-import type { OneOrMany, Type } from "../jsonld/base.ts"
-import type { URI } from "../jsonld/document.ts"
-import type { VerificationMethodRef, VerificationMethod } from "./method.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
+import type { OneOrMany } from "../jsonld/base.ts"
+import type { Type, URI } from "../jsonld/literals.ts"
+import type { VerificationMethod, VerificationMethodRef } from "./method.ts"
 
 /**
  * A controlled identifier document describing a DID subject, including mechanisms, such as cryptographic keys, that the
@@ -23,7 +23,7 @@ export interface CIDDocument extends NodeObject {
    * The value of this property MUST be a string that conforms to the DID syntax.
    *
    * @see https://www.w3.org/TR/did-core/#did-subject
-   * 
+   *
    * @example
    * ```json
    * "did:example:123456789abcdefghijk"
@@ -39,7 +39,7 @@ export interface CIDDocument extends NodeObject {
    * The value of this property MUST be an set of strings that conform to the URL syntax.
    *
    * @see https://www.w3.org/TR/did-core/#also-known-as
-   * 
+   *
    * @example
    * ```json
    * [
@@ -58,7 +58,7 @@ export interface CIDDocument extends NodeObject {
    * The value of this property MUST be a string, or a set of strings, that conforms to the DID syntax.
    *
    * @see https://www.w3.org/TR/did-core/#did-controller
-   * 
+   *
    * @example
    * ```json
    * "did:example:bcehfew7h32f32h7af3"
@@ -74,7 +74,7 @@ export interface CIDDocument extends NodeObject {
    * The value of this property MUST be an set of verification methods, where each one is expressed using a map.
    *
    * @see https://www.w3.org/TR/did-core/#verification-methods
-   * 
+   *
    * @example
    * ```json
    * [{
@@ -108,7 +108,7 @@ export interface CIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#authentication
-   * 
+   *
    * @example
    * ```json
    * [
@@ -132,7 +132,7 @@ export interface CIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#assertion
-   * 
+   *
    * @example
    * ```json
    * [
@@ -142,7 +142,7 @@ export interface CIDDocument extends NodeObject {
    *        "type": "Ed25519VerificationKey2020",
    *        "controller": "did:example:123456789abcdefghi",
    *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
-   *    } 
+   *    }
    * ]
    * ```
    */
@@ -157,7 +157,7 @@ export interface CIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#key-agreement
-   * 
+   *
    * @example
    * ```json
    * [
@@ -167,7 +167,7 @@ export interface CIDDocument extends NodeObject {
    *        "type": "X25519KeyAgreementKey2019",
    *        "controller": "did:example:123",
    *        "publicKeyMultibase": "z9hFgmPVfmBZwRvFEyniQDBkz9LmV7gDEqytWyGZLmDXE"
-   *    } 
+   *    }
    * ]
    * ```
    */
@@ -181,7 +181,7 @@ export interface CIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#capability-invocation
-   * 
+   *
    * @example
    * ```json
    * [
@@ -191,7 +191,7 @@ export interface CIDDocument extends NodeObject {
    *        "type": "Ed25519VerificationKey2020",
    *        "controller": "did:example:123456789abcdefghi",
    *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
-   *    } 
+   *    }
    * ]
    * ```
    */
@@ -206,7 +206,7 @@ export interface CIDDocument extends NodeObject {
    * embedded directly or referenced by DID URL.
    *
    * @see https://www.w3.org/TR/did-core/#capability-delegation
-   * 
+   *
    * @example
    * ```json
    * [
@@ -216,7 +216,7 @@ export interface CIDDocument extends NodeObject {
    *        "type": "Ed25519VerificationKey2020",
    *        "controller": "did:example:123456789abcdefghi",
    *        "publicKeyMultibase": "zH3C2AVvLMv6gmMNam3uVAjZpfkcJCwDwnZn6z3wXmqPV"
-   *    } 
+   *    }
    * ]
    * ```
    */
@@ -230,7 +230,7 @@ export interface CIDDocument extends NodeObject {
    * The value of this property MUST be a set of services, where each one is expressed using a map.
    *
    * @see https://www.w3.org/TR/did-core/#services
-   * 
+   *
    * @example
    * ```json
    * [{
@@ -281,5 +281,3 @@ export interface Service extends NodeObject {
    */
   serviceEndpoint: OneOrMany<URI>
 }
-
-// FIXME: service endpoint can be a map, but we don't have a way to represent that yet

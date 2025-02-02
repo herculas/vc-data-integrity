@@ -1,16 +1,22 @@
-import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/constants.ts"
+import type { Loader } from "../utils/loader.ts"
+import type { OneOrMany } from "../types/jsonld/base.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/did/proof.ts"
-import type { SuiteOptions, VerificationResult } from "../types/interface/suite.ts"
-import type { Type } from "../types/jsonld/base.ts"
+import type { Type } from "../types/jsonld/literals.ts"
 
 /**
  * Base class from which various linked data cryptographic suites inherit.
- * 
+ *
  * @see https://www.w3.org/TR/vc-data-integrity/
  */
-export class Cryptosuite {
+export abstract class Cryptosuite {
+  /**
+   * The `cryptosuite` property MUST be a string that identifies the cryptographic suite. If the processing environment
+   * supports string subtypes, the subtype of the `cryptosuite` property MUST be the
+   * {@link https://w3id.org/security#cryptosuiteString | cryptosuiteString} subtype.
+   */
+  readonly cryptosuite: string
+
   /**
    * The `type` property of a data integrity proof MUST contain the string `DataIntegrityProof`.
    *
@@ -27,14 +33,7 @@ export class Cryptosuite {
    * carries the identifier for the cryptosuite; and any cryptosuite-specific cryptographic data is encapsulated (i.e.,
    * not directly exposed as application layer data) within `proofValue`.
    */
-  type: Type
-
-  /**
-   * The `cryptosuite` property MUST be a string that identifies the cryptographic suite. If the processing environment
-   * supports string subtypes, the subtype of the `cryptosuite` property MUST be the
-   * `https://w3id.org/security#cryptosuiteString` subtype.
-   */
-  cryptosuite: string
+  readonly type: Type
 
   /**
    * @param {string} _suite The identifier of the cryptographic suite.
@@ -50,38 +49,47 @@ export class Cryptosuite {
    * error.
    *
    * @param {PlainDocument} _inputDocument The document to prove.
-   * @param {SuiteOptions} _options The options to use.
+   * @param {CreateOptions} _options The options to use.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  createProof(
-    _inputDocument: PlainDocument,
-    _options: SuiteOptions,
-  ): Promise<Proof> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Suite.createProof",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract createProof(_inputDocument: PlainDocument, _options: CreateOptions): Promise<Proof>
 
   /**
    * An algorithm that takes a secured data document as input, and produces a cryptosuite verification result or an
    * error.
    *
    * @param {PlainDocument} _securedDocument The secured document to be verified.
-   * @param {SuiteOptions} _options The options to use.
+   * @param {VerifyOptions} _options The options to use.
    *
    * @returns {Promise<VerificationResult>} Resolve to a verification result.
    */
-  verifyProof(
-    _securedDocument: PlainDocument,
-    _options: SuiteOptions,
-  ): Promise<VerificationResult> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Suite.verifyProof",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract verifyProof(_securedDocument: PlainDocument, _options: VerifyOptions): Promise<VerificationResult>
+}
+
+type CreateOptions = {
+  proof: Partial<Proof>
+  loader?: Loader
+}
+
+type VerifyOptions = {
+  loader?: Loader
+}
+
+/**
+ * The result of a cryptographic verification.
+ */
+export type VerificationResult = {
+  /**
+   * A boolean that is `true` if the verification succeeded, or `false` otherwise.
+   */
+  verified: boolean
+
+  /**
+   * A map that represents the secured data document with the verified proofs removed if `verified` is `true`, or `null`
+   * otherwise.
+   */
+  verifiedDocument?: PlainDocument
+  warnings?: OneOrMany<Error>
+  errors?: OneOrMany<Error>
 }

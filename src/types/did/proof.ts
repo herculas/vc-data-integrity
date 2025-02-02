@@ -1,7 +1,6 @@
-import type { DIDURL } from "./keywords.ts"
-import type { DateTime, OneOrMany, Type } from "../jsonld/base.ts"
-import type { URI } from "../jsonld/document.ts"
+import type { DateTime, DIDURL, Type, URI } from "../jsonld/literals.ts"
 import type { NodeObject } from "../jsonld/objects.ts"
+import type { OneOrMany } from "../jsonld/base.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and

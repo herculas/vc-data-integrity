@@ -1,17 +1,12 @@
-import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/constants.ts"
 import type { CIDDocument } from "../types/did/cid.ts"
-import type { DIDURL } from "../types/did/keywords.ts"
-import type { Type } from "../types/jsonld/base.ts"
-import type { URI } from "../types/jsonld/document.ts"
-import type { KeypairExportOptions, KeypairImportOptions } from "../types/interface/keypair.ts"
-import type { VerificationResult } from "../types/interface/suite.ts"
+import type { DIDURL, URI } from "../types/jsonld/literals.ts"
+import type { Type } from "../types/jsonld/literals.ts"
 
 /**
  * The keypair base class. This class is used to represent a cryptographic keypair, which is used to sign and verify
  * messages, as well as encrypt and decrypt data.
  */
-export class Keypair {
+export abstract class Keypair {
   /**
    * The identifier of this keypair. If not otherwise specified, will be hashed from the controller and the key
    * fingerprint.
@@ -26,17 +21,17 @@ export class Keypair {
   controller?: DIDURL
 
   /**
-   * The type of the cryptographic suite used by this keypair instance, which should be specified by the sub-classes.
-   */
-  type: Type
-
-  /**
    * The date and time when the keypair has been revoked. If not specified, the keypair is considered active.
    *
    * Note that this mechanism is slightly different from the DID Document key revocation, where a DID controller can
    * revoke a key from that DID by simply removing it from the DID Document.
    */
   revoked?: Date
+
+  /**
+   * The type of the cryptographic suite used by this keypair instance, which should be specified by the sub-classes.
+   */
+  readonly type: Type
 
   /**
    * Initialize a keypair instance.
@@ -59,13 +54,7 @@ export class Keypair {
    *
    * @param {Uint8Array} [_seed] A seed to generate the keypair from. If not specified, a random one will be used.
    */
-  initialize(_seed?: Uint8Array) {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Keypair.generate",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract initialize(_seed?: Uint8Array): void
 
   /**
    * Calculate the public key fingerprint, multibase + multicodec encoded. The specific fingerprint method is
@@ -76,13 +65,7 @@ export class Keypair {
    *
    * @returns {string} Resolve to the fingerprint.
    */
-  generateFingerprint(): Promise<string> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Keypair.fingerprint",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract generateFingerprint(): Promise<string>
 
   /**
    * Verify that a provided fingerprint matches the public key material belonging to this keypair.
@@ -91,42 +74,35 @@ export class Keypair {
    *
    * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
-  verifyFingerprint(_fingerprint: string): Promise<VerificationResult> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Keypair.verifyFingerprint",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract verifyFingerprint(_fingerprint: string): Promise<boolean>
 
   /**
    * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {KeypairExportOptions} _options Options for keypair export.
+   * @param {ExportOptions} _options Options for keypair export.
    *
    * @returns {Promise<CIDDocument>} Resolve to a serialized keypair document.
    */
-  export(_options: KeypairExportOptions): Promise<CIDDocument> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Keypair.export",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract export(_options: ExportOptions): Promise<CIDDocument>
 
   /**
    * Import a keypair from a serialized representation of a keypair.
    *
    * @param {CIDDocument} _document An externally fetched controlled identifier document.
-   * @param {KeypairImportOptions} _options Options for keypair import.
+   * @param {ImportOptions} _options Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: CIDDocument, _options: KeypairImportOptions): Promise<Keypair> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Keypair.import",
-      "This method should be implemented by sub-classes!",
-    )
-  }
+  abstract import(_document: CIDDocument, _options: ImportOptions): Promise<Keypair>
+}
+
+type ExportOptions = {
+  type?: Type
+  flag?: "public" | "private"
+}
+
+type ImportOptions = {
+  type?: Type
+  checkContext?: boolean
+  checkRevoked?: boolean
 }

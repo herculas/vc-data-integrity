@@ -1,5 +1,6 @@
 import type { OneOrMany } from "../types/jsonld/base.ts"
-import type { IRI, PlainDocument } from "../types/jsonld/document.ts"
+import type { PlainDocument } from "../types/jsonld/document.ts"
+import type { URI } from "../types/jsonld/literals.ts"
 
 /**
  * Concatenate multiple Uint8Arrays.
@@ -34,11 +35,11 @@ export function severalToMany<T>(several: OneOrMany<T>): Array<T> {
  * Check if a provided document includes a context URL in its `@context` property.
  *
  * @param {PlainDocument} document A JSON-LD document.
- * @param {IRI} context The context URL to check.
+ * @param {URI} context The context URL to check.
  *
  * @returns {boolean} `true` if the context is included, `false` otherwise.
  */
-export function includeContext(document: PlainDocument, context: IRI): boolean {
+export function includeContext(document: PlainDocument, context: URI): boolean {
   const fromContext = document["@context"]
   if (context === fromContext) {
     return true

@@ -1,12 +1,9 @@
 import * as jsonld from "jsonld"
-
 import * as CONTEXT_URL from "../context/url.ts"
-import type { CanonizeOptions } from "../types/interface/jsonld.ts"
 import type { Context } from "../types/jsonld/keywords.ts"
-import type { DIDURL } from "../types/did/keywords.ts"
+import type { DIDURL } from "../types/jsonld/literals.ts"
 import type { Frame, PlainDocument } from "../types/jsonld/document.ts"
-import type { FrameOptions } from "../types/interface/jsonld.ts"
-import type { Loader } from "../types/interface/loader.ts"
+import type { Loader } from "./loader.ts"
 import type { Proof } from "../types/did/proof.ts"
 
 /**
@@ -96,4 +93,102 @@ export async function frame(
   options: FrameOptions,
 ): Promise<PlainDocument> {
   return await jsonld.default.frame(input, frame, options)
+}
+
+/**
+ * Common options for canonizing or framing a JSON-LD document.
+ */
+interface CommonOptions {
+  /**
+   * The base IRI to use when expanding relative IRIs. This property is set to `null` by default, which means that
+   * relative IRIs will not be expanded.
+   */
+  base?: string
+
+  /**
+   * The context to use when expanding a document.
+   */
+  expandContext?: Context
+}
+
+/**
+ * Options for canonizing a JSON-LD document.
+ */
+export interface CanonizeOptions extends CommonOptions {
+  /**
+   * The canonization algorithm to be used, either 'URDNA2015' or 'URGNA2012'. The default is 'URDNA2015'.
+   */
+  algorithm?: string
+
+  /**
+   * Whether to skip expansion when serializing, `true` to assume the input is expanded and skip the expansion step,
+   * `false` to expand the input before serializing. The default is `false`.
+   */
+  skipExpansion?: boolean
+
+  /**
+   * The input format to use, if the input is not a JSON-LD document. The default is 'application/n-quads' for N-Quads.
+   */
+  inputFormat?: string
+
+  /**
+   * The output format to use, if the output is a string. The default is 'application/n-quads' for N-Quads.
+   */
+  format?: string
+
+  /**
+   * The document loader to use when fetching remote documents.
+   */
+  documentLoader?: Loader
+
+  /**
+   * Whether to use a native canonization algorithm, if available.
+   */
+  useNative?: boolean
+
+  /**
+   * The indication of the direction of the graph for transformation of @direction. Can be 'i18n-datatype' or null.
+   */
+  rdfDirection?: string
+
+  /**
+   * Whether to use the safe mode. The default is `true`.
+   */
+  safe?: boolean
+}
+
+/**
+ * Options for framing a JSON-LD document.
+ */
+export interface FrameOptions extends CommonOptions {
+  /**
+   * Set the default `@embed` flag for the frame, could be `@last`, `@always`, `@never`, or `@link`. The default is
+   * `@last`.
+   */
+  embed?: string
+
+  /**
+   * Set the default `@explicit` flag for the frame. The default is `false`.
+   */
+  explicit?: boolean
+
+  /**
+   * Set the default `@requireAll` flag for the frame. The default is `true`.
+   */
+  requireAll?: boolean
+
+  /**
+   * Set the default `@omitDefault` flag for the frame. The default is `false`.
+   */
+  omitDefault?: boolean
+
+  /**
+   * The document loader to use when fetching remote documents.
+   */
+  documentLoader?: Loader
+
+  /**
+   * Whether to use the safe mode. The default is `true`.
+   */
+  safe?: boolean
 }

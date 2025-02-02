@@ -1,6 +1,5 @@
-import { extendLoader } from "../src/utils/loader.ts"
+import { extendLoader, type Loader } from "../src/utils/loader.ts"
 import type { PlainDocument } from "../src/types/jsonld/document.ts"
-import type { Loader } from "../src/types/interface/loader.ts"
 
 import * as CONTROLLER_FILE from "../data/test/controller.json" with { type: "json" }
 import * as KEYPAIR_FILE from "../data/test/keypair.json" with { type: "json" }

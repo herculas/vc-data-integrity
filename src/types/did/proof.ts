@@ -14,6 +14,8 @@ export interface Proof extends NodeObject {
    * The identifier of the proof.
    *
    * The value of this property MUST be a URL such as UUID as a URN.
+   *
+   * @example "urn:uuid:6a1676b8-b51f-11ed-937b-d76685a20ff5"
    */
   id?: URI
 
@@ -22,6 +24,9 @@ export interface Proof extends NodeObject {
    * secure and verify the proof.
    *
    * The value of this property MUST be specified as a string that maps to a URL.
+   *
+   * @example "DataIntegrityProof"
+   * @example "Ed25519Signature2020"
    */
   type: Type
 
@@ -50,6 +55,9 @@ export interface Proof extends NodeObject {
    *      Hellman (ECDH) key agreement used by popular encryption libraries.
    *    - `capabilityDelegation`: indicates that a proof can only be used to for delegating capabilities.
    *    - `capabilityInvocation`: indicates that a proof can only be used for invoking capabilities.
+   *
+   * @example "assertionMethod"
+   * @example "authentication"
    */
   proofPurpose: string
 
@@ -59,6 +67,8 @@ export interface Proof extends NodeObject {
    * location of the public key that can be used to verify the proof.
    *
    * The value of this property MUST be a string that maps to a URL.
+   *
+   * @example "did:example:123#key-1"
    */
   verificationMethod?: DIDURL
 
@@ -67,6 +77,8 @@ export interface Proof extends NodeObject {
    *
    * If the proof `type` is `DataIntegrityProof`, `cryptosuite` MUST be specified; otherwise, ``cryptosuite` MAY be
    * specified. If specified, the value MUST be a string.
+   *
+   * @example "Ed25519Signature2018"
    */
   cryptosuite?: string
 
@@ -77,6 +89,8 @@ export interface Proof extends NodeObject {
    * by a `Z` at the end of the value, or with a time zone offset relative to UTC.
    *
    * @see https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
+   *
+   * @example "2021-05-10T17:00:00Z"
    */
   created?: DateTime
 
@@ -87,6 +101,8 @@ export interface Proof extends NodeObject {
    * by a `Z` at the end of the value, or with a time zone offset relative to UTC.
    *
    * @see https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
+   *
+   * @example "2021-05-10T17:00:00Z"
    */
   expires?: DateTime
 
@@ -94,6 +110,10 @@ export interface Proof extends NodeObject {
    * One or more security domains in which the proof is meant to be used.
    *
    * The value of this property MUST be either a string, or an unordered set of strings.
+   *
+   * @example "https://domain.example:8443"
+   * @example "mycorp-intranet"
+   * @example "b31d37d4-dd59-47d3-9dd8-c973da43b63a"
    */
   domain?: OneOrMany<string>
 
@@ -102,6 +122,10 @@ export interface Proof extends NodeObject {
    *
    * This property SHOULD be included in a proof if a `domain` is specified. The value of this property MUST be a
    * string.
+   *
+   * @example "1235abcd6789"
+   * @example "79d34551-ae81-44ae-823b-6dadbab9ebd4"
+   * @example "ruby"
    */
   challenge?: string
 
@@ -112,6 +136,8 @@ export interface Proof extends NodeObject {
    * This value MUST use a header and encoding as defined in the Multibase specification.
    *
    * @see https://www.w3.org/TR/controller-document/#multibase-0
+   *
+   * @example "zQeVbY4oey5q2M3XKaxup3tmzN4DRFTLVqpLMweBrSxMY2xHX5XTYV8nQApmEcqaqA3Q1gVHMrXFkXJeV6doDwLWx"
    */
   proofValue?: string
 
@@ -120,6 +146,8 @@ export interface Proof extends NodeObject {
    * considered verified.
    *
    * The value of this property MUST be a string or an unordered list of strings.
+   *
+   * @example "urn:uuid:60102d04-b51e-11ed-acfe-2fcd717666a7"
    */
   previousProof?: OneOrMany<string>
 

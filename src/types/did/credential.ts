@@ -14,6 +14,10 @@ import type { Proof } from "./proof.ts"
  *
  * Examples of verifiable credentials include, but not limited to, digital employee identification cards, digital
  * driver's licenses, and digital educational certificates.
+ *
+ * @see https://www.w3.org/TR/vc-data-model-2.0/
+ * @see https://www.w3.org/TR/vc-data-model-2.0/#credentials
+ * @see https://www.w3.org/TR/vc-data-model-2.0/#verifiable-credentials
  */
 export interface Credential extends NodeObject {
   /**
@@ -28,12 +32,11 @@ export interface Credential extends NodeObject {
    * RECOMMENDED that the URL in the `id` be one which, if dereferenceable, results in a document containing machine-
    * readable information about the `id`.
    *
-   * @example
-   * ```json
-   * "urn:uuid:0c07c1ce-57cb-41af-bef2-1b932b986873"
-   * "https://id.example/things#123"
-   * "did:example:1234abcd"
-   * ```
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#identifiers
+   *
+   * @example "urn:uuid:0c07c1ce-57cb-41af-bef2-1b932b986873"
+   * @example "https://id.example/things#123"
+   * @example "did:example:1234abcd"
    */
   id?: URI
 
@@ -44,11 +47,10 @@ export interface Credential extends NodeObject {
    * The value of the `type` property MUST be one or more terms and absolute URL strings. If more than one value is
    * provided, the order does not matter.
    *
-   * @example
-   * ```json
-   * ["VerifiableCredential", "ExampleDegreeCredential"]
-   * "VerifiablePresentation"
-   * ```
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#types
+   *
+   * @example ["VerifiableCredential", "ExampleDegreeCredential"]
+   * @example "VerifiablePresentation"
    */
   type: OneOrMany<Type>
 
@@ -58,9 +60,11 @@ export interface Credential extends NodeObject {
    *
    * If present, the value of the `name` property MUST be a string or a language value object.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#names-and-descriptions
+   *
+   * @example "University Degree"
    * @example
    * ```json
-   * "University Degree"
    * [{
    *    "@value": "Example University",
    *    "@language": "en"
@@ -79,9 +83,11 @@ export interface Credential extends NodeObject {
    *
    * If present, the value of the `description` property MUST be a string or a language value object.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#names-and-descriptions
+   *
+   * @example "2015 Bachelor of Science in Mechanical Engineering from Example University"
    * @example
    * ```json
-   * "2015 Bachelor of Science in Mechanical Engineering from Example University"
    * [{
    *    "@value": "A public university focusing on teaching examples.",
    *    "@language": "en"
@@ -100,9 +106,11 @@ export interface Credential extends NodeObject {
    * The value of the `issuer` property MUST be either a URL or an object containing an `id` property whose value is a
    * URL; in either case, the issuer selects this URL to identify itself in a globally unambiguous way.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#issuer
+   *
+   * @example "https://university.example/issuers/14"
    * @example
    * ```json
-   * "https://university.example/issuers/14"
    * {
    *    "id": "did:example:76e12ec712ebc6f1c221ebfeb1f",
    *    "name": "Example University"
@@ -118,6 +126,8 @@ export interface Credential extends NodeObject {
    * more claims, which MUST be serialized inside the `credentialSubject` property. Each object MAY also contain an `id`
    * property to identify the subject.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#credential-subject
+   *
    * @example
    * ```json
    * {
@@ -127,6 +137,9 @@ export interface Credential extends NodeObject {
    *      "name": "Bachelor of Science and Arts"
    *    }
    * }
+   * ```
+   * @example
+   * ```json
    * [{
    *    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
    *    "name": "Jayden Doe",
@@ -149,10 +162,9 @@ export interface Credential extends NodeObject {
    * If present, the value of the `validFrom` property MUST be a `dateTimeStamp` string value representing the date and
    * time the credential becomes valid, which could be a date and time in the past or future.
    *
-   * @example
-   * ```json
-   * "2010-01-01T19:23:24Z"
-   * ```
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#validity-period
+   *
+   * @example "2010-01-01T19:23:24Z"
    */
   validFrom?: DateTime
 
@@ -165,10 +177,9 @@ export interface Credential extends NodeObject {
    * If present, the value of the `validUntil` property MUST be a `dateTimeStamp` string value representing the date and
    * time the credential ceases to be valid, which could be a date and time in the past or future.
    *
-   * @example
-   * ```json
-   * "2020-01-01T19:23:24Z"
-   * ```
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#validity-period
+   *
+   * @example "2020-01-01T19:23:24Z"
    */
   validUntil?: DateTime
 
@@ -182,6 +193,8 @@ export interface Credential extends NodeObject {
    *
    * If present, the value of the `status` property is a single object or a set of one or more objects.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#status
+   *
    * @example
    * ```json
    * {
@@ -191,6 +204,9 @@ export interface Credential extends NodeObject {
    *    "statusListIndex": "94567",
    *    "statusListCredential": "https://university.example/credentials/status/3"
    * }
+   * ```
+   * @example
+   * ```json
    * [{
    *    "id": "https://license.example/credentials/status/84#14278",
    *    "type": "BitstringStatusListEntry",
@@ -221,6 +237,8 @@ export interface Credential extends NodeObject {
    * neither enforces data structure or data syntax nor enables the definition of arbitrary encodings to alternate
    * representation formats.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#data-schemas
+   *
    * @example
    * ```json
    * [{
@@ -239,6 +257,8 @@ export interface Credential extends NodeObject {
    * proof secures the original credential by decorating the original data with a digital signature or cryptographic
    * proof. This results in a verifiable credential that is easy to manage in modern programming environments and
    * database systems.
+   *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#securing-mechanisms
    *
    * @example
    * ```json
@@ -267,6 +287,8 @@ export interface Credential extends NodeObject {
    * The refresh service is only expected to be used when either the credential has expired or the issuer does not
    * publish credential status information. Issuers are advised not to put the `refreshService` property in a verifiable
    * credential that does not contain public information or whose refresh service is not protected in some way.
+   *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#refreshing
    *
    * @example
    * ```json
@@ -299,6 +321,8 @@ export interface Credential extends NodeObject {
    * issued is the "professional qualifications directive" using the "Employment&Life" trust framework, with a specific
    * link to the policy.
    *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#terms-of-use
+   *
    * @example
    * ```json
    * {
@@ -320,6 +344,8 @@ export interface Credential extends NodeObject {
    *
    * In the example below, the issuer is asserting that they have video of the subject of the credential demonstrating
    * the achievement.
+   *
+   * @see https://www.w3.org/TR/vc-data-model-2.0/#evidence
    *
    * @example
    * ```json
@@ -372,8 +398,7 @@ interface Status extends MaybeIdentified {
    *
    * The `type` property is REQUIRED. Its value MUST be a single term or an absolute URL string.
    *
-   * @example
-   * - "BitstringStatusListEntry"
+   * @example "BitstringStatusListEntry"
    */
   type: OneOrMany<Type>
 }
@@ -387,8 +412,7 @@ interface Schema extends Identified {
    *
    * The `type` property is REQUIRED. Its value MUST be a single term or an absolute URL string.
    *
-   * @example
-   * - "JsonSchema"
+   * @example "JsonSchema"
    */
   type: OneOrMany<Type>
 }
@@ -402,10 +426,7 @@ interface RefreshService extends NodeObject {
    *
    * The `type` property is REQUIRED. Its value MUST be a single term or an absolute URL string.
    *
-   * @example
-   * ```json
-   * "VerifiableCredentialRefreshService2021"
-   * ```
+   * @example "VerifiableCredentialRefreshService2021"
    */
   type: OneOrMany<Type>
 }
@@ -419,10 +440,7 @@ interface TermOfUse extends MaybeIdentified {
    *
    * The `type` property is REQUIRED. Its value MUST be a single term or an absolute URL string.
    *
-   * @example
-   * ```json
-   * "TrustFrameworkPolicy"
-   * ```
+   * @example "TrustFrameworkPolicy"
    */
   type: OneOrMany<Type>
 }
@@ -436,10 +454,7 @@ interface Evidence extends MaybeIdentified {
    *
    * The `type` property is REQUIRED. Its value MUST be a single term or an absolute URL string.
    *
-   * @example
-   * ```json
-   * ["Evidence"]
-   * ```
+   * @example ["Evidence"]
    */
   type: OneOrMany<Type>
 }

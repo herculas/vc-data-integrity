@@ -10,7 +10,6 @@ export { toW3CTimestampString } from "./utils/time.ts"
 export { defaultLoader, extendLoader } from "./utils/loader.ts"
 export { canonize, frame } from "./utils/jsonld.ts"
 export type { LoadedDocument, Loader } from "./utils/loader.ts"
-export type { CanonizeOptions, FrameOptions } from "./utils/jsonld.ts"
 
 // DID type definitions
 export type { CIDDocument, Service } from "./types/did/cid.ts"

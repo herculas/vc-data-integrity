@@ -26,6 +26,9 @@ export interface VerificationMethod extends NodeObject {
    * The value of this property MUST be a string that conforms to the DID URL syntax.
    *
    * @see https://www.w3.org/TR/did-core/#dfn-verificationmethod
+   *
+   * @example "did:example:123#key-1"
+   * @example "did:example:123#_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
    */
   id: DIDURL
 
@@ -35,6 +38,9 @@ export interface VerificationMethod extends NodeObject {
    * The value of this property MUST be a string that conforms to the DID syntax.
    *
    * @see https://www.w3.org/TR/did-core/#dfn-verificationmethod
+   *
+   * @example "did:example:123"
+   * @example "did:example:pqrstuvwxyz0987654321"
    */
   controller: DID
 
@@ -45,6 +51,9 @@ export interface VerificationMethod extends NodeObject {
    * `JsonWebKey` or `Multikey`.
    *
    * @see https://www.w3.org/TR/did-core/#dfn-verificationmethod
+   *
+   * @example "JsonWebKey2020"
+   * @example "Ed25519VerificationKey2020"
    */
   type: Type
 

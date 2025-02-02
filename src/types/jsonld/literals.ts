@@ -80,17 +80,14 @@
  *
  * @see https://datatracker.ietf.org/doc/html/rfc3986
  *
- * @example
- * ```text
- * ftp://ftp.is.co.za/rfc/rfc1808.txt
- * http://www.ietf.org/rfc/rfc2396.txt
- * ldap://[2001:db8::7]/c=GB?objectClass?one
- * mailto:John.Doe@example.com
- * news:comp.infosystems.www.servers.unix
- * tel:+1-816-555-1212
- * telnet://192.0.2.16:80/
- * urn:oasis:names:specification:docbook:dtd:xml:4.1.2
- * ```
+ * @example "ftp://ftp.is.co.za/rfc/rfc1808.txt"
+ * @example "http://www.ietf.org/rfc/rfc2396.txt"
+ * @example "ldap://[2001:db8::7]/c=GB?objectClass?one"
+ * @example "mailto:John.Doe@example.com"
+ * @example "news:comp.infosystems.www.servers.unix"
+ * @example "tel:+1-816-555-1212"
+ * @example "telnet://192.0.2.16:80/"
+ * @example "urn:oasis:names:specification:docbook:dtd:xml:4.1.2"
  */
 export type URI = string
 
@@ -129,6 +126,8 @@ export type URI = string
  * @see https://www.w3.org/TR/did-core/#dfn-decentralized-identifiers
  * @see https://www.w3.org/TR/did-core/#dfn-did-schemes
  * @see https://www.w3.org/TR/did-core/#dfn-did-methods
+ *
+ * @example "did:example:123456789abcdefghi"
  */
 export type DID = URI
 
@@ -149,6 +148,10 @@ export type DID = URI
  *
  * @see https://www.w3.org/TR/did-core
  * @see https://www.w3.org/TR/did-core/#did-url-syntax
+ *
+ * @example "did:example:123?service=agent&relativeRef=/credentials#degree"
+ * @example "did:example:123?versionTime=2021-05-10T17:00:00Z"
+ * @example "did:example:123?service=files&relativeRef=/resume.pdf"
  */
 export type DIDURL = URI
 
@@ -161,5 +164,10 @@ export type Type = string
  * A dateTimeStamp is a string that represents a date and time in the `dateTimeStamp` format. The lexical space of
  * `dateTimeStamp` is reduced from that of `dateTime` by requiring a `timezoneFrag` fragment in the lexical
  * representations.
+ *
+ * @see https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
+ *
+ * @example "2020-01-01T19:23:24Z"
+ * @example "2021-05-10T17:00:00.123Z"
  */
 export type DateTime = string

@@ -24,11 +24,8 @@ export interface CIDDocument extends NodeObject {
    *
    * @see https://www.w3.org/TR/did-core/#did-subject
    *
-   * @example
-   * ```json
-   * "did:example:123456789abcdefghijk"
-   * "https://controller.example"
-   * ```
+   * @example "did:example:123456789abcdefghijk"
+   * @example "https://controller.example"
    */
   id: URI
 
@@ -59,11 +56,8 @@ export interface CIDDocument extends NodeObject {
    *
    * @see https://www.w3.org/TR/did-core/#did-controller
    *
-   * @example
-   * ```json
-   * "did:example:bcehfew7h32f32h7af3"
-   * "https://controllerB.example/abc"
-   * ```
+   * @example "did:example:bcehfew7h32f32h7af3"
+   * @example "https://controllerB.example/abc"
    */
   controller?: OneOrMany<URI>
 

@@ -23,11 +23,8 @@ export interface JWK extends NodeObject {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.1
    *
-   * @example
-   * ```json
-   * "EC"
-   * "RSA"
-   * ```
+   * @example "EC"
+   * @example "RSA"
    */
   kty: Type
 
@@ -49,11 +46,8 @@ export interface JWK extends NodeObject {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.2
    *
-   * @example
-   * ```json
-   * "sig"
-   * "enc"
-   * ```
+   * @example "sig"
+   * @example "enc"
    */
   use?: string
 
@@ -84,13 +78,10 @@ export interface JWK extends NodeObject {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.3
    *
-   * @example
-   * ```json
-   * ["sign", "verify"]
-   * ["encrypt", "decrypt"]
-   * ["wrapKey", "unwrapKey"]
-   * ["deriveKey", "deriveBits"]
-   * ```
+   * @example ["sign", "verify"]
+   * @example ["encrypt", "decrypt"]
+   * @example ["wrapKey", "unwrapKey"]
+   * @example ["deriveKey", "deriveBits"]
    */
   key_ops?: Array<string>
 
@@ -101,11 +92,8 @@ export interface JWK extends NodeObject {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.4
    *
-   * @example
-   * ```json
-   * "ES256"
-   * "RS256"
-   * ```
+   * @example "ES256"
+   * @example "RS256"
    */
   alg?: string
 
@@ -124,12 +112,9 @@ export interface JWK extends NodeObject {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.5
    *
-   * @example
-   * ```json
-   * "Public key used in JWS spec Appendix A.3 example"
-   * "2011-04-29"
-   * "1"
-   * ```
+   * @example "Public key used in JWS spec Appendix A.3 example"
+   * @example "2011-04-29"
+   * @example "1"
    */
   kid?: string
 
@@ -163,10 +148,7 @@ export interface JWK extends NodeObject {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.7
    *
-   * @example
-   * ```json
-   * ["MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqX8XzQzvZt+hyzf7bnueSzaV1uqQsk7YmJyliMoiFjlrQ=="]
-   * ```
+   * @example ["MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqX8XzQzvZt+hyzf7bnueSzaV1uqQsk7YmJyliMoiFjlrQ=="]
    */
   x5c?: Array<string>
 
@@ -247,12 +229,9 @@ export interface JWKEC extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.1.1
    *
-   * @example
-   * ```json
-   * "P-256"
-   * "P-384"
-   * "P-521"
-   * ```
+   * @example "P-256"
+   * @example "P-384"
+   * @example "P-521"
    */
   crv: string
 
@@ -265,10 +244,7 @@ export interface JWKEC extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.1.2
    *
-   * @example
-   * ```json
-   * "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU"
-   * ```
+   * @example "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU"
    */
   x: string
 
@@ -281,10 +257,7 @@ export interface JWKEC extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.1.3
    *
-   * @example
-   * ```json
-   * "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
-   * ```
+   * @example "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0"
    */
   y: string
 
@@ -296,10 +269,7 @@ export interface JWKEC extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.2.2.1
    *
-   * @example
-   * ```json
-   * "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE"
-   * ```
+   * @example "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE"
    */
   d?: string
 }
@@ -327,10 +297,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.1.1
    *
-   * @example
-   * ```json
-   * "0vx7a8jJ0OZIj9u8aPzb3A5f6L1Hq8MjtFjT3T0Cp9Hc1TmJQ4W_9mOpcOy0adu4U3j_YsN4w4W5JY1MjT5Bjw"
-   * ```
+   * @example "0vx7a8jJ0OZIj9u8aPzb3A5f6L1Hq8MjtFjT3T0Cp9Hc1TmJQ4W_9mOpcOy0adu4U3j_YsN4w4W5JY1MjT5Bjw"
    */
   n: string
 
@@ -343,10 +310,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.1.2
    *
-   * @example
-   * ```json
-   * "AQAB"
-   * ```
+   * @example "AQAB"
    */
   e: string
 
@@ -359,10 +323,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.1
    *
-   * @example
-   * ```json
-   * "X4cTteJY_gn4FYPsXB8rdXix5vwsg1FLN5E3EaG6RJoVH-HLLKD9...me1z0HbIkfz0Y6mqnOYtqc0X4jfcKoAC8Q"
-   * ```
+   * @example "X4cTteJY_gn4FYPsXB8rdXix5vwsg1FLN5E3EaG6RJoVH-HLLKD9...me1z0HbIkfz0Y6mqnOYtqc0X4jfcKoAC8Q"
    */
   d?: string
 
@@ -377,10 +338,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.2
    *
-   * @example
-   * ```json
-   * "83i-7IvMGXoMXCskv73TKr8637FiO7Z27zv8oj6pbWUQyLPQBQxtPV...WlWEh6dN36GVZYk93N8Bc9vY41xy8B9RzzOGVQzXvNEvn7O0nVbfs"
-   * ```
+   * @example "83i-7IvMGXoMXCskv73TKr8637FiO7Z27zv8oj6pbWUQ...dN36GVZYk93N8Bc9vY41xy8B9RzzOGVQzXvNEvn7O0nVbfs"
    */
   p?: string
 
@@ -395,10 +353,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.3
    *
-   * @example
-   * ```json
-   * "3dfOR9cuYq-0S-mkFLzgItgMEfFzB2q3hWehMuG0oCuqnb3vobLyum...kIdrecRezsZ-1kYd_s1qDbxtkDEgfAITAG9LUnADun4vIcb6yelxk"
-   * ```
+   * @example "3dfOR9cuYq....0S-mcb6yek"
    */
   q?: string
 
@@ -414,10 +369,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.4
    *
-   * @example
-   * ```json
-   * "G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX3coE0oim...YZc3C3m3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0"
-   * ```
+   * @example "G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX...3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0"
    */
   dp?: string
 
@@ -433,10 +385,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.5
    *
-   * @example
-   * ```json
-   * "s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUU...GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk"
-   * ```
+   * @example "s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE...4WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk"
    */
   dq?: string
 
@@ -452,10 +401,7 @@ export interface JWKRSA extends JWK {
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.6
    *
-   * @example
-   * ```json
-   * "GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzg...yR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU"
-   * ```
+   * @example "GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3...Se3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU"
    */
   qi?: string
 

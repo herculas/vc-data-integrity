@@ -1,5 +1,6 @@
 export enum ErrorCode {
   NETWORK_CONNECTION_ERROR = 0,
+  NOT_IMPLEMENTED_ERROR = 1,
   CONTEXT_MISMATCH_ERROR = 2,
 
   /**

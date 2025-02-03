@@ -1,3 +1,5 @@
+import { DataIntegrityError } from "../error/error.ts"
+import { ErrorCode } from "../error/constants.ts"
 import type { DIDURL, URI } from "../types/jsonld/literals.ts"
 import type { Type } from "../types/jsonld/literals.ts"
 import type { VerificationMethod } from "../types/did/method.ts"
@@ -93,7 +95,13 @@ export abstract class Keypair {
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  abstract import(_document: VerificationMethod, _options: ImportOptions): Promise<Keypair>
+  static import(_document: VerificationMethod, _options: ImportOptions): Promise<Keypair> {
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
+      "Keypair.import",
+      "The import method is not implemented.",
+    )
+  }
 }
 
 /**

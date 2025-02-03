@@ -67,12 +67,18 @@ export abstract class Cryptosuite {
   abstract verifyProof(_securedDocument: PlainDocument, _options: VerifyOptions): Promise<VerificationResult>
 }
 
-type CreateOptions = {
+/**
+ * Options for creating a cryptographic proof.
+ */
+export type CreateOptions = {
   proof: Partial<Proof>
   loader?: Loader
 }
 
-type VerifyOptions = {
+/**
+ * Options for verifying a cryptographic proof.
+ */
+export type VerifyOptions = {
   loader?: Loader
 }
 

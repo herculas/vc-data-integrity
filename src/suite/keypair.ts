@@ -1,6 +1,6 @@
-import type { CIDDocument } from "../types/did/cid.ts"
 import type { DIDURL, URI } from "../types/jsonld/literals.ts"
 import type { Type } from "../types/jsonld/literals.ts"
+import type { VerificationMethod } from "../types/did/method.ts"
 
 /**
  * The keypair base class. This class is used to represent a cryptographic keypair, which is used to sign and verify
@@ -81,27 +81,38 @@ export abstract class Keypair {
    *
    * @param {ExportOptions} _options Options for keypair export.
    *
-   * @returns {Promise<CIDDocument>} Resolve to a serialized keypair document.
+   * @returns {Promise<VerificationMethod>} Resolve to a serialized keypair document.
    */
-  abstract export(_options: ExportOptions): Promise<CIDDocument>
+  abstract export(_options: ExportOptions): Promise<VerificationMethod>
 
   /**
    * Import a keypair from a serialized representation of a keypair.
    *
-   * @param {CIDDocument} _document An externally fetched controlled identifier document.
+   * @param {VerificationMethod} _document An externally fetched controlled identifier document.
    * @param {ImportOptions} _options Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  abstract import(_document: CIDDocument, _options: ImportOptions): Promise<Keypair>
+  abstract import(_document: VerificationMethod, _options: ImportOptions): Promise<Keypair>
 }
 
-type ExportOptions = {
+/**
+ * The keypair type.
+ */
+export type KeyFlag = "public" | "private"
+
+/**
+ * The options for exporting a keypair.
+ */
+export type ExportOptions = {
   type?: Type
-  flag?: "public" | "private"
+  flag?: KeyFlag
 }
 
-type ImportOptions = {
+/**
+ * The options for importing a keypair.
+ */
+export type ImportOptions = {
   type?: Type
   checkContext?: boolean
   checkRevoked?: boolean

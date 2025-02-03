@@ -1,7 +1,9 @@
 // Cryptographic suites
+export * as VC_BASE_URL from "./context/url.ts"
 export { Cryptosuite } from "./suite/cryptosuite.ts"
 export { Keypair } from "./suite/keypair.ts"
-export type { VerificationResult } from "./suite/cryptosuite.ts"
+export type { CreateOptions, VerificationResult, VerifyOptions } from "./suite/cryptosuite.ts"
+export type { ExportOptions, ImportOptions } from "./suite/keypair.ts"
 
 // Utilities
 export { sha256 } from "./utils/crypto.ts"

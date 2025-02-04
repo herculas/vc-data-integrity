@@ -1,3 +1,5 @@
+import { DataIntegrityError } from "../error/error.ts"
+import { ErrorCode } from "../error/constants.ts"
 import type { Loader } from "../utils/loader.ts"
 import type { OneOrMany } from "../types/jsonld/base.ts"
 import type { PlainDocument } from "../types/jsonld/document.ts"
@@ -9,14 +11,7 @@ import type { Type } from "../types/jsonld/literals.ts"
  *
  * @see https://www.w3.org/TR/vc-data-integrity/
  */
-export abstract class Cryptosuite {
-  /**
-   * The `cryptosuite` property MUST be a string that identifies the cryptographic suite. If the processing environment
-   * supports string subtypes, the subtype of the `cryptosuite` property MUST be the
-   * {@link https://w3id.org/security#cryptosuiteString | cryptosuiteString} subtype.
-   */
-  readonly cryptosuite: string
-
+export class Cryptosuite {
   /**
    * The `type` property of a data integrity proof MUST contain the string `DataIntegrityProof`.
    *
@@ -33,16 +28,14 @@ export abstract class Cryptosuite {
    * carries the identifier for the cryptosuite; and any cryptosuite-specific cryptographic data is encapsulated (i.e.,
    * not directly exposed as application layer data) within `proofValue`.
    */
-  readonly type: Type
+  static readonly type: Type = "DataIntegrityProof"
 
   /**
-   * @param {string} _suite The identifier of the cryptographic suite.
-   * @param {Type} _type The type of the cryptographic suite, default to `DataIntegrityProof`.
+   * The `cryptosuite` property MUST be a string that identifies the cryptographic suite. If the processing environment
+   * supports string subtypes, the subtype of the `cryptosuite` property MUST be the
+   * {@link https://w3id.org/security#cryptosuiteString | cryptosuiteString} subtype.
    */
-  constructor(_suite: string, _type?: Type) {
-    this.type = _type ?? "DataIntegrityProof"
-    this.cryptosuite = _suite
-  }
+  static readonly cryptosuite: string
 
   /**
    * An algorithm that takes an input document and proof options as input, and produces a data integrity proof or an
@@ -53,7 +46,13 @@ export abstract class Cryptosuite {
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  abstract createProof(_inputDocument: PlainDocument, _options: CreateOptions): Promise<Proof>
+  static createProof(_inputDocument: PlainDocument, _options: CreateOptions): Promise<Proof> {
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
+      "Cryptosuite.createProof",
+      "The createProof method must be implemented by a subclass.",
+    )
+  }
 
   /**
    * An algorithm that takes a secured data document as input, and produces a cryptosuite verification result or an
@@ -64,14 +63,20 @@ export abstract class Cryptosuite {
    *
    * @returns {Promise<VerificationResult>} Resolve to a verification result.
    */
-  abstract verifyProof(_securedDocument: PlainDocument, _options: VerifyOptions): Promise<VerificationResult>
+  static verifyProof(_securedDocument: PlainDocument, _options: VerifyOptions): Promise<VerificationResult> {
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
+      "Cryptosuite.verifyProof",
+      "The verifyProof method must be implemented by a subclass.",
+    )
+  }
 }
 
 /**
  * Options for creating a cryptographic proof.
  */
 export type CreateOptions = {
-  proof: Partial<Proof>
+  proof: Proof
   loader?: Loader
 }
 

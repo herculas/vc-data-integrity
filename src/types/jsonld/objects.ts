@@ -13,7 +13,7 @@ import type {
   Types,
 } from "./keywords.ts"
 import type { IdMap, IndexMap, LanguageMap, TypeMap } from "./maps.ts"
-import type { JsonArray, JsonObject, OneOrMany, Scalar } from "./base.ts"
+import type { JsonArray, JsonObject, OneOrMany, JsonPrimitive } from "./base.ts"
 
 /**
  * A node object represents zero or more properties of a node in the graph serialized by the JSON-LD document. A map is
@@ -36,7 +36,7 @@ export interface NodeObject {
   "@reverse"?: Reverse
   "@index"?: Index
   [key: string]:
-    | OneOrMany<Scalar | NodeObject | GraphObject | ValueObject | ListObject | SetObject>
+    | OneOrMany<JsonPrimitive | NodeObject | GraphObject | ValueObject | ListObject | SetObject>
     | IncludedBlock
     | LanguageMap
     | IndexMap
@@ -69,14 +69,14 @@ export type ValueObject =
     "@context"?: Context
   }
   & ({
-    "@value": Scalar
+    "@value": JsonPrimitive
     "@language"?: Language
     "@direction"?: Direction
   } | {
-    "@value": Scalar
+    "@value": JsonPrimitive
     "@type": Types
   } | {
-    "@value": Scalar | JsonObject | JsonArray
+    "@value": JsonPrimitive | JsonObject | JsonArray
     "@type": "@json"
   })
 
@@ -102,7 +102,7 @@ export interface SetObject {
  * A language object is used to associate a language tag with a string value.
  */
 export interface LanguageObject {
-  "@value": Scalar
+  "@value": JsonPrimitive
   "@language"?: Language
   "@direction"?: Direction
 }

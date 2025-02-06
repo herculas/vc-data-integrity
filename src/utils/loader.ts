@@ -1,30 +1,19 @@
 import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/constants.ts"
+import { ErrorCode } from "../error/code.ts"
 import { URL_CONTEXT_MAP } from "../context/context.ts"
+
+import type { JsonLdDocument } from "../types/jsonld/base.ts"
+import type { Loader, RemoteDocument } from "../types/api/loader.ts"
 import type { URI } from "../types/jsonld/literals.ts"
-
-/**
- * The result of loading a document.
- */
-export type LoadedDocument = {
-  contextUrl?: URI
-  documentUrl?: URI
-  document?: object
-}
-
-/**
- * A `Loader` is a function that loads a document from a URL.
- */
-export type Loader = (url: URI) => Promise<LoadedDocument>
 
 /**
  * Construct the default document loader for fetching JSON-LD documents.
  *
  * @param {URI} url The URL to fetch.
  *
- * @returns {Promise<LoadedDocument>} Resolve to the loaded document.
+ * @returns {Promise<RemoteDocument>} Resolve to the loaded document.
  */
-export async function defaultLoader(url: URI): Promise<LoadedDocument> {
+export async function defaultLoader(url: URI): Promise<RemoteDocument> {
   try {
     const response = await fetch(url)
     const document = await response.json()
@@ -58,7 +47,7 @@ export function extendLoader(loader: Loader): Loader {
     if (URL_CONTEXT_MAP.has(url)) {
       return Promise.resolve({
         documentUrl: url,
-        document: URL_CONTEXT_MAP.get(url)!,
+        document: URL_CONTEXT_MAP.get(url)! as JsonLdDocument,
       })
     }
     return loader(url)

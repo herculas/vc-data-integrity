@@ -1,5 +1,6 @@
 // import { ErrorCode } from "../error/constants.ts"
 // import { DataIntegrityError } from "../error/error.ts"
+
 // import type { OneOrMany } from "../mod.ts"
 // import type { Proof } from "../types/did/proof.ts"
 // import type { AddManyOptions, AddOneOptions, VerificationResult, VerifyOptions } from "../types/interface/suite.ts"

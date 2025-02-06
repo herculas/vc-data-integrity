@@ -1,5 +1,6 @@
 import type { DateTime, Type, URI } from "../jsonld/literals.ts"
-import type { LanguageObject, NodeObject } from "../jsonld/objects.ts"
+import type { JsonLdObject } from "../jsonld/base.ts"
+import type { LanguageObject } from "../jsonld/objects.ts"
 import type { OneOrMany } from "../../mod.ts"
 import type { Proof } from "./proof.ts"
 
@@ -19,7 +20,7 @@ import type { Proof } from "./proof.ts"
  * @see https://www.w3.org/TR/vc-data-model-2.0/#credentials
  * @see https://www.w3.org/TR/vc-data-model-2.0/#verifiable-credentials
  */
-export interface Credential extends NodeObject {
+export interface Credential extends JsonLdObject {
   /**
    * The `id` property allows for expressing statements about specific things in the verifiable credential and is set by
    * an issuer when expressing objects in a verifiable credential or a holder when expressing objects in a verifiable
@@ -364,7 +365,7 @@ export interface Credential extends NodeObject {
 /**
  * A node object that MUST contain an `id` property whose value is a URI.
  */
-interface Identified extends NodeObject {
+interface Identified extends JsonLdObject {
   /**
    * Provide a unique identifier for the object.
    *
@@ -378,7 +379,7 @@ interface Identified extends NodeObject {
 /**
  * A node object that MAY contain an `id` property whose value is a URI.
  */
-interface MaybeIdentified extends NodeObject {
+interface MaybeIdentified extends JsonLdObject {
   /**
    * Provide a unique identifier for the object.
    *
@@ -420,7 +421,7 @@ interface Schema extends Identified {
 /**
  * A refresh service object that contains information about the refresh service of a verifiable credential.
  */
-interface RefreshService extends NodeObject {
+interface RefreshService extends JsonLdObject {
   /**
    * The type information of the object determining the precise contents of each refresh service.
    *

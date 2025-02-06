@@ -1,7 +1,6 @@
-import type { NodeObject } from "../jsonld/objects.ts"
-import type { OneOrMany } from "../jsonld/base.ts"
+import type { JsonLdObject, OneOrMany } from "../jsonld/base.ts"
 import type { Type, URI } from "../jsonld/literals.ts"
-import type { VerificationMethod, VerificationMethodRef } from "./method.ts"
+import type { VerificationMethod, VerificationRelationship } from "./method.ts"
 
 /**
  * A controlled identifier document describing a DID subject, including mechanisms, such as cryptographic keys, that the
@@ -16,7 +15,7 @@ import type { VerificationMethod, VerificationMethodRef } from "./method.ts"
  * @see https://www.w3.org/TR/did-core/#did-documents
  * @see https://www.w3.org/TR/did-core/#did-subject
  */
-export interface CIDDocument extends NodeObject {
+export interface CIDDocument extends JsonLdObject {
   /**
    * The basic identifier for the controlled identifier document.
    *
@@ -116,7 +115,7 @@ export interface CIDDocument extends NodeObject {
    * ]
    * ```
    */
-  authentication?: Array<VerificationMethodRef>
+  authentication?: Array<VerificationRelationship>
 
   /**
    * The assertionMethod property is used to specify how the DID subject is expected to express claims, such as
@@ -140,7 +139,7 @@ export interface CIDDocument extends NodeObject {
    * ]
    * ```
    */
-  assertionMethod?: Array<VerificationMethodRef>
+  assertionMethod?: Array<VerificationRelationship>
 
   /**
    * The keyAgreement property is used to specify how an entity can generate encryption material in order to transmit
@@ -165,7 +164,7 @@ export interface CIDDocument extends NodeObject {
    * ]
    * ```
    */
-  keyAgreement?: Array<VerificationMethodRef>
+  keyAgreement?: Array<VerificationRelationship>
 
   /**
    * The capabilityInvocation property is used to specify a verification method that might be used by the DID subject
@@ -189,7 +188,7 @@ export interface CIDDocument extends NodeObject {
    * ]
    * ```
    */
-  capabilityInvocation?: Array<VerificationMethodRef>
+  capabilityInvocation?: Array<VerificationRelationship>
 
   /**
    * The capabilityDelegation property is used to specify a mechanism that might be used by the DID subject to delegate
@@ -214,7 +213,7 @@ export interface CIDDocument extends NodeObject {
    * ]
    * ```
    */
-  capabilityDelegation?: Array<VerificationMethodRef>
+  capabilityDelegation?: Array<VerificationRelationship>
 
   /**
    * Services are used in DID documents to express ways of communicating with the DID subject or associated entities.
@@ -244,7 +243,7 @@ export interface CIDDocument extends NodeObject {
  *
  * @see https://www.w3.org/TR/did-core/#services
  */
-export interface Service extends NodeObject {
+export interface Service extends JsonLdObject {
   /**
    * The identifier of the service.
    *

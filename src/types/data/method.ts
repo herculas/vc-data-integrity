@@ -1,13 +1,13 @@
 import type { DateTime, DID, DIDURL, Type } from "../jsonld/literals.ts"
+import type { JsonLdObject } from "../jsonld/base.ts"
 import type { JWK } from "./jwk.ts"
-import type { NodeObject } from "../jsonld/objects.ts"
 
 /**
- * A verification method is a set of data describing a cryptographic key, key pair, or other verification material that
- * can be used to authenticate or authorize a DID subject or associated parties. It can also be a reference to a
+ * A verification relationship is a set of data describing a cryptographic key, key pair, or other verification material
+ * that can be used to authenticate or authorize a DID subject or associated parties. It can also be a reference to a
  * verification method.
  */
-export type VerificationMethodRef = VerificationMethod | DIDURL
+export type VerificationRelationship = VerificationMethod | DIDURL
 
 /**
  * A set of data describing a verification method, such as a cryptographic key, that can be used to authenticate or
@@ -18,7 +18,7 @@ export type VerificationMethodRef = VerificationMethod | DIDURL
  * @see https://www.w3.org/TR/did-core/#verification-methods
  * @see https://www.w3.org/TR/did-core/#verification-material
  */
-export interface VerificationMethod extends NodeObject {
+export interface VerificationMethod extends JsonLdObject {
   /**
    * The verification method identifier can be used in a proof to refer to a specific instance of a verification method,
    * which is called the verification method definition.

@@ -1,14 +1,14 @@
-import * as CREDENTIAL_V1 from "../../data/contexts/credential-v1.json" with { type: "json" }
-import * as CREDENTIAL_V2 from "../../data/contexts/credential-v2.json" with { type: "json" }
-import * as CREDENTIAL_EXAMPLES_V2 from "../../data/contexts/credential-example-v2.json" with { type: "json" }
+import * as CREDENTIAL_V1 from "../../assets/credential-v1.json" with { type: "json" }
+import * as CREDENTIAL_V2 from "../../assets/credential-v2.json" with { type: "json" }
+import * as CREDENTIAL_EXAMPLES_V2 from "../../assets/credential-example-v2.json" with { type: "json" }
 
-import * as SECURITY_V1 from "../../data/contexts/security-v1.json" with { type: "json" }
-import * as SECURITY_V2 from "../../data/contexts/security-v2.json" with { type: "json" }
+import * as SECURITY_V1 from "../../assets/security-v1.json" with { type: "json" }
+import * as SECURITY_V2 from "../../assets/security-v2.json" with { type: "json" }
 
-import * as CID_V1 from "../../data/contexts/cid-v1.json" with { type: "json" }
-import * as DID_V1 from "../../data/contexts/did-v1.json" with { type: "json" }
+import * as CID_V1 from "../../assets/cid-v1.json" with { type: "json" }
+import * as DID_V1 from "../../assets/did-v1.json" with { type: "json" }
 
-import * as DATA_INTEGRITY_V2 from "../../data/contexts/data-integrity-v2.json" with { type: "json" }
+import * as DATA_INTEGRITY_V2 from "../../assets/data-integrity-v2.json" with { type: "json" }
 
 import * as CONTEXT_URL from "./url.ts"
 

@@ -1,10 +1,11 @@
 import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/constants.ts"
-import type { Loader } from "../utils/loader.ts"
-import type { OneOrMany } from "../types/jsonld/base.ts"
-import type { PlainDocument } from "../types/jsonld/document.ts"
-import type { Proof } from "../types/did/proof.ts"
+import { ErrorCode } from "../error/code.ts"
+
+import type { JsonLdDocument } from "../types/jsonld/base.ts"
+import type { Proof } from "../types/data/proof.ts"
 import type { Type } from "../types/jsonld/literals.ts"
+
+import type * as Result from "../types/api/result.ts"
 
 /**
  * Base class from which various linked data cryptographic suites inherit.
@@ -41,12 +42,12 @@ export class Cryptosuite {
    * An algorithm that takes an input document and proof options as input, and produces a data integrity proof or an
    * error.
    *
-   * @param {PlainDocument} _inputDocument The document to prove.
-   * @param {CreateOptions} _options The options to use.
+   * @param {PlainDocument} _unsecuredDocument The unsecured document to create the proof from.
+   * @param {object} _options A set of proof options.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  static createProof(_inputDocument: PlainDocument, _options: CreateOptions): Promise<Proof> {
+  static createProof(_unsecuredDocument: JsonLdDocument, _options: object): Promise<Proof> {
     throw new DataIntegrityError(
       ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Cryptosuite.createProof",
@@ -55,52 +56,35 @@ export class Cryptosuite {
   }
 
   /**
+   * An algorithm that takes a secured data document and a proof as input, and produces a derived proof.
+   *
+   * @param {PlainDocument} _securedDocument The secured document to derive the proof from.
+   * @param {object} _options A set of proof options, along with any custom API options, such as a document loader.
+   *
+   * @returns {Promise<Proof>} Resolve to the derived proof.
+   */
+  static deriveProof(_securedDocument: JsonLdDocument, _options: object): Promise<Proof> {
+    throw new DataIntegrityError(
+      ErrorCode.NOT_IMPLEMENTED_ERROR,
+      "Cryptosuite.deriveProof",
+      "The deriveProof method must be implemented by a subclass.",
+    )
+  }
+
+  /**
    * An algorithm that takes a secured data document as input, and produces a cryptosuite verification result or an
    * error.
    *
    * @param {PlainDocument} _securedDocument The secured document to be verified.
-   * @param {VerifyOptions} _options The options to use.
+   * @param {object} _options A set of verification options.
    *
-   * @returns {Promise<VerificationResult>} Resolve to a verification result.
+   * @returns {Promise<Result.Verification>} Resolve to a verification result.
    */
-  static verifyProof(_securedDocument: PlainDocument, _options: VerifyOptions): Promise<VerificationResult> {
+  static verifyProof(_securedDocument: JsonLdDocument, _options: object): Promise<Result.Verification> {
     throw new DataIntegrityError(
       ErrorCode.NOT_IMPLEMENTED_ERROR,
       "Cryptosuite.verifyProof",
       "The verifyProof method must be implemented by a subclass.",
     )
   }
-}
-
-/**
- * Options for creating a cryptographic proof.
- */
-export type CreateOptions = {
-  proof: Proof
-  loader?: Loader
-}
-
-/**
- * Options for verifying a cryptographic proof.
- */
-export type VerifyOptions = {
-  loader?: Loader
-}
-
-/**
- * The result of a cryptographic verification.
- */
-export type VerificationResult = {
-  /**
-   * A boolean that is `true` if the verification succeeded, or `false` otherwise.
-   */
-  verified: boolean
-
-  /**
-   * A map that represents the secured data document with the verified proofs removed if `verified` is `true`, or `null`
-   * otherwise.
-   */
-  verifiedDocument?: PlainDocument
-  warnings?: OneOrMany<Error>
-  errors?: OneOrMany<Error>
 }

@@ -1,6 +1,5 @@
 import type { DateTime, DIDURL, Type, URI } from "../jsonld/literals.ts"
-import type { NodeObject } from "../jsonld/objects.ts"
-import type { OneOrMany } from "../jsonld/base.ts"
+import type { JsonLdObject, OneOrMany } from "../jsonld/base.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and
@@ -9,7 +8,7 @@ import type { OneOrMany } from "../jsonld/base.ts"
  * @see https://www.w3.org/TR/vc-data-model-2.0/#securing-mechanisms
  * @see https://www.w3.org/TR/vc-data-integrity/#proofs
  */
-export interface Proof extends NodeObject {
+export interface Proof extends JsonLdObject {
   /**
    * The identifier of the proof.
    *

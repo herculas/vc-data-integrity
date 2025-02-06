@@ -1,5 +1,5 @@
 import type { ContainerType, ContainerTypeCombination, ContextDefinition } from "./misc.ts"
-import type { JsonObject, OneOrMany, Scalar } from "./base.ts"
+import type { JsonObject, JsonPrimitive, OneOrMany } from "./base.ts"
 import type { NodeObject, ValueObject } from "./objects.ts"
 import type { URI } from "./literals.ts"
 
@@ -22,7 +22,7 @@ export type Container = OneOrMany<"@list" | "@set" | ContainerType> | ContainerT
  *
  * @see https://www.w3.org/TR/json-ld11/#the-context
  */
-export type Context = OneOrMany<URI | ContextDefinition>
+export type Context = OneOrMany<null | URI | ContextDefinition>
 
 /**
  * Used to set the base direction of a JSON-LD value, which are not typed values (e.g., strings, or language-tagged
@@ -37,7 +37,7 @@ export type Direction = "ltr" | "rtl" | null
  *
  * @see https://www.w3.org/TR/json-ld11/#named-graphs
  */
-export type Graph = OneOrMany<NodeObject>
+export type Graph = OneOrMany<NodeObject | ValueObject>
 
 /**
  * Used to uniquely identify node objects that are being described in the document with IRIs or blank node identifiers.
@@ -85,7 +85,7 @@ export type Language = string
  *
  * @see https://www.w3.org/TR/json-ld11/#lists
  */
-export type List = OneOrMany<Scalar | NodeObject | ValueObject>
+export type List = OneOrMany<JsonPrimitive | NodeObject | ValueObject>
 
 /**
  * Used to define a property of a node object that groups together properties of that node, but is not an edge in the
@@ -119,8 +119,8 @@ export type Protected = boolean
  *
  * @see https://www.w3.org/TR/json-ld11/#reverse-properties
  */
-export type Reverse = {
-  [key: string]: OneOrMany<string>
+export type Reverse = string | {
+  [key: string]: OneOrMany<string | JsonObject>
 }
 
 /**
@@ -128,7 +128,7 @@ export type Reverse = {
  *
  * @see https://www.w3.org/TR/json-ld11/#sets
  */
-export type LdSet = OneOrMany<Scalar | NodeObject | ValueObject>
+export type LdSet = OneOrMany<JsonPrimitive | NodeObject | ValueObject>
 
 /**
  * Used to set the type of a node or the datatype of a typed value.
@@ -141,7 +141,7 @@ export type Types = OneOrMany<string>
 /**
  * Used in a context definition to set the processing mode.
  */
-export type Version = "1.1"
+export type Version = "1.1" | 1.1
 
 /**
  * Used to expand properties and values in `@type` with a common prefix IRI.

@@ -1,4 +1,4 @@
-import type { NodeObject } from "../jsonld/objects.ts"
+import type { JsonLdObject } from "../jsonld/base.ts"
 import type { Type } from "../jsonld/literals.ts"
 
 /**
@@ -6,7 +6,7 @@ import type { Type } from "../jsonld/literals.ts"
  *
  * @see https://datatracker.ietf.org/doc/html/rfc7517
  */
-export interface JWK extends NodeObject {
+export interface JWK extends JsonLdObject {
   /**
    * The `kty` (key type) parameter identifies the cryptographic algorithm family used with the key. `kty` values should
    * either be registered in the IANA "JSON Web Key Types" registry established by
@@ -195,7 +195,7 @@ export interface JWK extends NodeObject {
  *
  * @see https://datatracker.ietf.org/doc/html/rfc7517#section-5
  */
-export interface JWKSet extends NodeObject {
+export interface JWKSet extends JsonLdObject {
   /**
    * The `keys` parameter is an array of JWKs. By default, the order of the JWK values within the array does not imply
    * an order of preference among them, although applications of JWK Sets can choose to assign a meaning to the order
@@ -428,7 +428,7 @@ export interface JWKRSA extends JWK {
  * @see https://datatracker.ietf.org/doc/html/rfc3447#appendix-A.1.2
  * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.7
  */
-export interface OtherPrimeInfo extends NodeObject {
+export interface OtherPrimeInfo extends JsonLdObject {
   /**
    * The `r` (prime factor) parameter represents the value of a subsequent prime factor.
    *

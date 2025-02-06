@@ -1,5 +1,5 @@
 import type { ListObject, NodeObject, SetObject, ValueObject } from "./objects.ts"
-import type { OneOrMany, Scalar } from "./base.ts"
+import type { OneOrMany, JsonPrimitive } from "./base.ts"
 
 /**
  * A language map is a map value of a term defined with `@container` set to `@language`, whose keys MUST be strings
@@ -24,7 +24,7 @@ export interface LanguageMap {
  * @see https://www.w3.org/TR/json-ld11/#data-indexing
  */
 export interface IndexMap {
-  [key: string]: OneOrMany<Scalar | NodeObject | ValueObject | ListObject | SetObject>
+  [key: string]: OneOrMany<JsonPrimitive | NodeObject | ValueObject | ListObject | SetObject>
 }
 
 /**

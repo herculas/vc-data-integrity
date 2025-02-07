@@ -1,6 +1,5 @@
-import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/code.ts"
-import { URL_CONTEXT_MAP } from "../context/context.ts"
+import { BasicError, BasicErrorCode } from "../error/basic.ts"
+import { URL_CONTEXT_MAP } from "../context/map.ts"
 
 import type { JsonLdDocument } from "../types/jsonld/base.ts"
 import type { Loader, RemoteDocument } from "../types/api/loader.ts"
@@ -23,8 +22,8 @@ export async function fallback(url: URI): Promise<RemoteDocument> {
       document: document,
     }
   } catch (error) {
-    throw new DataIntegrityError(
-      ErrorCode.NETWORK_CONNECTION_ERROR,
+    throw new BasicError(
+      BasicErrorCode.NETWORK_CONNECTION_ERROR,
       "loader.defaultLoader",
       `Failed to fetch the resource from ${url}: ${error}!`,
     )

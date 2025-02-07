@@ -1,5 +1,5 @@
-import type { DataIntegrityError } from "../../error/error.ts"
 import type { JsonLdDocument, OneOrMany } from "../jsonld/base.ts"
+import type { ProcessingError } from "../../error/process.ts"
 
 /**
  * The result of a cryptographic verification.
@@ -15,8 +15,8 @@ export type Verification = {
    * otherwise.
    */
   verifiedDocument?: JsonLdDocument
-  warnings?: OneOrMany<DataIntegrityError>
-  errors?: OneOrMany<DataIntegrityError>
+  warnings?: OneOrMany<ProcessingError>
+  errors?: OneOrMany<ProcessingError>
 }
 
 /**
@@ -32,6 +32,6 @@ export type Validation = {
    * A map that represents the validated document with the if `verified` is `true`, or `null` otherwise.
    */
   validatedDocument?: JsonLdDocument
-  warnings?: OneOrMany<DataIntegrityError>
-  errors?: OneOrMany<DataIntegrityError>
+  warnings?: OneOrMany<ProcessingError>
+  errors?: OneOrMany<ProcessingError>
 }

@@ -1,8 +1,7 @@
 import { equal } from "@std/assert"
 
 import { compact } from "./jsonld.ts"
-import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/code.ts"
+import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { hasProperty } from "./format.ts"
 import { severalToMany } from "./format.ts"
 
@@ -71,8 +70,8 @@ export async function retrieveVerificationMethod(
   // 12.  Return `verificationMethod` as the verification method.
 
   if (!URL.canParse(vmIdentifier)) {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_VERIFICATION_METHOD_URL,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_VERIFICATION_METHOD_URL,
       "jsonld#retrieve",
       "Invalid verification method identifier.",
     )
@@ -85,8 +84,8 @@ export async function retrieveVerificationMethod(
   const controllerDocument = await options.documentLoader(controllerDocumentUrl).then(
     (response) => response.document as CIDDocument,
     () => {
-      throw new DataIntegrityError(
-        ErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
+      throw new ProcessingError(
+        ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
         "jsonld#retrieve",
         "Invalid controlled identifier document.",
       )
@@ -94,8 +93,8 @@ export async function retrieveVerificationMethod(
   )
 
   if (controllerDocument.id !== controllerDocumentUrl) {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID,
       "jsonld#retrieve",
       "Invalid controlled identifier document identifier.",
     )
@@ -105,24 +104,24 @@ export async function retrieveVerificationMethod(
   try {
     verificationMethod = resolveFragment(controllerDocument, vmFragment) as VerificationMethod
   } catch {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_VERIFICATION_METHOD,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_VERIFICATION_METHOD,
       "jsonld#retrieve",
       "Invalid verification method.",
     )
   }
 
   if (verificationMethod.id !== vmIdentifier) {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_VERIFICATION_METHOD,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_VERIFICATION_METHOD,
       "jsonld#retrieve",
       "Invalid verification method identifier.",
     )
   }
 
   if (verificationMethod.controller !== controllerDocumentUrl) {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_VERIFICATION_METHOD,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_VERIFICATION_METHOD,
       "jsonld#retrieve",
       "Invalid verification method controller.",
     )
@@ -130,8 +129,8 @@ export async function retrieveVerificationMethod(
 
   const relationships = controllerDocument[verificationRelationship]
   if (relationships === undefined) {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
       "jsonld#retrieve",
       "Invalid relationship for verification method.",
     )
@@ -141,8 +140,8 @@ export async function retrieveVerificationMethod(
       typeof relationship === "string" ? relationship === vmIdentifier : equal(relationship, verificationMethod)
     )
   ) {
-    throw new DataIntegrityError(
-      ErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
+    throw new ProcessingError(
+      ProcessingErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
       "jsonld#retrieve",
       "Invalid relationship for verification method.",
     )
@@ -286,18 +285,18 @@ export async function validateContext(
       try {
         result.validatedDocument = await compact(inputDocument, knownContext, { documentLoader })
       } catch (error) {
-        ;(result.errors as Array<DataIntegrityError>).push(
-          new DataIntegrityError(
-            ErrorCode.CONTEXT_MISMATCH_ERROR,
+        ;(result.errors as Array<ProcessingError>).push(
+          new ProcessingError(
+            ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
             "jsonld#validate",
             `Invalid context: ${error}.`,
           ),
         )
       }
     } else {
-      ;(result.errors as Array<DataIntegrityError>).push(
-        new DataIntegrityError(
-          ErrorCode.CONTEXT_MISMATCH_ERROR,
+      ;(result.errors as Array<ProcessingError>).push(
+        new ProcessingError(
+          ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
           "jsonld#validate",
           "Invalid context.",
         ),
@@ -305,7 +304,7 @@ export async function validateContext(
     }
   }
 
-  if ((result.errors as Array<DataIntegrityError>).length === 0) {
+  if ((result.errors as Array<ProcessingError>).length === 0) {
     result.validated = true
   } else {
     result.validated = false

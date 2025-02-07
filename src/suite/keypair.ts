@@ -1,5 +1,4 @@
-import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/code.ts"
+import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
 import type { CIDDocument } from "../types/data/cid.ts"
 import type { Type } from "../types/jsonld/literals.ts"
@@ -58,8 +57,8 @@ export class Keypair {
    * @param {Uint8Array} [_seed] A seed to generate the keypair from. If not specified, a random one will be used.
    */
   initialize(_seed?: Uint8Array) {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.initialize",
       "The initialize method must be implemented by a subclass.",
     )
@@ -75,8 +74,8 @@ export class Keypair {
    * @returns {string} Resolve to the fingerprint.
    */
   generateFingerprint(): Promise<string> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.generateFingerprint",
       "The generateFingerprint method must be implemented by a subclass.",
     )
@@ -90,8 +89,8 @@ export class Keypair {
    * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
   verifyFingerprint(_fingerprint: string): Promise<boolean> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.verifyFingerprint",
       "The verifyFingerprint method must be implemented by a subclass.",
     )
@@ -105,8 +104,8 @@ export class Keypair {
    * @returns {Promise<CIDDocument>} Resolve to a controlled identifier document containing the verification method.
    */
   export(_options: KeypairOptions.Export): Promise<CIDDocument> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.export",
       "The export method must be implemented by a subclass.",
     )
@@ -121,10 +120,10 @@ export class Keypair {
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
   static import(_document: CIDDocument, _options: KeypairOptions.Import): Promise<Keypair> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Keypair.import",
-      "The import method is not implemented.",
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
+      "Keypair::import",
+      "The import method must be implemented by a subclass.",
     )
   }
 }

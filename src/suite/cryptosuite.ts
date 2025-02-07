@@ -1,5 +1,4 @@
-import { DataIntegrityError } from "../error/error.ts"
-import { ErrorCode } from "../error/code.ts"
+import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
 import type { JsonLdDocument } from "../types/jsonld/base.ts"
 import type { Proof } from "../types/data/proof.ts"
@@ -48,9 +47,9 @@ export class Cryptosuite {
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
   static createProof(_unsecuredDocument: JsonLdDocument, _options: object): Promise<Proof> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Cryptosuite.createProof",
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
+      "Cryptosuite::createProof",
       "The createProof method must be implemented by a subclass.",
     )
   }
@@ -64,10 +63,10 @@ export class Cryptosuite {
    * @returns {Promise<Proof>} Resolve to the derived proof.
    */
   static deriveProof(_securedDocument: JsonLdDocument, _options: object): Promise<Proof> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Cryptosuite.deriveProof",
-      "The deriveProof method must be implemented by a subclass.",
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
+      "Cryptosuite::deriveProof",
+      "The createProof method must be implemented by a subclass.",
     )
   }
 
@@ -81,10 +80,10 @@ export class Cryptosuite {
    * @returns {Promise<Result.Verification>} Resolve to a verification result.
    */
   static verifyProof(_securedDocument: JsonLdDocument, _options: object): Promise<Result.Verification> {
-    throw new DataIntegrityError(
-      ErrorCode.NOT_IMPLEMENTED_ERROR,
-      "Cryptosuite.verifyProof",
-      "The verifyProof method must be implemented by a subclass.",
+    throw new BasicError(
+      BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
+      "Cryptosuite::verifyProof",
+      "The createProof method must be implemented by a subclass.",
     )
   }
 }

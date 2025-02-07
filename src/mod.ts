@@ -6,8 +6,9 @@ export { Cryptosuite } from "./suite/cryptosuite.ts"
 export { Keypair } from "./suite/keypair.ts"
 
 // Error handling
-export { DataIntegrityError } from "./error/error.ts"
-export { ErrorCode } from "./error/code.ts"
+export { BasicError, BasicErrorCode } from "./error/basic.ts"
+export { ImplementationError, ImplementationErrorCode } from "./error/implement.ts"
+export { ProcessingError, ProcessingErrorCode } from "./error/process.ts"
 
 // Utilities
 export * as document from "./utils/document.ts"

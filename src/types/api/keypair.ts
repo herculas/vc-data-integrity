@@ -3,14 +3,14 @@ import type { Type } from "../jsonld/literals.ts"
 /**
  * The keypair type.
  */
-export type KeyFlag = "public" | "private"
+export type Flag = "public" | "private"
 
 /**
  * The options for exporting a keypair.
  */
 export interface Export {
   type?: Type
-  flag?: KeyFlag
+  flag?: Flag
 }
 
 /**

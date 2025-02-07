@@ -20,6 +20,12 @@ export interface JsonObject {
 
 type JsonValue = JsonPrimitive | JsonObject | JsonArray
 
+/**
+ * A JSON-LD object is a JSON object that represents an RDF node. It is a JSON object that contains a combination of
+ * keywords and values that describe the node. The keywords and values are defined in the JSON-LD specification.
+ * 
+ * @see https://www.w3.org/TR/json-ld11/#json-ld-grammar
+ */
 export type JsonLdObject = NodeObject
 
 /**

@@ -58,8 +58,6 @@ The operation of Data Integrity is conceptually simple.
 To create a cryptographic proof, the following steps are performed: 1) Transformation, 2) Hashing, and 3) Proof
 Generation.
 
-![To create a cryptographic proof, data is transformed, hashed, and cryptographically protected.](https://www.w3.org/TR/vc-data-integrity/diagrams/hiw-creation.svg)
-
 **_Transformation_** is a process described by a **_transformation algorithm_** that takes input data and prepares it
 for the hashing process. One example of a possible transformation is to take a record of people's names that attended a
 meeting, sort the list alphabetically by the individual's family name, and rewrite the names on a piece of paper, one
@@ -82,8 +80,6 @@ functions include **digital signatures**, **proofs of stake**, and **proofs of k
 
 To verify a cryptographic proof, the following steps are performed: 1) Transformation, 2) Hashing, and 3) Proof
 Verification.
-
-![To verify a cryptographic proof, data is transformed, hashed, and checked for correctness.](https://www.w3.org/TR/vc-data-integrity/diagrams/hiw-verification.svg)
 
 During verification, the **_transformation_** and **_hashing_** steps are conceptually the same as described above.
 

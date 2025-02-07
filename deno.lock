@@ -1,24 +1,16 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@es-toolkit/es-toolkit@^1.32.0": "1.32.0",
     "jsr:@std/assert@1": "1.0.9",
-    "jsr:@std/crypto@^1.0.3": "1.0.3",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "npm:jsonld@^8.3.2": "8.3.2"
   },
   "jsr": {
-    "@es-toolkit/es-toolkit@1.32.0": {
-      "integrity": "cbc7147d53e0ea5d218ed42cccc9b8f018c44871ae4ac5f44e7171c4c3a93fd3"
-    },
     "@std/assert@1.0.9": {
       "integrity": "a9f0c611a869cc791b26f523eec54c7e187aab7932c2c8e8bea0622d13680dcd",
       "dependencies": [
         "jsr:@std/internal"
       ]
-    },
-    "@std/crypto@1.0.3": {
-      "integrity": "a2a32f51ddef632d299e3879cd027c630dcd4d1d9a5285d6e6788072f4e51e7f"
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
@@ -125,9 +117,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@es-toolkit/es-toolkit@^1.32.0",
       "jsr:@std/assert@1",
-      "jsr:@std/crypto@^1.0.3",
       "npm:jsonld@^8.3.2"
     ]
   }

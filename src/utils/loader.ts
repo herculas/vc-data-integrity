@@ -13,7 +13,7 @@ import type { URI } from "../types/jsonld/literals.ts"
  *
  * @returns {Promise<RemoteDocument>} Resolve to the loaded document.
  */
-export async function defaultLoader(url: URI): Promise<RemoteDocument> {
+export async function fallback(url: URI): Promise<RemoteDocument> {
   try {
     const response = await fetch(url)
     const document = await response.json()
@@ -42,7 +42,7 @@ export async function defaultLoader(url: URI): Promise<RemoteDocument> {
  * @returns {Loader} A new document loader that will first check the built-in context map before using the passed
  * fallback loader.
  */
-export function extendLoader(loader: Loader): Loader {
+export function extend(loader: Loader): Loader {
   return (url: string) => {
     if (URL_CONTEXT_MAP.has(url)) {
       return Promise.resolve({

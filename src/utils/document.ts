@@ -1,19 +1,34 @@
-import { cloneDeep, isEqual } from "@es-toolkit/es-toolkit"
+import { equal } from "@std/assert"
 
+import { compact } from "./jsonld.ts"
 import { DataIntegrityError } from "../error/error.ts"
 import { ErrorCode } from "../error/code.ts"
+import { hasProperty } from "./format.ts"
+import { severalToMany } from "./format.ts"
 
 import type { CIDDocument } from "../types/data/cid.ts"
 import type { Context } from "../types/jsonld/keywords.ts"
 import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/base.ts"
+import type { Loader } from "../types/api/loader.ts"
 import type { URI } from "../types/jsonld/literals.ts"
-import type { VerificationMethod, VerificationRelationship } from "../types/data/method.ts"
+import type { VerificationMethod } from "../types/data/method.ts"
 
 import type * as DocumentOptions from "../types/api/document.ts"
 import type * as Result from "../types/api/result.ts"
 
 /**
  * Retrieve a verification method, such as a cryptographic public key, by using a verification method identifier.
+ *
+ * Verification method identifiers are expressed as strings that are URLs, or via the `id` property, whose value is a
+ * URL. It is possible for a controlled identifier document to express a verification method, through a verification
+ * relationship, that exists in a place that is external to the controlled identifier document.
+ *
+ * When retrieving any verification method, the algorithm above is used to ensure that the verification method is
+ * retrieved from the correct controlled identifier document. The algorithm also ensures that this controlled identifier
+ * document refers to the verification method (via a verification relationship) abd that the verification method refers
+ * to the controlled identifier document (via the verification method's `controller` property). Failure to use this
+ * algorithm, or any equivalent one that performs these checks, can lead to security compromises where an attacker
+ * poisons a cache by claiming control of a victim's verification method.
  *
  * @param {URI} vmIdentifier The verification method identifier.
  * @param {VerificationRelationship} [verificationRelationship] The verification relationship.
@@ -25,7 +40,7 @@ import type * as Result from "../types/api/result.ts"
  */
 export async function retrieveVerificationMethod(
   vmIdentifier: URI,
-  verificationRelationship: VerificationRelationship | undefined,
+  verificationRelationship: DocumentOptions.Relationship,
   options: DocumentOptions.Retrieve,
 ): Promise<VerificationMethod> {
   // Procedure:
@@ -86,8 +101,10 @@ export async function retrieveVerificationMethod(
     )
   }
 
-  const verificationMethod = resoluteFragment(controllerDocument, vmFragment) as VerificationMethod
-  if (!verificationMethod) {
+  let verificationMethod: VerificationMethod
+  try {
+    verificationMethod = resolveFragment(controllerDocument, vmFragment) as VerificationMethod
+  } catch {
     throw new DataIntegrityError(
       ErrorCode.INVALID_VERIFICATION_METHOD,
       "jsonld#retrieve",
@@ -111,6 +128,26 @@ export async function retrieveVerificationMethod(
     )
   }
 
+  const relationships = controllerDocument[verificationRelationship]
+  if (relationships === undefined) {
+    throw new DataIntegrityError(
+      ErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
+      "jsonld#retrieve",
+      "Invalid relationship for verification method.",
+    )
+  }
+  if (
+    !relationships.some((relationship) =>
+      typeof relationship === "string" ? relationship === vmIdentifier : equal(relationship, verificationMethod)
+    )
+  ) {
+    throw new DataIntegrityError(
+      ErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
+      "jsonld#retrieve",
+      "Invalid relationship for verification method.",
+    )
+  }
+
   return verificationMethod
 }
 
@@ -127,7 +164,7 @@ export async function retrieveVerificationMethod(
  *
  * @see https://www.w3.org/TR/cid/#fragment-resolution
  */
-export function resoluteFragment(document: CIDDocument, fragmentIdentifier: string): JsonLdDocument | undefined {
+export function resolveFragment(document: CIDDocument, fragmentIdentifier: string): JsonLdDocument | undefined {
   // Procedure:
   //
   // 1. Let `documentFragment` be `null`.
@@ -176,6 +213,10 @@ export function resoluteFragment(document: CIDDocument, fragmentIdentifier: stri
  * Check if an application understands the contexts associated with a document before it executed business rules
  * specific to the input in the document.
  *
+ * It is necessary to ensure that a consuming application has explicitly approved of the types, and therefore the
+ * semantics, of input documents that it will pass. Not checking JSON-LD context values against known good values can
+ * lead to security vulnerabilities, due to variance in the semantics that they convey.
+ *
  * @param {JsonLdDocument} inputDocument The input document to validate.
  * @param {Context} knownContext The set of known contexts that the application understands.
  * @param {boolean} [recompact] A flag to indicate if the input document should be re-compacted.
@@ -189,6 +230,7 @@ export async function validateContext(
   inputDocument: JsonLdObject,
   knownContext: Context,
   recompact: boolean = false,
+  documentLoader: Loader,
 ): Promise<Result.Validation> {
   // Procedure:
   //
@@ -213,46 +255,62 @@ export async function validateContext(
     validated: false,
     warnings: [],
     errors: [],
-    validatedDocument: cloneDeep(inputDocument),
+    validatedDocument: structuredClone(inputDocument),
   }
 
   const contextValue = (result.validatedDocument as JsonLdObject)["@context"]
 
-  // check if `contextValue` deeply equals to `knownContext`
-  const check1 = isEqual(contextValue, knownContext)
+  // check 1: check if `contextValue` deeply equals to `knownContext`
+  const check1 = !equal(contextValue, knownContext)
 
-  // check if any subtree in `result.validatedDocument` contains an `@context` property
+  // check 2: check if any subtree in `result.validatedDocument` contains an `@context` property
+  const check2 = hasProperty(result.validatedDocument!, "@context")
 
-  // check if any URI in `contextValue` dereferences to a JSON-LD Context file that does not match a known good value or cryptographic hash
-  return result
-}
-
-/**
- * Check if any subtree in the input map contains a property with the specified key.
- *
- * @param {JsonLdDocument} map The input map to check.
- * @param {string} key The key to search for.
- *
- * @returns {boolean} `true` if the key is found; otherwise, `false`.
- */
-function checkProperty(map: JsonLdDocument, key: string): boolean {
-  for (const k in map) {
-    // key-value is a scaler
-    if (k === key) return true
-
-    // key-value is an array
-    if (Array.isArray(map[k])) {
-      for (const item of map[k]) {
-        if (typeof item === "object" && item !== null) {
-          if (checkProperty(item as JsonLdDocument, key)) return true
+  // check 3: check if any URI in `contextValue` dereferences to a JSON-LD Context file that does not
+  // match a known good value or cryptographic hash
+  const check3 = contextValue !== undefined && (await Promise.all(
+    severalToMany(contextValue).map(async (context) => {
+      if (typeof context === "string") {
+        try {
+          await documentLoader(context)
+        } catch {
+          return true
         }
       }
-    }
+      return false
+    }),
+  )).some(Boolean)
 
-    // key-value is an object
-    if (typeof map[k] === "object" && map[k] !== null) {
-      if (checkProperty(map[k] as JsonLdDocument, key)) return true
+  if (check1 || check2 || check3) {
+    if (recompact) {
+      try {
+        result.validatedDocument = await compact(inputDocument, knownContext, { documentLoader })
+      } catch (error) {
+        ;(result.errors as Array<DataIntegrityError>).push(
+          new DataIntegrityError(
+            ErrorCode.CONTEXT_MISMATCH_ERROR,
+            "jsonld#validate",
+            `Invalid context: ${error}.`,
+          ),
+        )
+      }
+    } else {
+      ;(result.errors as Array<DataIntegrityError>).push(
+        new DataIntegrityError(
+          ErrorCode.CONTEXT_MISMATCH_ERROR,
+          "jsonld#validate",
+          "Invalid context.",
+        ),
+      )
     }
   }
-  return false
+
+  if ((result.errors as Array<DataIntegrityError>).length === 0) {
+    result.validated = true
+  } else {
+    result.validated = false
+    delete result.validatedDocument
+  }
+
+  return result
 }

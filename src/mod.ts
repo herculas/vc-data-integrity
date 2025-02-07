@@ -1,5 +1,7 @@
-// Cryptographic suites
+// Context URLs
 export * as VC_BASE_URL from "./context/url.ts"
+
+// Cryptographic suites
 export { Cryptosuite } from "./suite/cryptosuite.ts"
 export { Keypair } from "./suite/keypair.ts"
 
@@ -8,18 +10,20 @@ export { DataIntegrityError } from "./error/error.ts"
 export { ErrorCode } from "./error/code.ts"
 
 // Utilities
-export * as hash from "./utils/hash.ts"
+export * as document from "./utils/document.ts"
+export * as format from "./utils/format.ts"
 export * as jsonld from "./utils/jsonld.ts"
-export * as controlled from "./utils/controlled.ts"
-export { concatenate, severalToMany } from "./utils/format.ts"
-export { defaultLoader, extendLoader } from "./utils/loader.ts"
-export { toW3CTimestampString } from "./utils/time.ts"
+export * as loader from "./utils/loader.ts"
 
-// Interfaces, options, and results
+// Options
 export type * as DocumentOptions from "./types/api/document.ts"
 export type * as JsonLdOptions from "./types/api/jsonld.ts"
 export type * as KeypairOptions from "./types/api/keypair.ts"
+
+// Results
 export type * as Result from "./types/api/result.ts"
+
+// Interfaces
 export type { Loader, RemoteDocument } from "./types/api/loader.ts"
 
 // Data type definitions

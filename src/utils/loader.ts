@@ -10,7 +10,7 @@ import type { URI } from "../types/jsonld/literals.ts"
  *
  * @param {URI} url The URL to fetch.
  *
- * @returns {Promise<RemoteDocument>} Resolve to the loaded document.
+ * @returns {Promise<RemoteDocument>} Resolve to a loaded document.
  */
 export async function fallback(url: URI): Promise<RemoteDocument> {
   try {
@@ -38,8 +38,8 @@ export async function fallback(url: URI): Promise<RemoteDocument> {
  * will be used prior to any external document loader.
  *
  * @param {Loader} loader A fallback loader that will be used if the given URL is not in the built-in context map.
- * @returns {Loader} A new document loader that will first check the built-in context map before using the passed
- * fallback loader.
+ * 
+ * @returns {Loader} A wrapped loader function.
  */
 export function extend(loader: Loader): Loader {
   return (url: string) => {

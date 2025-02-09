@@ -44,22 +44,3 @@ export function toW3CTimestamp(date?: Date | number | string): string {
   const str = date.toISOString()
   return str.substring(0, str.length - 5) + "Z"
 }
-
-/**
- * Check if any subtree in the input map contains a property with the specified key.
- *
- * @param {JsonLdDocument} map The input map to check.
- * @param {string} key The key to search for.
- *
- * @returns {boolean} `true` if the key is found; otherwise, `false`.
- */
-export function hasProperty(map: OneOrMany<object>, key: string): boolean {
-  // check if the map is an object or an array
-  if (!map || (typeof map !== "object" && !Array.isArray(map))) return false
-  // the map itself is an object, check if it contains the key
-  else if (key in map) return true
-  // the map is an array, recursively check if any of the items in the array contains the key
-  else if (Array.isArray(map)) return map.some((item) => hasProperty(item, key))
-  // the map is an object not containing the key, recursively check if any of the items in the object contains the key
-  else return Object.values(map).some((value) => typeof value === "object" && hasProperty(value, key))
-}

@@ -15,6 +15,7 @@ export * as document from "./utils/document.ts"
 export * as format from "./utils/format.ts"
 export * as jsonld from "./utils/jsonld.ts"
 export * as loader from "./utils/loader.ts"
+export * as instance from "./utils/instance.ts"
 
 // Options
 export type * as DocumentOptions from "./types/api/document.ts"

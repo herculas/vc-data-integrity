@@ -17,17 +17,21 @@ export class Keypair {
   static readonly type: Type
 
   /**
-   * The identifier of this keypair. If not otherwise specified, will be hashed from the controller and the key
-   * fingerprint.
-   */
-  id?: URI
-
-  /**
-   * The controller of this keypair.
+   * The controller of this keypair, which should be the URI that identifies the entity that controls this keypair.
    *
-   * The value of this property MUST be a string that conforms to the DID URL syntax.
+   * The value of this property MUST be a string that conforms to the URL syntax.
    */
   controller?: URI
+
+  /**
+   * The identifier of this keypair. The identifier of a keypair should use the controller DID as the base, and append
+   * a fragment identifier to identify the specific verification method.
+   *
+   * If not otherwise specified, will be hashed from the controller and the key fingerprint.
+   *
+   * The value of this property MUST be a string that conforms to the URL syntax with a fragment identifier.
+   */
+  id?: URI
 
   /**
    * The date and time when the keypair has been revoked. If not specified, the keypair is considered active.
@@ -40,13 +44,13 @@ export class Keypair {
   /**
    * Initialize a keypair instance.
    *
-   * @param {string} _id The identifier of the keypair.
    * @param {string} [_controller] The controller of the keypair.
+   * @param {string} [_id] The identifier of the keypair.
    * @param {Date} [_revoked] The time when the key was revoked. If not present, the key is considered active.
    */
-  constructor(_id?: URI, _controller?: URI, _revoked?: Date) {
-    this.id = _id
+  constructor(_controller?: URI, _id?: URI, _revoked?: Date) {
     this.controller = _controller
+    this.id = _id
     this.revoked = _revoked
   }
 
@@ -71,7 +75,7 @@ export class Keypair {
    *
    * This method is frequently used to initialize the key identifier or generate some types of cryptonym DIDs.
    *
-   * @returns {string} Resolve to the fingerprint.
+   * @returns {Promise<string>} Resolve to the fingerprint.
    */
   generateFingerprint(): Promise<string> {
     throw new BasicError(
@@ -86,7 +90,7 @@ export class Keypair {
    *
    * @param {string} _fingerprint A public key fingerprint.
    *
-   * @returns {boolean} `true` if the fingerprint matches the public key material, `false` otherwise.
+   * @returns {Promise<boolean>} `true` if the fingerprint matches the public key material, `false` otherwise.
    */
   verifyFingerprint(_fingerprint: string): Promise<boolean> {
     throw new BasicError(
@@ -99,11 +103,12 @@ export class Keypair {
   /**
    * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {ExportOptions} _options Options for keypair export.
+   * @param {KeypairOptions.Export} [_options] Options for keypair export.
    *
-   * @returns {Promise<CIDDocument>} Resolve to a controlled identifier document containing the verification method.
+   * @returns {Promise<CIDDocument>} Resolve to a controlled identifier document containing the verification method,
+   * which contains this keypair and other metadata.
    */
-  export(_options: KeypairOptions.Export): Promise<CIDDocument> {
+  export(_options?: KeypairOptions.Export): Promise<CIDDocument> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.export",
@@ -112,14 +117,15 @@ export class Keypair {
   }
 
   /**
-   * Import a keypair from a serialized representation of a keypair.
+   * Import a keypair from a controlled identifier document which contains a verification method that represents a
+   * keypair of specific type.
    *
    * @param {CIDDocument} _document An externally fetched controlled identifier document.
-   * @param {ImportOptions} _options Options for keypair import.
+   * @param {KeypairOptions.Import} [_options] Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: CIDDocument, _options: KeypairOptions.Import): Promise<Keypair> {
+  static import(_document: CIDDocument, _options?: KeypairOptions.Import): Promise<Keypair> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair::import",

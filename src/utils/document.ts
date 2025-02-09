@@ -1,8 +1,6 @@
-import { equal } from "@std/assert"
-
 import { compact } from "./jsonld.ts"
+import { deepEqual, hasProperty } from "./instance.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
-import { hasProperty } from "./format.ts"
 import { severalToMany } from "./format.ts"
 
 import type { CIDDocument } from "../types/data/cid.ts"
@@ -30,8 +28,8 @@ import type * as Result from "../types/api/result.ts"
  * poisons a cache by claiming control of a victim's verification method.
  *
  * @param {URI} vmIdentifier The verification method identifier.
- * @param {VerificationRelationship} [verificationRelationship] The verification relationship.
- * @param {RetrieveOptions} options The dereferencing options.
+ * @param {DocumentOptions.Relationship} verificationRelationship The verification relationship.
+ * @param {DocumentOptions.Retrieve} options The dereferencing options.
  *
  * @returns {Promise<VerificationMethod>} Resolve to a verification method object.
  *
@@ -135,9 +133,10 @@ export async function retrieveVerificationMethod(
       "Invalid relationship for verification method.",
     )
   }
+
   if (
     !relationships.some((relationship) =>
-      typeof relationship === "string" ? relationship === vmIdentifier : equal(relationship, verificationMethod)
+      typeof relationship === "string" ? relationship === vmIdentifier : deepEqual(relationship, verificationMethod)
     )
   ) {
     throw new ProcessingError(
@@ -159,7 +158,7 @@ export async function retrieveVerificationMethod(
  * @param {CIDDocument} document A controlled identifier document to retrieve the fragment from.
  * @param {string} fragmentIdentifier The fragment identifier.
  *
- * @returns {JsonLdDocument} Resolve to the document fragment.
+ * @returns {JsonLdDocument | undefined} Resolve to the document fragment.
  *
  * @see https://www.w3.org/TR/cid/#fragment-resolution
  */
@@ -184,22 +183,26 @@ export function resolveFragment(document: CIDDocument, fragmentIdentifier: strin
    * @param {JsonLdDocument} map The document to search.
    * @param {Set<URI>} identifiers The set of identifiers to match.
    *
-   * @returns {JsonLdDocument} A conforming document fragment, if any.
+   * @returns {JsonLdDocument | undefined} A conforming document fragment, if any.
    */
   const recursiveFindFragment = (map: JsonLdDocument, identifiers: Set<URI>): JsonLdDocument | undefined => {
-    if (Array.isArray(map)) { // map is an array, process the items in the array
+    if (Array.isArray(map)) {
+      // map is an array, process the items in the array
       for (const item of map) {
         const fragment = recursiveFindFragment(item as JsonLdDocument, identifiers)
         if (fragment) return fragment
       }
-    } else if (typeof map === "object") { // map is an object
+    } else if (typeof map === "object") {
+      // map is an object
       if (map.id && typeof map.id === "string" && identifiers.has(map.id)) return map
 
-      for (const key in map) { // map itself is an object, but not the target, process the keys in the object
+      // map itself is an object, but not the target, process the keys in the object
+      for (const key in map) {
         const fragment = recursiveFindFragment(map[key] as JsonLdDocument, identifiers)
         if (fragment) return fragment
       }
-    } else { // map is not an object nor an array
+    } else {
+      // map is not an object nor an array
       return undefined
     }
   }
@@ -219,6 +222,7 @@ export function resolveFragment(document: CIDDocument, fragmentIdentifier: strin
  * @param {JsonLdDocument} inputDocument The input document to validate.
  * @param {Context} knownContext The set of known contexts that the application understands.
  * @param {boolean} [recompact] A flag to indicate if the input document should be re-compacted.
+ * @param {Loader} documentLoader The document loader to use for dereferencing URIs.
  *
  * @returns {Promise<Result.Validation>} Resolve to a validation result.
  *
@@ -260,13 +264,15 @@ export async function validateContext(
   const contextValue = (result.validatedDocument as JsonLdObject)["@context"]
 
   // check 1: check if `contextValue` deeply equals to `knownContext`
-  const check1 = !equal(contextValue, knownContext)
+  const check1 = !deepEqual(contextValue, knownContext)
 
   // check 2: check if any subtree in `result.validatedDocument` contains an `@context` property
-  const check2 = hasProperty(result.validatedDocument!, "@context")
+  const check2 = Object.values(result.validatedDocument as JsonLdObject).some((sub) =>
+    typeof sub === "object" && hasProperty(sub, "@context")
+  )
 
-  // check 3: check if any URI in `contextValue` dereferences to a JSON-LD Context file that does not
-  // match a known good value or cryptographic hash
+  // check 3: check if any URI in `contextValue` dereferences to a context file that does not match a known good value
+  // or cryptographic hash
   const check3 = contextValue !== undefined && (await Promise.all(
     severalToMany(contextValue).map(async (context) => {
       if (typeof context === "string") {
@@ -294,11 +300,16 @@ export async function validateContext(
         )
       }
     } else {
+      const messages = [
+        check1 && `${contextValue} does not deeply equal ${knownContext}.`,
+        check2 && "A subtree of the input document contains an @context property.",
+        check3 && "A URI in @context does not match a known good value or cryptographic hash.",
+      ].filter(Boolean).join(" ")
       ;(result.errors as Array<ProcessingError>).push(
         new ProcessingError(
           ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
           "jsonld#validate",
-          "Invalid context.",
+          `Invalid context: ${messages}`,
         ),
       )
     }

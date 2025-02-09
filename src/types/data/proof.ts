@@ -1,4 +1,4 @@
-import type { DateTime, DIDURL, Type, URI } from "../jsonld/literals.ts"
+import type { DateTime, Type, URI } from "../jsonld/literals.ts"
 import type { JsonLdObject, OneOrMany } from "../jsonld/base.ts"
 
 /**
@@ -69,7 +69,7 @@ export interface Proof extends JsonLdObject {
    *
    * @example "did:example:123#key-1"
    */
-  verificationMethod?: DIDURL
+  verificationMethod?: URI
 
   /**
    * An identifier for the cryptographic suite that can be used to verify the proof.

@@ -41,12 +41,12 @@ export class Cryptosuite {
    * An algorithm that takes an input document and proof options as input, and produces a data integrity proof or an
    * error.
    *
-   * @param {PlainDocument} _unsecuredDocument The unsecured document to create the proof from.
-   * @param {object} _options A set of proof options.
+   * @param {JsonLdDocument} _unsecuredDocument The unsecured document to create the proof from.
+   * @param {object} [_options] A set of proof options.
    *
    * @returns {Promise<Proof>} Resolve to the created proof.
    */
-  static createProof(_unsecuredDocument: JsonLdDocument, _options: object): Promise<Proof> {
+  static createProof(_unsecuredDocument: JsonLdDocument, _options?: object): Promise<Proof> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Cryptosuite::createProof",
@@ -57,12 +57,12 @@ export class Cryptosuite {
   /**
    * An algorithm that takes a secured data document and a proof as input, and produces a derived proof.
    *
-   * @param {PlainDocument} _securedDocument The secured document to derive the proof from.
-   * @param {object} _options A set of proof options, along with any custom API options, such as a document loader.
+   * @param {JsonLdDocument} _securedDocument The secured document to derive the proof from.
+   * @param {object} [_options] A set of proof options, along with any custom API options, such as a document loader.
    *
    * @returns {Promise<Proof>} Resolve to the derived proof.
    */
-  static deriveProof(_securedDocument: JsonLdDocument, _options: object): Promise<Proof> {
+  static deriveProof(_securedDocument: JsonLdDocument, _options?: object): Promise<Proof> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Cryptosuite::deriveProof",
@@ -74,12 +74,12 @@ export class Cryptosuite {
    * An algorithm that takes a secured data document as input, and produces a cryptosuite verification result or an
    * error.
    *
-   * @param {PlainDocument} _securedDocument The secured document to be verified.
-   * @param {object} _options A set of verification options.
+   * @param {JsonLdDocument} _securedDocument The secured document to be verified.
+   * @param {object} [_options] A set of verification options.
    *
    * @returns {Promise<Result.Verification>} Resolve to a verification result.
    */
-  static verifyProof(_securedDocument: JsonLdDocument, _options: object): Promise<Result.Verification> {
+  static verifyProof(_securedDocument: JsonLdDocument, _options?: object): Promise<Result.Verification> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Cryptosuite::verifyProof",

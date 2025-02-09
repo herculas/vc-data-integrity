@@ -1,4 +1,4 @@
-import type { DateTime, DID, DIDURL, Type } from "../jsonld/literals.ts"
+import type { DateTime, Type, URI } from "../jsonld/literals.ts"
 import type { JsonLdObject } from "../jsonld/base.ts"
 import type { JWK } from "./jwk.ts"
 
@@ -7,7 +7,7 @@ import type { JWK } from "./jwk.ts"
  * that can be used to authenticate or authorize a DID subject or associated parties. It can also be a reference to a
  * verification method.
  */
-export type VerificationRelationship = VerificationMethod | DIDURL
+export type VerificationRelationship = VerificationMethod | URI
 
 /**
  * A set of data describing a verification method, such as a cryptographic key, that can be used to authenticate or
@@ -30,7 +30,7 @@ export interface VerificationMethod extends JsonLdObject {
    * @example "did:example:123#key-1"
    * @example "did:example:123#_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
    */
-  id: DIDURL
+  id: URI
 
   /**
    * The `controller` property is used to express the entity that controls the corresponding private key.
@@ -42,7 +42,7 @@ export interface VerificationMethod extends JsonLdObject {
    * @example "did:example:123"
    * @example "did:example:pqrstuvwxyz0987654321"
    */
-  controller: DID
+  controller: URI
 
   /**
    * The `type` property is used to express the type of verification method.

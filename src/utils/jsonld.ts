@@ -121,7 +121,7 @@ export async function frame(
  * and "fail closed". This is different from the other API transformations which allow unsafe defaults (for
  * cryptographic usage) in order to comply with the JSON-LD 1.1 specification.
  *
- * @param {PlainDocument} input The input document to normalize.
+ * @param {JsonLdDocument} input The input document to normalize.
  * @param {JsonLdOptions.Normalize} [options] The options to use.
  *
  * @returns {Promise<string>} Resolve to the normalized RDF dataset.

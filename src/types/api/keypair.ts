@@ -1,3 +1,5 @@
+import type { Relationship } from "./document.ts"
+
 /**
  * The keypair type.
  */
@@ -9,6 +11,7 @@ export type Flag = "public" | "private"
 export interface Export {
   type?: string
   flag?: Flag
+  relationship?: Set<Relationship>
 }
 
 /**

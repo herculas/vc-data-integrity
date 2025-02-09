@@ -28,7 +28,7 @@ import type * as Result from "../types/api/result.ts"
  * poisons a cache by claiming control of a victim's verification method.
  *
  * @param {URI} vmIdentifier The verification method identifier.
- * @param {DocumentOptions.Relationship} verificationRelationship The verification relationship.
+ * @param {DocumentOptions.Relationship} relationships A set of verification relationships.
  * @param {DocumentOptions.Retrieve} options The dereferencing options.
  *
  * @returns {Promise<VerificationMethod>} Resolve to a verification method object.
@@ -37,7 +37,7 @@ import type * as Result from "../types/api/result.ts"
  */
 export async function retrieveVerificationMethod(
   vmIdentifier: URI,
-  verificationRelationship: DocumentOptions.Relationship,
+  relationships: Set<DocumentOptions.Relationship>,
   options: DocumentOptions.Retrieve,
 ): Promise<VerificationMethod> {
   // Procedure:
@@ -125,25 +125,28 @@ export async function retrieveVerificationMethod(
     )
   }
 
-  const relationships = controllerDocument[verificationRelationship]
-  if (relationships === undefined) {
-    throw new ProcessingError(
-      ProcessingErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
-      "jsonld#retrieve",
-      "Invalid relationship for verification method.",
-    )
-  }
+  // iterate over the relationships and check if the verification method is associated with the relationship
+  for (const relationship of relationships) {
+    const relationshipList = controllerDocument[relationship]
+    if (!relationshipList) {
+      throw new ProcessingError(
+        ProcessingErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
+        "jsonld#retrieve",
+        "Invalid relationship for verification method.",
+      )
+    }
 
-  if (
-    !relationships.some((relationship) =>
-      typeof relationship === "string" ? relationship === vmIdentifier : deepEqual(relationship, verificationMethod)
-    )
-  ) {
-    throw new ProcessingError(
-      ProcessingErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
-      "jsonld#retrieve",
-      "Invalid relationship for verification method.",
-    )
+    if (
+      !relationshipList.some((item) =>
+        typeof item === "string" ? item === vmIdentifier : deepEqual(item, verificationMethod)
+      )
+    ) {
+      throw new ProcessingError(
+        ProcessingErrorCode.INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
+        "jsonld#retrieve",
+        "Invalid relationship for verification method.",
+      )
+    }
   }
 
   return verificationMethod

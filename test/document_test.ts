@@ -8,49 +8,77 @@ import type { CIDDocument } from "../src/types/data/cid.ts"
 import type { Credential } from "../src/types/data/credential.ts"
 import type { JsonLdDocument } from "../src/types/jsonld/base.ts"
 
-Deno.test("retrieve verification method: key 1 for authentication", async () => {
-  const method = await retrieveVerificationMethod(
+Deno.test("retrieve verification method: key 1 for authentication only", async () => {
+  const methodWithRelationship = await retrieveVerificationMethod(
     "did:example:1145141919810#key-1",
-    "authentication",
+    new Set(["authentication"]),
     { documentLoader: testLoader },
   )
-  assertExists(method)
+
+  const methodWithoutRelationship = await retrieveVerificationMethod(
+    "did:example:1145141919810#key-1",
+    new Set(),
+    { documentLoader: testLoader },
+  )
+
+  assertExists(methodWithRelationship)
+  assertExists(methodWithoutRelationship)
 })
 
-Deno.test("retrieve verification method: key 2 for assertion", async () => {
-  const method = await retrieveVerificationMethod(
+Deno.test("retrieve verification method: key 2 for assertion, capability delegation and invocation", async () => {
+  const methodWithRelationshipFull = await retrieveVerificationMethod(
     "did:example:1145141919810#key-2",
-    "assertionMethod",
+    new Set(["assertionMethod", "capabilityDelegation", "capabilityInvocation"]),
     { documentLoader: testLoader },
   )
-  assertExists(method)
-})
 
-Deno.test("retrieve verification method: key 2 for capability delegation", async () => {
-  const method = await retrieveVerificationMethod(
+  const methodWithRelationshipPartial1 = await retrieveVerificationMethod(
     "did:example:1145141919810#key-2",
-    "capabilityDelegation",
+    new Set(["assertionMethod", "capabilityDelegation"]),
     { documentLoader: testLoader },
   )
-  assertExists(method)
-})
 
-Deno.test("retrieve verification method: key 2 for capability invocation", async () => {
-  const method = await retrieveVerificationMethod(
+  const methodWithRelationshipPartial2 = await retrieveVerificationMethod(
     "did:example:1145141919810#key-2",
-    "capabilityInvocation",
+    new Set(["assertionMethod", "capabilityInvocation"]),
     { documentLoader: testLoader },
   )
-  assertExists(method)
+
+  const methodWithRelationshipPartial3 = await retrieveVerificationMethod(
+    "did:example:1145141919810#key-2",
+    new Set(["capabilityDelegation", "capabilityInvocation"]),
+    { documentLoader: testLoader },
+  )
+
+  const methodWithoutRelationship = await retrieveVerificationMethod(
+    "did:example:1145141919810#key-2",
+    new Set(),
+    { documentLoader: testLoader },
+  )
+
+  assertExists(methodWithRelationshipFull)
+  assertExists(methodWithRelationshipPartial1)
+  assertExists(methodWithRelationshipPartial2)
+  assertExists(methodWithRelationshipPartial3)
+
+  assertExists(methodWithoutRelationship)
 })
 
-Deno.test("retrieve verification method: key 3 for assertion", async () => {
-  const method = await retrieveVerificationMethod(
+Deno.test("retrieve verification method: key 3 for assertion only", async () => {
+  const methodWithRelationship = await retrieveVerificationMethod(
     "did:example:1145141919810#key-3",
-    "assertionMethod",
+    new Set(["assertionMethod"]),
     { documentLoader: testLoader },
   )
-  assertExists(method)
+
+  const methodWithoutRelationship = await retrieveVerificationMethod(
+    "did:example:1145141919810#key-3",
+    new Set(),
+    { documentLoader: testLoader },
+  )
+
+  assertExists(methodWithRelationship)
+  assertExists(methodWithoutRelationship)
 })
 
 Deno.test("resolve fragments", () => {

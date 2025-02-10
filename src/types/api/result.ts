@@ -15,7 +15,15 @@ export type Verification = {
    * otherwise.
    */
   verifiedDocument?: JsonLdDocument
+
+  /**
+   * Warnings that occurred during the verification process.
+   */
   warnings?: OneOrMany<ProcessingError>
+
+  /**
+   * Errors that occurred during the verification process.
+   */
   errors?: OneOrMany<ProcessingError>
 }
 
@@ -32,6 +40,14 @@ export type Validation = {
    * A map that represents the validated document with the if `verified` is `true`, or `null` otherwise.
    */
   validatedDocument?: JsonLdDocument
+
+  /**
+   * Warnings that occurred during the validation process.
+   */
   warnings?: OneOrMany<ProcessingError>
+
+  /**
+   * Errors that occurred during the validation process.
+   */
   errors?: OneOrMany<ProcessingError>
 }

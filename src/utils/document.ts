@@ -79,11 +79,16 @@ export async function retrieveVerificationMethod(
   const vmFragment = vmIdentifierUrl.hash
   const controllerDocumentUrl = vmIdentifier.replace(vmFragment, "")
 
-  const loadedDocument = await options.documentLoader(controllerDocumentUrl)
-  const controllerDocument = loadedDocument.document as CIDDocument
-
-  console.log(loadedDocument)
-  console.log(controllerDocument)
+  const controllerDocument = await options.documentLoader(controllerDocumentUrl).then(
+    (response) => response.document as CIDDocument,
+    () => {
+      throw new ProcessingError(
+        ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
+        "jsonld#retrieve",
+        "Invalid controlled identifier document.",
+      )
+    },
+  )
 
   if (controllerDocument.id !== controllerDocumentUrl) {
     throw new ProcessingError(

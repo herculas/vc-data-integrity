@@ -1,4 +1,4 @@
-import { compact } from "./jsonld.ts"
+import { compact } from "./rdfc.ts"
 import { deepEqual, hasProperty } from "./instance.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { severalToMany } from "./format.ts"

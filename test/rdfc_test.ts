@@ -1,4 +1,4 @@
-import * as jsonld from "../src/utils/jsonld.ts"
+import * as rdfc from "../src/utils/rdfc.ts"
 
 import type { JsonLdDocument } from "../src/types/jsonld/base.ts"
 import type { ContextDefinition } from "../src/types/jsonld/misc.ts"
@@ -34,7 +34,7 @@ Deno.test("JSON-LD document compaction: basic 1", async () => {
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -66,7 +66,7 @@ Deno.test("JSON-LD document compaction: basic 2", async () => {
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -98,7 +98,7 @@ Deno.test("JSON-LD document compaction: shortening IRIs", async () => {
     "@vocab": "http://example.org/",
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -128,7 +128,7 @@ Deno.test("JSON-LD document compaction: compacting using a base IRI", async () =
     "label": "http://www.w3.org/2000/01/rdf-schema#label",
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -191,7 +191,7 @@ Deno.test("JSON-LD document compaction: representing values as strings", async (
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -228,7 +228,7 @@ Deno.test("JSON-LD document compaction: representing lists as arrays", async () 
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -277,7 +277,7 @@ Deno.test("JSON-LD document compaction: reversing node relationships", async () 
     "children": { "@reverse": "http://example.com/vocab#parent" },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -317,7 +317,7 @@ Deno.test("JSON-LD document compaction: indexing values", async () => {
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -353,7 +353,7 @@ Deno.test("JSON-LD document compaction: normalizing values as objects", async ()
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -388,7 +388,7 @@ Deno.test("JSON-LD document compaction: representing singular values as arrays",
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -426,7 +426,7 @@ Deno.test("JSON-LD document compaction: term selection", async () => {
     "iri": { "@id": "vocab:property", "@type": "@id" },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await rdfc.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -450,7 +450,7 @@ Deno.test("JSON-LD document expansion 1", async () => {
     "homepage": "http://www.markus-lanthaler.com/",
   } as const
 
-  const expandedDocument = await jsonld.expand(compactedDocument)
+  const expandedDocument = await rdfc.expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -470,7 +470,7 @@ Deno.test("JSON-LD document expansion 2", async () => {
     "website": { "@id": "http://www.markus-lanthaler.com/" },
   } as const
 
-  const expandedDocument = await jsonld.expand(compactedDocument)
+  const expandedDocument = await rdfc.expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -493,7 +493,7 @@ Deno.test("JSON-LD document expansion 3", async () => {
     "homepage": "http://manu.sporny.org/",
   } as const
 
-  const expandedDocument = await jsonld.expand(compactedDocument)
+  const expandedDocument = await rdfc.expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -521,8 +521,8 @@ Deno.test("JSON-LD document flattening 1", async () => {
     ],
   } as const
 
-  const flattenedDocument = await jsonld.flatten(document)
-  const compactedDocument = await jsonld.compact(flattenedDocument, document["@context"]!)
+  const flattenedDocument = await rdfc.flatten(document)
+  const compactedDocument = await rdfc.compact(flattenedDocument, document["@context"]!)
 
   console.log(flattenedDocument)
   console.log(compactedDocument)
@@ -554,8 +554,8 @@ Deno.test("JSON-LD document flattening 2", async () => {
     ],
   } as const
 
-  const flattenedDocument = await jsonld.flatten(document)
-  const compactedDocument = await jsonld.compact(flattenedDocument, document["@context"]!)
+  const flattenedDocument = await rdfc.flatten(document)
+  const compactedDocument = await rdfc.compact(flattenedDocument, document["@context"]!)
   console.log(compactedDocument)
 })
 
@@ -603,7 +603,7 @@ Deno.test("JSON-LD document framing: basic 1", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -654,7 +654,7 @@ Deno.test("JSON-LD document framing: basic 2", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -702,7 +702,7 @@ Deno.test("JSON-LD document framing: matching on properties", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -748,7 +748,7 @@ Deno.test("JSON-LD document framing: wildcard matching", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -796,7 +796,7 @@ Deno.test("JSON-LD document framing: matching on the absence of a property", asy
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -895,7 +895,7 @@ Deno.test("JSON-LD document framing: matching on values", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -941,7 +941,7 @@ Deno.test("JSON-LD document framing: matching on id 1", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -994,7 +994,7 @@ Deno.test("JSON-LD document framing: matching on id 2", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -1035,7 +1035,7 @@ Deno.test("JSON-LD document framing: empty frame", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await rdfc.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -1058,6 +1058,6 @@ Deno.test("JSON-LD document normalization", async () => {
     },
   ] as const
 
-  const normalizedDocument = await jsonld.normalize(document)
+  const normalizedDocument = await rdfc.normalize(document)
   console.log(normalizedDocument)
 })

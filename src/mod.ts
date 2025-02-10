@@ -13,9 +13,10 @@ export { ProcessingError, ProcessingErrorCode } from "./error/process.ts"
 // Utilities
 export * as document from "./utils/document.ts"
 export * as format from "./utils/format.ts"
-export * as jsonld from "./utils/jsonld.ts"
-export * as loader from "./utils/loader.ts"
 export * as instance from "./utils/instance.ts"
+export * as jcs from "./utils/jcs.ts"
+export * as loader from "./utils/loader.ts"
+export * as rdfc from "./utils/rdfc.ts"
 
 // Options
 export type * as DocumentOptions from "./types/api/document.ts"

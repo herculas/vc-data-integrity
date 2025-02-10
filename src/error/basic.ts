@@ -25,4 +25,9 @@ export enum BasicErrorCode {
    * A method has not been implemented by a subclass.
    */
   METHOD_NOT_IMPLEMENTED_ERROR = 1,
+
+  /**
+   * The document associated with the given URL was not found.
+   */
+  DOCUMENT_NOT_FOUND_ERROR = 2,
 }

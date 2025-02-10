@@ -18,6 +18,7 @@ export interface Export {
  * The options for importing a keypair.
  */
 export interface Import {
+  fragmentIdentifier?: string
   checkContext?: boolean
   checkRevoked?: boolean
 }

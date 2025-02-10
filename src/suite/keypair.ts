@@ -17,13 +17,6 @@ export class Keypair {
   static readonly type: Type
 
   /**
-   * The controller of this keypair, which should be the URI that identifies the entity that controls this keypair.
-   *
-   * The value of this property MUST be a string that conforms to the URL syntax.
-   */
-  controller?: URI
-
-  /**
    * The identifier of this keypair. The identifier of a keypair should use the controller DID as the base, and append
    * a fragment identifier to identify the specific verification method.
    *
@@ -32,6 +25,21 @@ export class Keypair {
    * The value of this property MUST be a string that conforms to the URL syntax with a fragment identifier.
    */
   id?: URI
+
+  /**
+   * The controller of this keypair, which should be the URI that identifies the entity that controls this keypair.
+   *
+   * The value of this property MUST be a string that conforms to the URL syntax.
+   */
+  controller?: URI
+
+  /**
+   * The date and time when the keypair is expired. If not specified, the keypair is considered active.
+   *
+   * Once this value is set, it is not expected to be updated, and systems depending on the value are expected to not
+   * verify any proofs associated with this keypair at or after the time of expiration.
+   */
+  expires?: Date
 
   /**
    * The date and time when the keypair has been revoked. If not specified, the keypair is considered active.
@@ -44,13 +52,15 @@ export class Keypair {
   /**
    * Initialize a keypair instance.
    *
-   * @param {string} [_controller] The controller of the keypair.
    * @param {string} [_id] The identifier of the keypair.
+   * @param {string} [_controller] The controller of the keypair.
+   * @param {Date} [_expires] The time when the key expires. If not present, the key is considered active.
    * @param {Date} [_revoked] The time when the key was revoked. If not present, the key is considered active.
    */
-  constructor(_controller?: URI, _id?: URI, _revoked?: Date) {
-    this.controller = _controller
+  constructor(_id?: URI, _controller?: URI, _expires?: Date, _revoked?: Date) {
     this.id = _id
+    this.controller = _controller
+    this.expires = _expires
     this.revoked = _revoked
   }
 

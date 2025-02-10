@@ -6,13 +6,13 @@ import type { Loader, RemoteDocument } from "../types/api/loader.ts"
 import type { URI } from "../types/jsonld/literals.ts"
 
 /**
- * Construct the default document loader for fetching JSON-LD documents.
+ * Construct the document loader for fetching JSON-LD documents from the network.
  *
  * @param {URI} url The URL to fetch.
  *
  * @returns {Promise<RemoteDocument>} Resolve to a loaded document.
  */
-export async function fallback(url: URI): Promise<RemoteDocument> {
+export async function network(url: URI): Promise<RemoteDocument> {
   try {
     const response = await fetch(url)
     const document = await response.json()
@@ -24,10 +24,25 @@ export async function fallback(url: URI): Promise<RemoteDocument> {
   } catch (error) {
     throw new BasicError(
       BasicErrorCode.NETWORK_CONNECTION_ERROR,
-      "loader.defaultLoader",
+      "loader#defaultLoader",
       `Failed to fetch the resource from ${url}: ${error}!`,
     )
   }
+}
+
+/**
+ * Construct the document loader with a fallback function that throws an error.
+ *
+ * @param {URI} url The URL to fetch.
+ *
+ * @returns {Promise<RemoteDocument>} Resolve to a loaded document.
+ */
+export function fallback(url: URI): Promise<RemoteDocument> {
+  throw new BasicError(
+    BasicErrorCode.DOCUMENT_NOT_FOUND_ERROR,
+    "loader#defaultLoader",
+    `No custom loader was provided and the document associated with the given URL was not found: ${url}!`,
+  )
 }
 
 /**
@@ -38,7 +53,7 @@ export async function fallback(url: URI): Promise<RemoteDocument> {
  * will be used prior to any external document loader.
  *
  * @param {Loader} loader A fallback loader that will be used if the given URL is not in the built-in context map.
- * 
+ *
  * @returns {Loader} A wrapped loader function.
  */
 export function extend(loader: Loader): Loader {
@@ -52,3 +67,8 @@ export function extend(loader: Loader): Loader {
     return loader(url)
   }
 }
+
+/**
+ * The basic document loader, which will only resolve to the built-in context map.
+ */
+export const basic = extend(fallback)

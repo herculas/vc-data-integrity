@@ -8,6 +8,16 @@ import type { CIDDocument } from "../src/types/data/cid.ts"
 import type { Credential } from "../src/types/data/credential.ts"
 import type { JsonLdDocument } from "../src/types/jsonld/base.ts"
 
+Deno.test("retrieve verification method", async () => {
+  const method = await retrieveVerificationMethod(
+    "did:key:z6MkrJVnaZkeFzdQyMZu1cgjg7k1pZZ6pvBQ7XJPt4swbTQ2#z6MkrJVnaZkeFzdQyMZu1cgjg7k1pZZ6pvBQ7XJPt4swbTQ2",
+    new Set(),
+    { documentLoader: testLoader },
+  )
+
+  console.log(method)
+})
+
 Deno.test("retrieve verification method: key 1 for authentication only", async () => {
   const methodWithRelationship = await retrieveVerificationMethod(
     "did:example:1145141919810#key-1",

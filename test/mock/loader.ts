@@ -3,11 +3,13 @@ import { extend } from "../../src/utils/loader.ts"
 
 import type { JsonLdDocument } from "../../src/types/jsonld/base.ts"
 
-import * as CID_FILE from "./cid.json" with { type: "json" }
+import * as CID_FILE_1 from "./cid1.json" with { type: "json" }
+import * as CID_FILE_2 from "./cid2.json" with { type: "json" }
 
 export const testLoader = extend((url: string) => {
   const document = new Map<string, JsonLdDocument>([
-    ["did:example:1145141919810", CID_FILE.default],
+    ["did:example:1145141919810", CID_FILE_1.default],
+    ["did:key:z6MkrJVnaZkeFzdQyMZu1cgjg7k1pZZ6pvBQ7XJPt4swbTQ2", CID_FILE_2.default],
   ])
 
   if (document.has(url)) {

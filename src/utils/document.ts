@@ -90,6 +90,9 @@ export async function retrieveVerificationMethod(
     },
   )
 
+  console.log("controllerDocument.id", controllerDocument.id)
+  console.log("controllerDocumentUrl", controllerDocumentUrl)
+
   if (controllerDocument.id !== controllerDocumentUrl) {
     throw new ProcessingError(
       ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID,

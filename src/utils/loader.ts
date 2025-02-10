@@ -71,4 +71,4 @@ export function extend(loader: Loader): Loader {
 /**
  * The basic document loader, which will only resolve to the built-in context map.
  */
-export const basic = extend(fallback)
+export const basic: Loader = extend(fallback)

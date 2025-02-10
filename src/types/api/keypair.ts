@@ -1,5 +1,3 @@
-import type { Relationship } from "./document.ts"
-
 /**
  * The keypair type.
  */
@@ -18,22 +16,12 @@ export interface Export {
    * The type of key to export, either "public" or "private".
    */
   flag?: Flag
-
-  /**
-   * The verification relationship designated by the keypair.
-   */
-  relationship?: Set<Relationship>
 }
 
 /**
  * The options for importing a keypair.
  */
 export interface Import {
-  /**
-   * The fragment identifier to identify the keypair within the verification method list.
-   */
-  fragmentIdentifier?: string
-
   /**
    * Whether to check the context of the keypair during import.
    */

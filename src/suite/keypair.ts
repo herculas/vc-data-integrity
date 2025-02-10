@@ -1,8 +1,8 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
-import type { CIDDocument } from "../types/data/cid.ts"
 import type { Type } from "../types/jsonld/literals.ts"
 import type { URI } from "../types/jsonld/literals.ts"
+import type { VerificationMethod } from "../types/data/method.ts"
 
 import type * as KeypairOptions from "../types/api/keypair.ts"
 
@@ -115,10 +115,9 @@ export class Keypair {
    *
    * @param {KeypairOptions.Export} [_options] Options for keypair export.
    *
-   * @returns {Promise<CIDDocument>} Resolve to a controlled identifier document containing the verification method,
-   * which contains this keypair and other metadata.
+   * @returns {Promise<VerificationMethod>} Resolve to a verification method containing this keypair and other metadata.
    */
-  export(_options?: KeypairOptions.Export): Promise<CIDDocument> {
+  export(_options?: KeypairOptions.Export): Promise<VerificationMethod> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.export",
@@ -130,12 +129,12 @@ export class Keypair {
    * Import a keypair from a controlled identifier document which contains a verification method that represents a
    * keypair of specific type.
    *
-   * @param {CIDDocument} _document An externally fetched controlled identifier document.
+   * @param {VerificationMethod} _document An externally fetched verification method containing a serialized keypair.
    * @param {KeypairOptions.Import} [_options] Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: CIDDocument, _options?: KeypairOptions.Import): Promise<Keypair> {
+  static import(_document: VerificationMethod, _options?: KeypairOptions.Import): Promise<Keypair> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair::import",

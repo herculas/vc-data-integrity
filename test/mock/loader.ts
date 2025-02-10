@@ -13,10 +13,9 @@ export const testLoader = extend((url: string) => {
   ])
 
   if (document.has(url)) {
-    const context = document.get(url)!
     return Promise.resolve({
-      document: context,
       documentUrl: url,
+      document: document.get(url)!,
     })
   }
 

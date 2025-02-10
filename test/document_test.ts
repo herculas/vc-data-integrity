@@ -14,8 +14,7 @@ Deno.test("retrieve verification method", async () => {
     new Set(),
     { documentLoader: testLoader },
   )
-
-  console.log(method)
+  assertExists(method)
 })
 
 Deno.test("retrieve verification method: key 1 for authentication only", async () => {

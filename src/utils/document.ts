@@ -1,3 +1,4 @@
+import { CID_V1 } from "../context/url.ts"
 import { compact } from "./rdfc.ts"
 import { deepEqual, hasProperty } from "./instance.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
@@ -150,6 +151,65 @@ export async function retrieveVerificationMethod(
   }
 
   return verificationMethod
+}
+
+/**
+ * Encapsulate a verification method into a controlled identifier document.
+ *
+ * @param {VerificationMethod} method The verification method to be encapsulated.
+ * @param {CIDDocument} [document] The controlled identifier document to encapsulate the verification method into.
+ * @param {DocumentOptions.Relationship} [relationships] A set of verification relationships.
+ *
+ * @returns {CIDDocument} A controlled identifier document with the encapsulated verification method.
+ */
+export function encapsulateVerificationMethod(
+  method: VerificationMethod,
+  document?: CIDDocument,
+  relationships?: Set<DocumentOptions.Relationship>,
+): CIDDocument {
+  // set the default controlled identifier document
+  if (!document) {
+    document = {
+      "@context": CID_V1,
+      id: method.controller,
+    }
+  } else {
+    // check if the controlled identifier document is valid
+    if (document.id !== method.controller) {
+      throw new ProcessingError(
+        ProcessingErrorCode.INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID,
+        "jsonld#encapsulate",
+        "Invalid controlled identifier document identifier.",
+      )
+    }
+  }
+
+  if (!document.verificationMethod) {
+    // initialize the verification method array if it does not exist
+    document.verificationMethod = []
+  } else {
+    // check if the new verification method shares the same identifier with some existing verification methods
+    if (document.verificationMethod.some((item) => item.id === method.id)) {
+      throw new ProcessingError(
+        ProcessingErrorCode.INVALID_VERIFICATION_METHOD_URL,
+        "jsonld#encapsulate",
+        "The identifier of the verification method has already existed.",
+      )
+    }
+  }
+
+  // encapsulate the verification method into the controlled identifier document
+  document.verificationMethod.push(method)
+
+  // set the verification relationships
+  if (relationships) {
+    for (const relationship of relationships) {
+      if (!document[relationship]) document[relationship] = []
+      document[relationship].push(method.id)
+    }
+  }
+
+  return document
 }
 
 /**

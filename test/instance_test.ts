@@ -2,7 +2,7 @@ import { assert, assertFalse } from "@std/assert"
 
 import { deepEqual, hasProperty } from "../src/utils/instance.ts"
 
-Deno.test("check object has property: basic", () => {
+Deno.test("Check object has property: basic", () => {
   const doc = { agent: 1, bravo: [{ charlie: 2 }, { delta: 3 }] }
 
   assert(hasProperty(doc, "agent"))
@@ -14,7 +14,7 @@ Deno.test("check object has property: basic", () => {
   assertFalse(hasProperty(doc, "foxtrot"))
 })
 
-Deno.test("check object has property: complicated objects", () => {
+Deno.test("Check object has property: complicated objects", () => {
   const doc = {
     "@context": "https://www.w3.org/ns/cid/v1",
     "id": "did:example:1145141919810",
@@ -48,24 +48,24 @@ Deno.test("check object has property: complicated objects", () => {
   assertFalse(hasProperty(doc, "hotel"))
 })
 
-Deno.test("check object has property: corner cases", () => {
+Deno.test("Check object has property: corner cases", () => {
   assertFalse(hasProperty(undefined, "agent"))
   assertFalse(hasProperty(null, "agent"))
 })
 
-Deno.test("deep equality check: basic", () => {
+Deno.test("Deep equality check: basic", () => {
   const doc1 = { a: 1, b: [{ c: 2 }, { d: 3 }] }
   const doc2 = { a: 1, b: [{ d: 3 }, { c: 2 }] }
   assert(deepEqual(doc1, doc2))
 })
 
-Deno.test("deep equality check: nested objects", () => {
+Deno.test("Deep equality check: nested objects", () => {
   const doc1 = { a: 1, b: [{ c: 2, e: [{ f: 4 }, { g: 5 }] }, { d: 3 }], h: { d: 3 } }
   const doc2 = { a: 1, b: [{ d: 3 }, { c: 2, e: [{ f: 4 }, { g: 5 }] }], h: { d: 3 } }
   assert(deepEqual(doc1, doc2))
 })
 
-Deno.test("deep equality check: more complicated nested objects", () => {
+Deno.test("Deep equality check: more complicated nested objects", () => {
   const doc1 = [{ a: 1, b: [{ c: 2 }, { d: 3 }] }, {
     e: 4,
     f: [{ g: 112 }, { h: [{ i: [{ k: 1 }, { l: 2 }] }, { j: { m: [{ n: 1 }, { o: 2 }] } }] }],
@@ -78,7 +78,7 @@ Deno.test("deep equality check: more complicated nested objects", () => {
   assert(deepEqual(doc1, doc2))
 })
 
-Deno.test("deep equality check: corner cases", () => {
+Deno.test("Deep equality check: corner cases", () => {
   assert(deepEqual(undefined, null))
   assert(deepEqual(null, undefined))
   assert(deepEqual(undefined, undefined))

@@ -1,14 +1,15 @@
 import { assert, assertExists } from "@std/assert"
 
-import { resolveFragment, retrieveVerificationMethod } from "../src/utils/document.ts"
+import { encapsulateVerificationMethod, resolveFragment, retrieveVerificationMethod } from "../src/utils/document.ts"
 import { testLoader } from "./mock/loader.ts"
 import { validateContext } from "../src/utils/document.ts"
 
 import type { CIDDocument } from "../src/types/data/cid.ts"
 import type { Credential } from "../src/types/data/credential.ts"
 import type { JsonLdDocument } from "../src/types/jsonld/base.ts"
+import type { VerificationMethod } from "../src/types/data/method.ts"
 
-Deno.test("retrieve verification method", async () => {
+Deno.test("Retrieve verification method", async () => {
   const method = await retrieveVerificationMethod(
     "did:key:z6MkrJVnaZkeFzdQyMZu1cgjg7k1pZZ6pvBQ7XJPt4swbTQ2#z6MkrJVnaZkeFzdQyMZu1cgjg7k1pZZ6pvBQ7XJPt4swbTQ2",
     new Set(),
@@ -17,7 +18,7 @@ Deno.test("retrieve verification method", async () => {
   assertExists(method)
 })
 
-Deno.test("retrieve verification method: key 1 for authentication only", async () => {
+Deno.test("Retrieve verification method: key 1 for authentication only", async () => {
   const methodWithRelationship = await retrieveVerificationMethod(
     "did:example:1145141919810#key-1",
     new Set(["authentication"]),
@@ -34,7 +35,7 @@ Deno.test("retrieve verification method: key 1 for authentication only", async (
   assertExists(methodWithoutRelationship)
 })
 
-Deno.test("retrieve verification method: key 2 for assertion, capability delegation and invocation", async () => {
+Deno.test("Retrieve verification method: key 2 for assertion, capability delegation and invocation", async () => {
   const methodWithRelationshipFull = await retrieveVerificationMethod(
     "did:example:1145141919810#key-2",
     new Set(["assertionMethod", "capabilityDelegation", "capabilityInvocation"]),
@@ -73,7 +74,7 @@ Deno.test("retrieve verification method: key 2 for assertion, capability delegat
   assertExists(methodWithoutRelationship)
 })
 
-Deno.test("retrieve verification method: key 3 for assertion only", async () => {
+Deno.test("Retrieve verification method: key 3 for assertion only", async () => {
   const methodWithRelationship = await retrieveVerificationMethod(
     "did:example:1145141919810#key-3",
     new Set(["assertionMethod"]),
@@ -90,7 +91,85 @@ Deno.test("retrieve verification method: key 3 for assertion only", async () => 
   assertExists(methodWithoutRelationship)
 })
 
-Deno.test("resolve fragments", () => {
+Deno.test("Encapsulate verification method in controlled identifier document: blank document", () => {
+  const method: VerificationMethod = {
+    "id": "did:example:1145141919810#key-1",
+    "type": "Multikey",
+    "controller": "did:example:1145141919810",
+    "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv",
+  }
+  const document = encapsulateVerificationMethod(method, undefined)
+  assertExists(document)
+})
+
+Deno.test("Encapsulate verification method in controlled identifier document: existing document", () => {
+  const method: VerificationMethod = {
+    "id": "did:example:1145141919810#key-3",
+    "type": "Multikey",
+    "controller": "did:example:1145141919810",
+    "publicKeyMultibase":
+      "zUC7EK3ZakmukHhuncwkbySmomv3FmrkmS36E4Ks5rsb6VQSRpoCrx6Hb8e2Nk6UvJFSdyw9NK1scFXJp21gNNYFjVWNgaqyGnkyhtagagCpQb5B7tagJu3HDbjQ8h5ypoHjwBb",
+  }
+  const document: CIDDocument = {
+    "@context": "https://www.w3.org/ns/cid/v1",
+    "id": "did:example:1145141919810",
+    "verificationMethod": [{
+      "id": "did:example:1145141919810#key-1",
+      "type": "Multikey",
+      "controller": "did:example:1145141919810",
+      "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv",
+    }, {
+      "id": "did:example:1145141919810#key-2",
+      "type": "Multikey",
+      "controller": "did:example:1145141919810",
+      "publicKeyMultibase": "z6Mkf5rGMoatrSj1f4CyvuHBeXJELe9RPdzo2PKGNCKVtZxP",
+    }],
+  }
+
+  const newDocument = encapsulateVerificationMethod(method, document)
+  assertExists(newDocument)
+})
+
+Deno.test("Encapsulate verification method in controlled identifier document: adding relationships", () => {
+  const method: VerificationMethod = {
+    "id": "did:example:1145141919810#key-2",
+    "type": "Multikey",
+    "controller": "did:example:1145141919810",
+    "publicKeyMultibase": "z6Mkf5rGMoatrSj1f4CyvuHBeXJELe9RPdzo2PKGNCKVtZxP",
+  }
+
+  const document: CIDDocument = {
+    "@context": "https://www.w3.org/ns/cid/v1",
+    "id": "did:example:1145141919810",
+    "verificationMethod": [{
+      "id": "did:example:1145141919810#key-1",
+      "type": "Multikey",
+      "controller": "did:example:1145141919810",
+      "publicKeyMultibase": "zDnaerx9CtbPJ1q36T5Ln5wYt3MQYeGRG5ehnPAmxcf5mDZpv",
+    }, {
+      "id": "did:example:1145141919810#key-3",
+      "type": "Multikey",
+      "controller": "did:example:1145141919810",
+      "publicKeyMultibase":
+        "zUC7EK3ZakmukHhuncwkbySmomv3FmrkmS36E4Ks5rsb6VQSRpoCrx6Hb8e2Nk6UvJFSdyw9NK1scFXJp21gNNYFjVWNgaqyGnkyhtagagCpQb5B7tagJu3HDbjQ8h5ypoHjwBb",
+    }],
+    "authentication": [
+      "did:example:1145141919810#key-1",
+    ],
+    "assertionMethod": [
+      "did:example:1145141919810#key-3",
+    ],
+  }
+
+  const newDocument = encapsulateVerificationMethod(
+    method,
+    document,
+    new Set(["assertionMethod", "capabilityDelegation", "capabilityInvocation"]),
+  )
+  assertExists(newDocument)
+})
+
+Deno.test("Resolve fragments", () => {
   const doc: CIDDocument = {
     "@context": "https://www.w3.org/ns/cid/v1",
     "id": "did:example:1145141919810",
@@ -132,7 +211,7 @@ Deno.test("resolve fragments", () => {
   assert(!resolved4)
 })
 
-Deno.test("validate contexts: simple context string array", async () => {
+Deno.test("Validate contexts: simple context string array", async () => {
   const cred: Credential = {
     "@context": [
       "https://www.w3.org/ns/credentials/v2",
@@ -167,7 +246,7 @@ Deno.test("validate contexts: simple context string array", async () => {
   assert(!res4.validated)
 })
 
-Deno.test("validate contexts: complicated nested objects", async () => {
+Deno.test("Validate contexts: complicated nested objects", async () => {
   const doc: JsonLdDocument = {
     "@context": [
       {

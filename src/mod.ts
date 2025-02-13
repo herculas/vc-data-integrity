@@ -18,7 +18,7 @@ export * as instance from "./utils/instance.ts"
 export * as jcs from "./utils/jcs.ts"
 export * as loader from "./utils/loader.ts"
 export * as rdfc from "./utils/rdfc.ts"
-export { base58btc, base64Url } from "./utils/encode.ts"
+export { base58btc, base64url } from "./utils/encode.ts"
 
 // Options
 export type * as DocumentOptions from "./types/api/document.ts"

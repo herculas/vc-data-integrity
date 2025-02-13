@@ -44,7 +44,7 @@ export const base58btc = {
 /**
  * Encode and decode functions for various encoding formats.
  */
-export const base64Url = {
+export const base64url = {
   encode: encodeBase64Url,
   decode: decodeBase64Url,
 }

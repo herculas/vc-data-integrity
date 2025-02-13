@@ -4,6 +4,7 @@ export * as VC_BASE_URL from "./context/url.ts"
 // Cryptographic suites
 export { Cryptosuite } from "./suite/cryptosuite.ts"
 export { Keypair } from "./suite/keypair.ts"
+export * as algorithm from "./suite/algorithms.ts"
 
 // Error handling
 export { BasicError, BasicErrorCode } from "./error/basic.ts"
@@ -17,6 +18,7 @@ export * as instance from "./utils/instance.ts"
 export * as jcs from "./utils/jcs.ts"
 export * as loader from "./utils/loader.ts"
 export * as rdfc from "./utils/rdfc.ts"
+export { base58btc, base64Url } from "./utils/encode.ts"
 
 // Options
 export type * as DocumentOptions from "./types/api/document.ts"

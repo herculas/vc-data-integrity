@@ -1,5 +1,4 @@
 import type { JsonLdDocument, OneOrMany } from "../jsonld/base.ts"
-import type { ProcessingError } from "../../error/process.ts"
 
 /**
  * The result of a cryptographic verification.
@@ -19,12 +18,28 @@ export type Verification = {
   /**
    * Warnings that occurred during the verification process.
    */
-  warnings?: OneOrMany<ProcessingError>
+  warnings?: OneOrMany<Error>
 
   /**
    * Errors that occurred during the verification process.
    */
-  errors?: OneOrMany<ProcessingError>
+  errors?: OneOrMany<Error>
+}
+
+/**
+ * The result of a verifying multiple cryptographic proofs.
+ */
+export type VerificationCombined = {
+  /**
+   * A boolean that is `true` if the verification succeeded, or `false` otherwise.
+   */
+  status: boolean
+
+  /**
+   * A map that represents the secured data document with the verified proofs removed if `status` is `true`, or `null`
+   * otherwise.
+   */
+  document?: JsonLdDocument
 }
 
 /**
@@ -44,10 +59,10 @@ export type Validation = {
   /**
    * Warnings that occurred during the validation process.
    */
-  warnings?: OneOrMany<ProcessingError>
+  warnings?: OneOrMany<Error>
 
   /**
    * Errors that occurred during the validation process.
    */
-  errors?: OneOrMany<ProcessingError>
+  errors?: OneOrMany<Error>
 }

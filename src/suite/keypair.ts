@@ -14,7 +14,7 @@ export class Keypair {
   /**
    * The type of the cryptographic suite used by this keypair instance, which should be specified by the sub-classes.
    */
-  static readonly type: Type
+  readonly type: Type
 
   /**
    * The identifier of this keypair. The identifier of a keypair should use the controller DID as the base, and append
@@ -52,12 +52,14 @@ export class Keypair {
   /**
    * Initialize a keypair instance.
    *
+   * @param {Type} type The type of the cryptographic suite used by this keypair instance.
    * @param {string} [_id] The identifier of the keypair.
    * @param {string} [_controller] The controller of the keypair.
    * @param {Date} [_expires] The time when the key expires. If not present, the key is considered active.
    * @param {Date} [_revoked] The time when the key was revoked. If not present, the key is considered active.
    */
-  constructor(_id?: URI, _controller?: URI, _expires?: Date, _revoked?: Date) {
+  constructor(type: Type, _id?: URI, _controller?: URI, _expires?: Date, _revoked?: Date) {
+    this.type = type
     this.id = _id
     this.controller = _controller
     this.expires = _expires

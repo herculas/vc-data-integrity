@@ -52,14 +52,14 @@ export class Keypair {
   /**
    * Initialize a keypair instance.
    *
-   * @param {Type} type The type of the cryptographic suite used by this keypair instance.
+   * @param {Type} _type The type of the cryptographic suite used by this keypair instance.
    * @param {string} [_id] The identifier of the keypair.
    * @param {string} [_controller] The controller of the keypair.
    * @param {Date} [_expires] The time when the key expires. If not present, the key is considered active.
    * @param {Date} [_revoked] The time when the key was revoked. If not present, the key is considered active.
    */
-  constructor(type: Type, _id?: URI, _controller?: URI, _expires?: Date, _revoked?: Date) {
-    this.type = type
+  constructor(_type: Type, _id?: URI, _controller?: URI, _expires?: Date, _revoked?: Date) {
+    this.type = _type
     this.id = _id
     this.controller = _controller
     this.expires = _expires

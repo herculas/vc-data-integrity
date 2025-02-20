@@ -149,7 +149,7 @@ export interface VerificationMethodMultibase extends VerificationMethod {
    * multibase header `z`.
    *
    * @see https://www.w3.org/TR/did-core/#dfn-publickeymultibase
-   * @see https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03
+   * @see https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-08
    * @see https://www.w3.org/TR/controller-document/#Multikey
    */
   publicKeyMultibase?: string

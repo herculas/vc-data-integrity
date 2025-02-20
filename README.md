@@ -1,6 +1,8 @@
 # Verifiable Credential Data Integrity
 
 [![Release](https://github.com/herculas/vc-data-integrity/actions/workflows/release.yml/badge.svg)](https://github.com/herculas/vc-data-integrity/actions/workflows/release.yml)
+[![JSR](https://jsr.io/badges/@herculas/vc-data-integrity)](https://jsr.io/@herculas/vc-data-integrity)
+[![JSR Score](https://jsr.io/badges/@herculas/vc-data-integrity/score)](https://jsr.io/@herculas/vc-data-integrity)
 
 The syntax of verifiable credential data integrity proofs and associated entities. The interface is compatible with the
 W3C specification of [JSON-LD](https://www.w3.org/TR/json-ld11/),

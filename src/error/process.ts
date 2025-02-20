@@ -37,7 +37,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/vc-data-integrity/#processing-errors
    * @see https://w3id.org/security#PROOF_GENERATION_ERROR
    */
-  PROOF_GENERATION_ERROR = -16,
+  PROOF_GENERATION_ERROR,
 
   /**
    * An error was encountered during proof verification.
@@ -45,7 +45,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/vc-data-integrity/#processing-errors
    * @see https://w3id.org/security#PROOF_VERIFICATION_ERROR
    */
-  PROOF_VERIFICATION_ERROR = -17,
+  PROOF_VERIFICATION_ERROR,
 
   /**
    * An error was encountered during the transformation process.
@@ -53,7 +53,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/vc-data-integrity/#processing-errors
    * @see https://w3id.org/security#PROOF_TRANSFORMATION_ERROR
    */
-  PROOF_TRANSFORMATION_ERROR = -18,
+  PROOF_TRANSFORMATION_ERROR,
 
   /**
    * The `domain` value in a proof did not match the expected value.
@@ -61,7 +61,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/vc-data-integrity/#processing-errors
    * @see https://w3id.org/security#INVALID_DOMAIN_ERROR
    */
-  INVALID_DOMAIN_ERROR = -19,
+  INVALID_DOMAIN_ERROR,
 
   /**
    * The `challenge` value in a proof did not match the expected value.
@@ -69,7 +69,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/vc-data-integrity/#processing-errors
    * @see https://w3id.org/security#INVALID_CHALLENGE_ERROR
    */
-  INVALID_CHALLENGE_ERROR = -20,
+  INVALID_CHALLENGE_ERROR,
 
   /**
    * The verification method value in a data integrity proof was malformed.
@@ -77,7 +77,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/cid-1.0/#processing-errors
    * @see https://w3id.org/security#INVALID_VERIFICATION_METHOD_URL
    */
-  INVALID_VERIFICATION_METHOD_URL = -21,
+  INVALID_VERIFICATION_METHOD_URL,
 
   /**
    * The `id` value in a controlled identifier document was malformed.
@@ -85,7 +85,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/cid-1.0/#processing-errors
    * @see https://w3id.org/security#INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID
    */
-  INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID = -22,
+  INVALID_CONTROLLED_IDENTIFIER_DOCUMENT_ID,
 
   /**
    * The controlled identifier document was malformed.
@@ -93,7 +93,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/cid-1.0/#processing-errors
    * @see https://w3id.org/security#INVALID_CONTROLLED_IDENTIFIER_DOCUMENT
    */
-  INVALID_CONTROLLED_IDENTIFIER_DOCUMENT = -23,
+  INVALID_CONTROLLED_IDENTIFIER_DOCUMENT,
 
   /**
    * The verification method in a controlled identifier document was malformed.
@@ -101,7 +101,7 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/cid-1.0/#processing-errors
    * @see https://w3id.org/security#INVALID_VERIFICATION_METHOD
    */
-  INVALID_VERIFICATION_METHOD = -24,
+  INVALID_VERIFICATION_METHOD,
 
   /**
    * The verification method in a controlled identifier document was not associated using the expected verification
@@ -110,5 +110,5 @@ export enum ProcessingErrorCode {
    * @see https://www.w3.org/TR/cid-1.0/#processing-errors
    * @see https://w3id.org/security#INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD
    */
-  INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD = -25,
+  INVALID_RELATIONSHIP_FOR_VERIFICATION_METHOD,
 }

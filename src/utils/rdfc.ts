@@ -2,7 +2,7 @@ import * as jsonld from "jsonld"
 
 import type { Context } from "../types/jsonld/keywords.ts"
 import type { Frame, JsonLdDocument } from "../types/jsonld/base.ts"
-import type { JsonLdObject } from "../mod.ts"
+import type { JsonLdObject } from "../types/jsonld/base.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 

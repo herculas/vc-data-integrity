@@ -19,15 +19,15 @@ export enum BasicErrorCode {
   /**
    * An error was encountered during network connection.
    */
-  NETWORK_CONNECTION_ERROR = 0,
+  NETWORK_CONNECTION_ERROR,
 
   /**
    * A method has not been implemented by a subclass.
    */
-  METHOD_NOT_IMPLEMENTED_ERROR = 1,
+  METHOD_NOT_IMPLEMENTED_ERROR,
 
   /**
    * The document associated with the given URL was not found.
    */
-  DOCUMENT_NOT_FOUND_ERROR = 2,
+  DOCUMENT_NOT_FOUND_ERROR,
 }

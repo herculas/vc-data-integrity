@@ -1,5 +1,4 @@
-import { ImplementationError } from "../mod.ts"
-import { ImplementationErrorCode } from "../error/implement.ts"
+import { ImplementationError, ImplementationErrorCode } from "../error/implement.ts"
 
 import type { JsonLdDocument } from "../types/jsonld/base.ts"
 

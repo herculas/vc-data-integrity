@@ -12,13 +12,14 @@ export { ImplementationError, ImplementationErrorCode } from "./error/implement.
 export { ProcessingError, ProcessingErrorCode } from "./error/process.ts"
 
 // Utilities
+export * as disclose from "./utils/disclose.ts"
 export * as document from "./utils/document.ts"
 export * as format from "./utils/format.ts"
 export * as instance from "./utils/instance.ts"
 export * as jcs from "./utils/jcs.ts"
 export * as loader from "./utils/loader.ts"
 export * as rdfc from "./utils/rdfc.ts"
-export { base58btc, base64url } from "./utils/encode.ts"
+export { base58btc, base64url, base64urlnopad } from "./utils/multibase.ts"
 
 // Options
 export type * as DocumentOptions from "./types/api/document.ts"

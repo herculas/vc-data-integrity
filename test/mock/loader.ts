@@ -3,8 +3,8 @@ import { extend } from "../../src/utils/loader.ts"
 
 import type { JsonLdDocument } from "../../src/types/jsonld/base.ts"
 
-import * as CID_FILE_1 from "./cid1.json" with { type: "json" }
-import * as CID_FILE_2 from "./cid2.json" with { type: "json" }
+import * as CID_FILE_1 from "./cid-1.json" with { type: "json" }
+import * as CID_FILE_2 from "./cid-2.json" with { type: "json" }
 
 export const testLoader = extend((url: string) => {
   const document = new Map<string, JsonLdDocument>([

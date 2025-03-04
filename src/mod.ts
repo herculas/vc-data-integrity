@@ -30,7 +30,7 @@ export type * as KeypairOptions from "./types/api/keypair.ts"
 export type * as Result from "./types/api/result.ts"
 
 // Interfaces
-export type { Loader, RemoteDocument } from "./types/api/loader.ts"
+export type { LoadDocumentCallback, RemoteDocument } from "./types/api/loader.ts"
 
 // Data type definitions
 export type { CIDDocument, Service } from "./types/data/cid.ts"
@@ -45,5 +45,5 @@ export type {
 } from "./types/data/method.ts"
 
 // JSON-LD type definitions
-export type { Frame, JsonLdDocument, JsonLdObject, OneOrMany } from "./types/jsonld/base.ts"
-export type { DateTime, DID, DIDURL, Type, URI } from "./types/jsonld/literals.ts"
+export type { JsonLdDocument, JsonLdObject, OneOrMany } from "./types/jsonld/document.ts"
+export type { DateTime, DID, DIDURL, IRI, IRIReference, URI, URIReference } from "./types/jsonld/base.ts"

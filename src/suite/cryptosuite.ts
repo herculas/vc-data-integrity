@@ -1,8 +1,7 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
-import type { JsonLdDocument } from "../types/jsonld/base.ts"
+import type { JsonLdDocument } from "../types/jsonld/document.ts"
 import type { Proof } from "../types/data/proof.ts"
-import type { Type } from "../types/jsonld/literals.ts"
 
 import type * as Result from "../types/api/result.ts"
 
@@ -28,7 +27,7 @@ export class Cryptosuite {
    * carries the identifier for the cryptosuite; and any cryptosuite-specific cryptographic data is encapsulated (i.e.,
    * not directly exposed as application layer data) within `proofValue`.
    */
-  static readonly type: Type = "DataIntegrityProof"
+  static readonly type: string = "DataIntegrityProof"
 
   /**
    * The `cryptosuite` property MUST be a string that identifies the cryptographic suite. If the processing environment

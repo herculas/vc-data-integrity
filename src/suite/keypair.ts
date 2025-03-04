@@ -1,7 +1,6 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
-import type { Type } from "../types/jsonld/literals.ts"
-import type { URI } from "../types/jsonld/literals.ts"
+import type { IRI, IRIReference } from "../types/jsonld/base.ts"
 import type { VerificationMethod } from "../types/data/method.ts"
 
 import type * as KeypairOptions from "../types/api/keypair.ts"
@@ -14,7 +13,7 @@ export class Keypair {
   /**
    * The type of the cryptographic suite used by this keypair instance, which should be specified by the sub-classes.
    */
-  static readonly type: Type
+  static readonly type: string
 
   /**
    * The identifier of this keypair. The identifier of a keypair should use the controller DID as the base, and append
@@ -24,14 +23,14 @@ export class Keypair {
    *
    * The value of this property MUST be a string that conforms to the URL syntax with a fragment identifier.
    */
-  id?: URI
+  id?: IRIReference
 
   /**
    * The controller of this keypair, which should be the URI that identifies the entity that controls this keypair.
    *
    * The value of this property MUST be a string that conforms to the URL syntax.
    */
-  controller?: URI
+  controller?: IRI
 
   /**
    * The date and time when the keypair is expired. If not specified, the keypair is considered active.
@@ -52,13 +51,12 @@ export class Keypair {
   /**
    * Initialize a keypair instance.
    *
-   * @param {Type} type The type of the cryptographic suite used by this keypair instance.
-   * @param {string} [_id] The identifier of the keypair.
-   * @param {string} [_controller] The controller of the keypair.
+   * @param {IRIReference} [_id] The identifier of the keypair.
+   * @param {IRI} [_controller] The controller of the keypair.
    * @param {Date} [_expires] The time when the key expires. If not present, the key is considered active.
    * @param {Date} [_revoked] The time when the key was revoked. If not present, the key is considered active.
    */
-  constructor(_id?: URI, _controller?: URI, _expires?: Date, _revoked?: Date) {
+  constructor(_id?: IRIReference, _controller?: IRI, _expires?: Date, _revoked?: Date) {
     this.id = _id
     this.controller = _controller
     this.expires = _expires

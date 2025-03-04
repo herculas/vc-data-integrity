@@ -1,4 +1,4 @@
-import { JsonLdDocument, JsonLdObject } from "../types/jsonld/base.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
 
 /**
  * Canonicalize an array of N-Quad strings and replace any blank node identifiers in the canonicalized result using

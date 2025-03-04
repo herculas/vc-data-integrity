@@ -1,5 +1,5 @@
-import type { JsonLdObject, OneOrMany } from "../jsonld/base.ts"
-import type { Type, URI } from "../jsonld/literals.ts"
+import type { IRI } from "../jsonld/base.ts"
+import type { JsonLdObject, OneOrMany } from "../jsonld/document.ts"
 import type { VerificationMethod, VerificationRelationship } from "./method.ts"
 
 /**
@@ -26,7 +26,7 @@ export interface CIDDocument extends JsonLdObject {
    * @example "did:example:123456789abcdefghijk"
    * @example "https://controller.example"
    */
-  id: URI
+  id: IRI
 
   /**
    * A subject can have multiple identifiers that are used for different purposes or at different times. The assertion
@@ -43,7 +43,7 @@ export interface CIDDocument extends JsonLdObject {
    *    "https://yetAnotherIdentifier.example/987"
    * ]
    */
-  alsoKnownAs?: Array<URI>
+  alsoKnownAs?: Array<IRI>
 
   /**
    * An entity that is authorized to make changes to this document. Whoever can update the content of the resource
@@ -58,7 +58,7 @@ export interface CIDDocument extends JsonLdObject {
    * @example "did:example:bcehfew7h32f32h7af3"
    * @example "https://controllerB.example/abc"
    */
-  controller?: OneOrMany<URI>
+  controller?: OneOrMany<IRI>
 
   /**
    * A DID document can express verification methods, such as cryptographic public keys, which can be used to
@@ -247,30 +247,30 @@ export interface Service extends JsonLdObject {
   /**
    * The identifier of the service.
    *
-   * The value of this property MUST be a URI conforming to
-   * {@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}. A conforming producer MUST NOT produce multiple
+   * The value of this property MUST be a URI conforming to [RFC-3986]. A conforming producer MUST NOT produce multiple
    * service entries with the same `id`. A conforming consumer MUST produce an error if it detects multiple service
    * entries with the same `id`.
+   *
+   * @see https://datatracker.ietf.org/doc/html/rfc3986
    */
-  id: URI
+  id: IRI
 
   /**
    * The type of service.
    *
    * The value of this property MUST be a string, or a set of strings.
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 
   /**
    * The service endpoint.
    *
    * The value of this property MUST be a string, a map, or a set composed of one or more strings and/or maps. All
-   * string values MUST be valid URIs conforming to {@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}
-   * and normalized according to the rules in Section 6 of
-   * {@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}, and to any normalization rules in its applicable
-   * URI scheme specification.
+   * string values MUST be valid URIs conforming to [RFC-3986] and normalized according to the rules in Section 6 of
+   * [RFC-3986], and to any normalization rules in its applicable URI scheme specification.
    *
    * @see https://www.w3.org/TR/did-core/#dfn-serviceendpoint
+   * @see https://datatracker.ietf.org/doc/html/rfc3986
    */
-  serviceEndpoint: OneOrMany<URI>
+  serviceEndpoint: OneOrMany<IRI>
 }

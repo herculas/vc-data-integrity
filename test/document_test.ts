@@ -6,7 +6,7 @@ import { validateContext } from "../src/utils/document.ts"
 
 import type { CIDDocument } from "../src/types/data/cid.ts"
 import type { Credential } from "../src/types/data/credential.ts"
-import type { JsonLdDocument } from "../src/types/jsonld/base.ts"
+import type { JsonLdDocument } from "../src/types/jsonld/document.ts"
 import type { VerificationMethod } from "../src/types/data/method.ts"
 
 Deno.test("Retrieve verification method", async () => {

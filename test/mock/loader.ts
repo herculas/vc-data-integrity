@@ -1,7 +1,7 @@
 import { ProcessingError, ProcessingErrorCode } from "../../src/error/process.ts"
 import { extend } from "../../src/utils/loader.ts"
 
-import type { JsonLdDocument } from "../../src/types/jsonld/base.ts"
+import type { JsonLdDocument } from "../../src/types/jsonld/document.ts"
 
 import * as CID_FILE_1 from "./cid-1.json" with { type: "json" }
 import * as CID_FILE_2 from "./cid-2.json" with { type: "json" }

@@ -1,6 +1,6 @@
 import * as jcs from "../src/utils/jcs.ts"
 
-import type { JsonLdDocument } from "../src/types/jsonld/base.ts"
+import type { JsonLdDocument } from "../src/types/jsonld/document.ts"
 
 Deno.test("JSON canonicalization: basic 1", () => {
   const expandedDocument: JsonLdDocument = [

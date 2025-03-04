@@ -1,5 +1,5 @@
-import type { DateTime, Type, URI } from "../jsonld/literals.ts"
-import type { JsonLdObject, OneOrMany } from "../jsonld/base.ts"
+import type { DateTime, IRI, IRIReference } from "../jsonld/base.ts"
+import type { JsonLdObject, OneOrMany } from "../jsonld/document.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and
@@ -16,7 +16,7 @@ export interface Proof extends JsonLdObject {
    *
    * @example "urn:uuid:6a1676b8-b51f-11ed-937b-d76685a20ff5"
    */
-  id?: URI
+  id?: IRI
 
   /**
    * The specific type of the proof. The type of the proof is used to determine what other fields are required to
@@ -27,7 +27,7 @@ export interface Proof extends JsonLdObject {
    * @example "DataIntegrityProof"
    * @example "Ed25519Signature2020"
    */
-  type: Type
+  type: string
 
   /**
    * The reason the proof was created. The proof purpose acts as a safeguard to prevent the proof from being misused by
@@ -69,7 +69,7 @@ export interface Proof extends JsonLdObject {
    *
    * @example "did:example:123#key-1"
    */
-  verificationMethod?: URI
+  verificationMethod?: IRIReference
 
   /**
    * An identifier for the cryptographic suite that can be used to verify the proof.

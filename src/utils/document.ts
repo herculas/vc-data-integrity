@@ -5,10 +5,10 @@ import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { severalToMany } from "./format.ts"
 
 import type { CIDDocument } from "../types/data/cid.ts"
-import type { Context } from "../types/jsonld/keywords.ts"
-import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/base.ts"
-import type { Loader } from "../types/api/loader.ts"
-import type { URI } from "../types/jsonld/literals.ts"
+import type { Context } from "../types/jsonld/keyword.ts"
+import type { IRIReference } from "../types/jsonld/base.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
+import type { LoadDocumentCallback } from "../types/api/loader.ts"
 import type { VerificationMethod } from "../types/data/method.ts"
 
 import type * as DocumentOptions from "../types/api/document.ts"
@@ -28,7 +28,7 @@ import type * as Result from "../types/api/result.ts"
  * algorithm, or any equivalent one that performs these checks, can lead to security compromises where an attacker
  * poisons a cache by claiming control of a victim's verification method.
  *
- * @param {URI} vmIdentifier The verification method identifier.
+ * @param {IRIReference} vmIdentifier The verification method identifier.
  * @param {DocumentOptions.Relationship} relationships A set of verification relationships.
  * @param {DocumentOptions.Retrieve} options The dereferencing options.
  *
@@ -37,7 +37,7 @@ import type * as Result from "../types/api/result.ts"
  * @see https://www.w3.org/TR/cid/#retrieve-verification-method
  */
 export async function retrieveVerificationMethod(
-  vmIdentifier: URI,
+  vmIdentifier: IRIReference,
   relationships: Set<DocumentOptions.Relationship>,
   options: DocumentOptions.Retrieve,
 ): Promise<VerificationMethod> {
@@ -244,11 +244,11 @@ export function resolveFragment(document: CIDDocument, fragmentIdentifier: strin
    * `id` value that matches the given set of identifiers.
    *
    * @param {JsonLdDocument} map The document to search.
-   * @param {Set<URI>} identifiers The set of identifiers to match.
+   * @param {Set<IRIReference>} identifiers The set of identifiers to match.
    *
    * @returns {JsonLdDocument | undefined} A conforming document fragment, if any.
    */
-  const recursiveFindFragment = (map: JsonLdDocument, identifiers: Set<URI>): JsonLdDocument | undefined => {
+  const recursiveFindFragment = (map: JsonLdDocument, identifiers: Set<IRIReference>): JsonLdDocument | undefined => {
     if (Array.isArray(map)) {
       // map is an array, process the items in the array
       for (const item of map) {
@@ -285,7 +285,7 @@ export function resolveFragment(document: CIDDocument, fragmentIdentifier: strin
  * @param {JsonLdDocument} inputDocument The input document to validate.
  * @param {Context} knownContext The set of known contexts that the application understands.
  * @param {boolean} [recompact] A flag to indicate if the input document should be re-compacted.
- * @param {Loader} documentLoader The document loader to use for dereferencing URIs.
+ * @param {LoadDocumentCallback} documentLoader The document loader to use for dereferencing URIs.
  *
  * @returns {Promise<Result.Validation>} Resolve to a validation result.
  *
@@ -296,7 +296,7 @@ export async function validateContext(
   inputDocument: JsonLdObject,
   knownContext: Context,
   recompact: boolean = false,
-  documentLoader: Loader,
+  documentLoader: LoadDocumentCallback,
 ): Promise<Result.Validation> {
   // Procedure:
   //

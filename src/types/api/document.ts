@@ -1,4 +1,4 @@
-import type { Loader } from "./loader.ts"
+import type { LoadDocumentCallback } from "./loader.ts"
 
 /**
  * The verification relationships that can be used to verify a document.
@@ -17,5 +17,5 @@ export interface Retrieve {
   /**
    * The document loader to use when fetching remote documents.
    */
-  documentLoader: Loader
+  documentLoader: LoadDocumentCallback
 }

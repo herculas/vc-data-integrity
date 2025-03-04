@@ -1,8 +1,8 @@
 import * as jsonld from "jsonld"
 
-import type { Context } from "../types/jsonld/keywords.ts"
-import type { Frame, JsonLdDocument } from "../types/jsonld/base.ts"
-import type { JsonLdObject } from "../types/jsonld/base.ts"
+import type { Context } from "../types/jsonld/keyword.ts"
+import type { IRI } from "../types/jsonld/base.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
@@ -106,7 +106,7 @@ export async function flatten(
  */
 export async function frame(
   input: JsonLdDocument,
-  frame: Frame,
+  frame: JsonLdObject | IRI,
   options?: JsonLdOptions.Frame,
 ): Promise<JsonLdObject> {
   return await jsonld.default.frame(input, frame, options)

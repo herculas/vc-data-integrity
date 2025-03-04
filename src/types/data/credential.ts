@@ -1,7 +1,6 @@
-import type { DateTime, Type, URI } from "../jsonld/literals.ts"
-import type { JsonLdObject } from "../jsonld/base.ts"
-import type { LanguageObject } from "../jsonld/objects.ts"
-import type { OneOrMany } from "../jsonld/base.ts"
+import type { DateTime, IRI } from "../jsonld/base.ts"
+import type { JsonLdObject, OneOrMany } from "../jsonld/document.ts"
+import type { LanguageObject } from "../jsonld/object.ts"
 import type { Proof } from "./proof.ts"
 
 /**
@@ -39,7 +38,7 @@ export interface Credential extends JsonLdObject {
    * @example "https://id.example/things#123"
    * @example "did:example:1234abcd"
    */
-  id?: URI
+  id?: IRI
 
   /**
    * The `type` property is used to determine whether or not a provided verifiable credential or verifiable presentation
@@ -53,7 +52,7 @@ export interface Credential extends JsonLdObject {
    * @example ["VerifiableCredential", "ExampleDegreeCredential"]
    * @example "VerifiablePresentation"
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 
   /**
    * The name of the credential. Ideally, the `name` of a credential is concise, human-readable, and could enable an
@@ -118,7 +117,7 @@ export interface Credential extends JsonLdObject {
    * }
    * ```
    */
-  issuer: URI | Identified
+  issuer: IRI | Identified
 
   /**
    * Claims about one or more subjects.
@@ -373,7 +372,7 @@ interface Identified extends JsonLdObject {
    * the URL in the `id` be one which, if dereferenceable, results in a document containing machine-readable information
    * about the `id`.
    */
-  id: URI
+  id: IRI
 }
 
 /**
@@ -387,7 +386,7 @@ interface MaybeIdentified extends JsonLdObject {
    * RECOMMENDED that the URL in the `id` be one which, if dereferenceable, results in a document containing machine-
    * readable information about the `id`.
    */
-  id?: URI
+  id?: IRI
 }
 
 /**
@@ -401,7 +400,7 @@ interface Status extends MaybeIdentified {
    *
    * @example "BitstringStatusListEntry"
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 }
 
 /**
@@ -415,7 +414,7 @@ interface Schema extends Identified {
    *
    * @example "JsonSchema"
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 }
 
 /**
@@ -429,7 +428,7 @@ interface RefreshService extends JsonLdObject {
    *
    * @example "VerifiableCredentialRefreshService2021"
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 }
 
 /**
@@ -443,7 +442,7 @@ interface TermOfUse extends MaybeIdentified {
    *
    * @example "TrustFrameworkPolicy"
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 }
 
 /**
@@ -457,5 +456,5 @@ interface Evidence extends MaybeIdentified {
    *
    * @example ["Evidence"]
    */
-  type: OneOrMany<Type>
+  type: OneOrMany<string>
 }

@@ -1,4 +1,4 @@
-import type { JsonLdDocument, OneOrMany } from "../jsonld/base.ts"
+import type { JsonLdDocument, OneOrMany } from "../jsonld/document.ts"
 
 /**
  * The result of a cryptographic verification.

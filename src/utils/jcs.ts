@@ -1,6 +1,6 @@
 import { ImplementationError, ImplementationErrorCode } from "../error/implement.ts"
 
-import type { JsonLdDocument } from "../types/jsonld/base.ts"
+import type { JsonLdDocument } from "../types/jsonld/document.ts"
 
 /**
  * Canonize a JSON document using the JSON Canonicalization Scheme (JCS).

@@ -1,5 +1,4 @@
-import type { JsonLdObject } from "../jsonld/base.ts"
-import type { Type } from "../jsonld/literals.ts"
+import type { JsonLdObject } from "../jsonld/document.ts"
 
 /**
  * A JSON Web Key (JWK) is a JavaScript Object Notation (JSON) data structure that represents a cryptographic key.
@@ -9,8 +8,7 @@ import type { Type } from "../jsonld/literals.ts"
 export interface JWK extends JsonLdObject {
   /**
    * The `kty` (key type) parameter identifies the cryptographic algorithm family used with the key. `kty` values should
-   * either be registered in the IANA "JSON Web Key Types" registry established by
-   * {@link https://datatracker.ietf.org/doc/html/rfc7518 | RFC-7518} or be a value that
+   * either be registered in the IANA "JSON Web Key Types" registry established by [RFC-7518] or be a value that
    * contains a Collision-Resistant Name.
    *
    * Values defined by this specification are:
@@ -22,11 +20,12 @@ export interface JWK extends JsonLdObject {
    * The `kty` value is a case-sensitive string.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.1
+   * @see https://datatracker.ietf.org/doc/html/rfc7518
    *
    * @example "EC"
    * @example "RSA"
    */
-  kty: Type
+  kty: string
 
   /**
    * The `use` (public key use) parameter identifies the intended use of the public key.
@@ -119,34 +118,36 @@ export interface JWK extends JsonLdObject {
   kid?: string
 
   /**
-   * The `x5u` (X.509 URL) parameter is a URI ({@link https://datatracker.ietf.org/doc/html/rfc3986 | RFC-3986}) that
-   * refers to a resource for an X.509 public key certificate or certificate chain
-   * ({@link https://datatracker.ietf.org/doc/html/rfc5280 | RFC-5280}).
+   * The `x5u` (X.509 URL) parameter is a URI [RFC-3986] that refers to a resource for an X.509 public key certificate
+   * or certificate chain ([RFC-5280]).
    *
    * The identified resource MUST provide a representation of the certificate or certificate chain that conforms to
-   * ({@link https://datatracker.ietf.org/doc/html/rfc5280 | RFC-5280}) in PEM-encoded form, with each certificate
-   * delimited as specified in Section 6.1 of ({@link https://datatracker.ietf.org/doc/html/rfc4945 | RFC-4945}). The
-   * key in the first certificate MUST match the public key represented by other members of the JWK.
+   * [RFC-5280] in PEM-encoded form, with each certificate delimited as specified in Section 6.1 of [RFC-4945]. The key
+   * in the first certificate MUST match the public key represented by other members of the JWK.
    *
    * The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the
-   * certificate MUST use TLS. The identity of the server MUST be validated, as per Section 6 of
-   * ({@link https://datatracker.ietf.org/doc/html/rfc6125 | RFC-6125}).
+   * certificate MUST use TLS. The identity of the server MUST be validated, as per Section 6 of [RFC-6125].
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.6
+   * @see https://datatracker.ietf.org/doc/html/rfc3986
+   * @see https://datatracker.ietf.org/doc/html/rfc4945
+   * @see https://datatracker.ietf.org/doc/html/rfc5280
+   * @see https://datatracker.ietf.org/doc/html/rfc6125
    */
   x5u?: string
 
   /**
-   * The `x5c` (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates
-   * ({@link https://datatracker.ietf.org/doc/html/rfc5280 | RFC-5280}). The certificate chain is represented as a JSON
-   * array of certificate value strings. Each string in the array is a base64-encoded
-   * ({@link https://datatracker.ietf.org/doc/html/rfc4648 | RFC-4648}) DER PKIX certificate value.
+   * The `x5c` (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates ([RFC-5280]). The
+   * certificate chain is represented as a JSON array of certificate value strings. Each string in the array is a
+   * base64-encoded ([RFC-4648]) DER PKIX certificate value.
    *
    * The PKIX certificate containing the key value MUST be the first certificate. This MAY be followed by additional
    * certificates, with each subsequent certificate being the one used to certify the previous one. The key in the first
    * certificate MUST match the public key represented by other members of the JWK.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.7
+   * @see https://datatracker.ietf.org/doc/html/rfc4648
+   * @see https://datatracker.ietf.org/doc/html/rfc5280
    *
    * @example ["MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqX8XzQzvZt+hyzf7bnueSzaV1uqQsk7YmJyliMoiFjlrQ=="]
    */
@@ -154,24 +155,25 @@ export interface JWK extends JsonLdObject {
 
   /**
    * The `x5t` (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest) of
-   * the DER encoding of an X.509 certificate ({@link https://datatracker.ietf.org/doc/html/rfc5280 | RFC-5280}).
+   * the DER encoding of an X.509 certificate ([RFC-5280]).
    *
    * Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate
    * MUST match the public key represented by other members of the JWK.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.8
+   * @see https://datatracker.ietf.org/doc/html/rfc5280
    */
   x5t?: string
 
   /**
    * The `x5t#S256` (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint (a.k.a.
-   * digest) of the DER encoding of an X.509 certificate
-   * ({@link https://datatracker.ietf.org/doc/html/rfc5280 | RFC-5280}).
+   * digest) of the DER encoding of an X.509 certificate ([RFC-5280]).
    *
    * Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate
    * MUST match the public key represented by other members of the JWK.
    *
    * @see https://datatracker.ietf.org/doc/html/rfc7517#section-4.9
+   * @see https://datatracker.ietf.org/doc/html/rfc5280
    */
   "x5t#S256"?: string
 
@@ -279,11 +281,12 @@ export interface JWKEC extends JWK {
  * the value `RSA`.
  *
  * The semantic of the parameters defined in this interface are the same as those defined in Section 3.1 and 3.2 of
- * {@link https://datatracker.ietf.org/doc/html/rfc3447 | RFC-3447}.
+ * [RFC-3447].
  *
  * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3
  * @see https://datatracker.ietf.org/doc/html/rfc3447#section-3.1
  * @see https://datatracker.ietf.org/doc/html/rfc3447#section-3.2
+ * @see https://datatracker.ietf.org/doc/html/rfc3447
  */
 export interface JWKRSA extends JWK {
   /**
@@ -423,10 +426,11 @@ export interface JWKRSA extends JWK {
  * This structure contains the information for the additional primes `r_3, ..., r_u` in order. When three or more primes
  * have been used in a RSA private key, the following primes should be included in the `oth` parameter of that key. For
  * more information on this case, see the description of the `OtherPrimeInfo` parameters in Appendix A.1.2 of
- * {@link https://datatracker.ietf.org/doc/html/rfc3447 | RFC-3447}.
+ * [RFC-3447].
  *
  * @see https://datatracker.ietf.org/doc/html/rfc3447#appendix-A.1.2
  * @see https://datatracker.ietf.org/doc/html/rfc7518#section-6.3.2.7
+ * @see https://datatracker.ietf.org/doc/html/rfc3447
  */
 export interface OtherPrimeInfo extends JsonLdObject {
   /**

@@ -1,5 +1,5 @@
-import type { DateTime, Type, URI } from "../jsonld/literals.ts"
-import type { JsonLdObject } from "../jsonld/base.ts"
+import type { DateTime, IRI, IRIReference } from "../jsonld/base.ts"
+import type { JsonLdObject } from "../jsonld/document.ts"
 import type { JWK } from "./jwk.ts"
 
 /**
@@ -7,7 +7,7 @@ import type { JWK } from "./jwk.ts"
  * that can be used to authenticate or authorize a DID subject or associated parties. It can also be a reference to a
  * verification method.
  */
-export type VerificationRelationship = VerificationMethod | URI
+export type VerificationRelationship = VerificationMethod | IRIReference
 
 /**
  * A set of data describing a verification method, such as a cryptographic key, that can be used to authenticate or
@@ -30,7 +30,7 @@ export interface VerificationMethod extends JsonLdObject {
    * @example "did:example:123#key-1"
    * @example "did:example:123#_Qq0UL2Fq651Q0Fjd6TvnYE-faHiOpRlPVQcY_-tA4A"
    */
-  id: URI
+  id: IRIReference
 
   /**
    * The `controller` property is used to express the entity that controls the corresponding private key.
@@ -42,7 +42,7 @@ export interface VerificationMethod extends JsonLdObject {
    * @example "did:example:123"
    * @example "did:example:pqrstuvwxyz0987654321"
    */
-  controller: URI
+  controller: IRI
 
   /**
    * The `type` property is used to express the type of verification method.
@@ -55,7 +55,7 @@ export interface VerificationMethod extends JsonLdObject {
    * @example "JsonWebKey2020"
    * @example "Ed25519VerificationKey2020"
    */
-  type: Type
+  type: string
 
   /**
    * The date and time when the verification method expire. Once the value is set, it is not expected to be updated,
@@ -76,20 +76,20 @@ export interface VerificationMethod extends JsonLdObject {
 
 /**
  * The JSON Web Key (JWK) data model is a specific type of verification method that uses the JWK specification
- * {@link https://datatracker.ietf.org/doc/html/rfc7517 | RFC-7517} to encode key types into a set of parameters.
+ * [RFC-7517] to encode key types into a set of parameters.
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc7517
  */
 export interface VerificationMethodJwk extends VerificationMethod {
   /**
    * The `publicKeyJwk` property is used to express a public key in JSON Web Key (JWK) format.
    *
-   * The value of this property MUST be a map representing a JWK that conforms
-   * {@link https://datatracker.ietf.org/doc/html/rfc7517 | RFC-7517}. The public JWK MUST NOT include any members of
-   * the private information class, such as `d`.
+   * The value of this property MUST be a map representing a JWK that conforms [RFC-7517]. The public JWK MUST NOT
+   * include any members of the private information class, such as `d`.
    *
    * It is RECOMMENDED that verification methods that use JWKs to represent their public keys, using the value of `kid`
    * as their fragment identifier. It is RECOMMENDED that JWK `kid` values are set to the public key thumbprint as
-   * defined in {@link https://datatracker.ietf.org/doc/html/rfc7638 | RFC-7638} using the SHA-256 hash function of the
-   * public key.
+   * defined in [RFC-7638] using the SHA-256 hash function of the public key.
    *
    * @see https://www.w3.org/TR/did-core/#dfn-publickeyjwk
    * @see https://datatracker.ietf.org/doc/html/rfc7517
@@ -100,9 +100,11 @@ export interface VerificationMethodJwk extends VerificationMethod {
   /**
    * The `secretKeyJwk` property is used to express a private key in JSON Web Key (JWK) format.
    *
-   * The value of this property MUST be a map representing a JWK that conforms
-   * {@link https://datatracker.ietf.org/doc/html/rfc7517 | RFC-7517}. It MUST NOT be used if the data structure
-   * containing it is public or may be revealed to parties other than the legitimate holder of the secret key.
+   * The value of this property MUST be a map representing a JWK that conforms [RFC-7517]. It MUST NOT be used if the
+   * data structure containing it is public or may be revealed to parties other than the legitimate holder of the secret
+   * key.
+   * 
+   * @see https://datatracker.ietf.org/doc/html/rfc7517
    */
   secretKeyJwk?: JWK
 }

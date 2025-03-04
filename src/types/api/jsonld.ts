@@ -1,5 +1,5 @@
-import type { ContextDefinition } from "../jsonld/misc.ts"
-import type { Loader } from "./loader.ts"
+import type { ContextDefinition } from "../jsonld/context.ts"
+import type { LoadDocumentCallback } from "./loader.ts"
 
 /**
  * Common options for canonizing or framing a JSON-LD document.
@@ -49,7 +49,7 @@ export interface Compact extends Common {
   /**
    * The document loader to use when fetching remote documents.
    */
-  documentLoader?: Loader
+  documentLoader?: LoadDocumentCallback
 
   /**
    * If compaction is occurring during a framing operation. The default is `false`.
@@ -75,7 +75,7 @@ export interface Expand extends Common {
   /**
    * The document loader to use when fetching remote documents.
    */
-  documentLoader?: Loader
+  documentLoader?: LoadDocumentCallback
 
   /**
    * Whether to use the safe mode. The default is `false`, which is different from the other operations.
@@ -90,7 +90,7 @@ export interface Flatten extends Common {
   /**
    * The document loader to use when fetching remote documents.
    */
-  documentLoader?: Loader
+  documentLoader?: LoadDocumentCallback
 }
 
 /**
@@ -121,7 +121,7 @@ export interface Frame extends Common {
   /**
    * The document loader to use when fetching remote documents.
    */
-  documentLoader?: Loader
+  documentLoader?: LoadDocumentCallback
 
   /**
    * Whether to use the safe mode. The default is `true`.
@@ -159,7 +159,7 @@ export interface Normalize extends Common {
   /**
    * The document loader to use when fetching remote documents.
    */
-  documentLoader?: Loader
+  documentLoader?: LoadDocumentCallback
 
   /**
    * Whether to use a native canonization algorithm, if available.

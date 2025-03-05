@@ -134,3 +134,18 @@ export async function normalize(
 ): Promise<string> {
   return await jsonld.default.canonize(input, options)
 }
+
+/**
+ * Deserialize a JSON-LD document to an RDF dataset.
+ *
+ * @param {JsonLdDocument} input The JSON-LD document to deserialize.
+ * @param {JsonLdOptions.ToRdf} [options] The options to use.
+ *
+ * @returns {Promise<object>} Resolve to the RDF dataset.
+ */
+export async function toRdf(
+  input: JsonLdDocument,
+  options?: JsonLdOptions.ToRdf,
+): Promise<object> {
+  return await jsonld.default.toRDF(input, options)
+}

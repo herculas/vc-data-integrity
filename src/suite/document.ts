@@ -1,8 +1,8 @@
 import { CID_V1 } from "../context/url.ts"
-import { compact } from "./rdfc.ts"
-import { deepEqual, hasProperty } from "./instance.ts"
+import { compact } from "../serialize/jsonld.ts"
+import { deepEqual, hasProperty } from "../utils/instance.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
-import { severalToMany } from "./format.ts"
+import { severalToMany } from "../utils/format.ts"
 
 import type { CIDDocument } from "../types/data/cid.ts"
 import type { Context } from "../types/jsonld/keyword.ts"

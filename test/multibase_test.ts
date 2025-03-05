@@ -105,8 +105,8 @@ Deno.test("base-64-url-no-pad encoding and decoding", () => {
     "ZR8C_uFNbTPuFnmqiCg0jMxXThlNf1f8qL41TBsw9w=="
 
   const bytes = hexToBytes(source)
-  const encoded = base64url.encode(bytes)
-  const decoded = base64url.decode(encoded)
+  const encoded = base64url.encode(bytes, false)
+  const decoded = base64url.decode(encoded, false)
   const recovered = bytesToHex(decoded)
 
   assertEquals(encoded, expectedEncoded)

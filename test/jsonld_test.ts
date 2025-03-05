@@ -1,4 +1,4 @@
-import * as rdfc from "../src/utils/rdfc.ts"
+import * as rdfc from "../src/serialize/jsonld.ts"
 
 import type { ContextDefinition } from "../src/types/jsonld/context.ts"
 import type { JsonLdDocument } from "../src/types/jsonld/document.ts"

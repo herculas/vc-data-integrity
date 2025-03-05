@@ -1,4 +1,4 @@
-import * as jcs from "../src/utils/jcs.ts"
+import * as jcs from "../src/serialize/jcs.ts"
 
 import type { JsonLdDocument } from "../src/types/jsonld/document.ts"
 

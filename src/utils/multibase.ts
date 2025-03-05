@@ -9,111 +9,91 @@
  */
 
 import { base58, base64url as url, base64urlnopad as nopad } from "@scure/base"
-
 import { ImplementationError, ImplementationErrorCode } from "../error/implement.ts"
 
 /**
- * The base-58-btc encoding suite.
+ * An interface for encoding and decoding binary values using a specific base and encoding alphabet.
  */
-export const base58btc = {
+export interface MultibaseCodec {
   /**
-   * The base-58-btc multibase header which identifies the base and encoding alphabet used to encode the binary value.
+   * The multibase header which identifies the base and encoding alphabet used to encode the binary value.
    */
-  header: "z",
+  header?: string
 
   /**
-   * Encode a byte array into a base-58-btc string.
+   * Encode a byte array into a multibase string.
    *
    * @param {Uint8Array} data A byte array to be encoded.
-   * @param {boolean} [attachHeader] Whether to attach the base-58-btc header to the encoded string.
+   * @param {boolean} [attachHeader] Whether to attach the multibase header to the encoded string.
    *
-   * @returns {string} The base-58-btc encoded string.
+   * @returns {string} The multibase encoded string.
    */
-  encode: (data: Uint8Array, attachHeader: boolean = true): string =>
-    (attachHeader ? base58btc.header : "") + base58.encode(data),
+  encode: (data: Uint8Array, attachHeader?: boolean) => string
 
   /**
-   * Decode a base-58-btc-encoded string into a byte array.
+   * Decode a multibase-encoded string into a byte array.
    *
-   * @param {string} str A base-58-btc-encoded string.
-   * @param {boolean} [checkHeader] Whether to check the base-58-btc header of the encoded string.
+   * @param {string} str A multibase-encoded string.
+   * @param {boolean} [checkHeader] Whether to check the multibase header of the encoded string.
    *
    * @returns {Uint8Array} The decoded byte array.
    */
+  decode: (str: string, checkHeader?: boolean) => Uint8Array
+}
+
+/**
+ * Encode and decode binary values using the base-58-btc encoding alphabet.
+ */
+export const base58btc: MultibaseCodec = {
+  header: "z",
+  encode: (data: Uint8Array, attachHeader: boolean = true): string =>
+    (attachHeader ? base58btc.header : "") + base58.encode(data),
   decode: (str: string, checkHeader: boolean = true): Uint8Array => {
-    if (checkHeader && !str.startsWith(base58btc.header)) {
+    if (checkHeader && !str.startsWith(base58btc.header!)) {
       throw new ImplementationError(
         ImplementationErrorCode.DECODING_ERROR,
         "multibase/base58btc::decode",
         `The encoded string MUST start with the base-58-btc header since "checkHeader" is set to ${checkHeader}!`,
       )
     }
-
-    return base58.decode(checkHeader ? str.slice(base58btc.header.length) : str)
+    return base58.decode(checkHeader ? str.slice(base58btc.header!.length) : str)
   },
 }
 
 /**
- * The base-64-url encoding suite.
+ * Encode and decode binary values using the base-64-url encoding alphabet.
  */
-export const base64url = {
-  /**
-   * Encode a byte array into a base-64-url string.
-   *
-   * @param {Uint8Array} data A byte array to be encoded.
-   *
-   * @returns {string} The base-64-url encoded string.
-   */
-  encode: url.encode,
-
-  /**
-   * Decode a base-64-url-encoded string into a byte array.
-   *
-   * @param {string} str A base-64-url-encoded string.
-   *
-   * @returns {Uint8Array} The decoded byte array.
-   */
-  decode: url.decode,
+export const base64url: MultibaseCodec = {
+  header: "u",
+  encode: (data: Uint8Array, attachHeader: boolean = true): string =>
+    (attachHeader ? base64url.header : "") + url.encode(data),
+  decode: (str: string, checkHeader: boolean = true): Uint8Array => {
+    if (checkHeader && !str.startsWith(base64url.header!)) {
+      throw new ImplementationError(
+        ImplementationErrorCode.DECODING_ERROR,
+        "multibase/base64url::decode",
+        `The encoded string MUST start with the base-64-url header since "checkHeader" is set to ${checkHeader}!`,
+      )
+    }
+    return url.decode(checkHeader ? str.slice(base64url.header!.length) : str)
+  },
 }
 
 /**
- * The base-64-url-no-pad encoding suite.
+ * Encode and decode binary values using the base-64-url-no-pad encoding alphabet.
  */
-export const base64urlnopad = {
-  /**
-   * The base-64-url-no-pad multibase header which identifies the base and encoding alphabet used to encode the binary
-   * value.
-   */
+export const base64urlnopad: MultibaseCodec = {
   header: "u",
-
-  /**
-   * Encode a byte array into a base-64-url-no-pad string.
-   *
-   * @param {Uint8Array} data A byte array to be encoded.
-   * @param {boolean} [attachHeader] Whether to attach the base-64-url-no-pad header to the encoded string.
-   *
-   * @returns {string} The base-64-url-no-pad encoded string.
-   */
   encode: (data: Uint8Array, attachHeader: boolean = true): string =>
     (attachHeader ? base64urlnopad.header : "") + nopad.encode(data),
-
-  /**
-   * Decode a base-64-url-no-pad-encoded string into a byte array.
-   *
-   * @param {string} str A base-64-url-no-pad-encoded string.
-   * @param {boolean} [checkHeader] Whether to check the base-64-url-no-pad header of the encoded string.
-   *
-   * @returns {Uint8Array} The decoded byte array.
-   */
   decode: (str: string, checkHeader: boolean = true): Uint8Array => {
-    if (checkHeader && !str.startsWith(base64urlnopad.header)) {
+    if (checkHeader && !str.startsWith(base64urlnopad.header!)) {
       throw new ImplementationError(
         ImplementationErrorCode.DECODING_ERROR,
         "multibase/base64urlnopad::decode",
         `The encoded string MUST start with the base-64-url-no-pad header since "checkHeader" is set to ${checkHeader}!`,
       )
     }
-
-    return nopad.decode(checkHeader ? str.slice(base64urlnopad.header.length) : str)
+    return nopad.decode(checkHeader ? str.slice(base64urlnopad.header!.length) : str)
   },
 }

@@ -1,8 +1,8 @@
 import { assert, assertExists } from "@std/assert"
 
-import { encapsulateVerificationMethod, resolveFragment, retrieveVerificationMethod } from "../src/utils/document.ts"
+import { encapsulateVerificationMethod, resolveFragment, retrieveVerificationMethod } from "../src/suite/document.ts"
 import { testLoader } from "./mock/loader.ts"
-import { validateContext } from "../src/utils/document.ts"
+import { validateContext } from "../src/suite/document.ts"
 
 import type { CIDDocument } from "../src/types/data/cid.ts"
 import type { Credential } from "../src/types/data/credential.ts"

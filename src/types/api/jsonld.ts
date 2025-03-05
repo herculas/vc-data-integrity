@@ -176,3 +176,49 @@ export interface Normalize extends Common {
    */
   safe?: boolean
 }
+
+export interface ToRdf extends Common {
+  /**
+   * Whether to skip expansion when serializing, `true` to assume the input is expanded and skip the expansion step,
+   * `false` not to expand the input before serializing. The default is `false`.
+   *
+   * Some well-formed and safe-mode checks may be omitted.
+   */
+  skipExpansion?: boolean
+
+  /**
+   * The output format to use, if the output is a string. The default is 'application/n-quads' for N-Quads.
+   */
+  format?: string
+
+  /**
+   * If set to `true`, the JSON-LD processor may emit blank nodes for triple predicates. Otherwise, it will be omitted.
+   * The default is `false`.
+   */
+  produceGeneralizedRdf?: boolean
+
+  /**
+   * The document loader to use when fetching remote documents.
+   */
+  documentLoader?: LoadDocumentCallback
+
+  /**
+   * Whether to use the safe mode. The default is `false`, which is different from the other operations.
+   */
+  safe?: boolean
+
+  /**
+   * Determine how value objects containing a base direction are transformed to and from RDF.
+   *
+   * - If set to `i18n-datatype`, an RDF literal is generated using a datatype IRI based on
+   *   `https://www.w3.org/ns/i18n#` with both the language tag (if present) and base direction encoded. When
+   *   transforming from RDF, this datatype is decoded to create a value object containing `@language` (if present) and
+   *   `@direction`.
+   * - If set to `compound-literal`, a blank node is emitted instead of a literal, where the blank node is the subject
+   *   of `rdf:value`, `rdf:direction`, and `rdf:language` (if present) properties. When transforming from RDF, this
+   *   object is decoded to create a value object containing `@language` (if present), and `@direction`.
+   *
+   * The default is `null`.
+   */
+  rdfDirection?: string | null
+}

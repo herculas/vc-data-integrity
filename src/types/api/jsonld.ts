@@ -1,4 +1,4 @@
-import type { ContextDefinition } from "../jsonld/context.ts"
+import type { ContextDefinition } from "../serialize/context.ts"
 import type { LoadDocumentCallback } from "./loader.ts"
 
 /**

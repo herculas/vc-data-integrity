@@ -1,20 +1,33 @@
 import * as jsonld from "../serialize/jsonld.ts"
 import * as rdf from "../serialize/rdf.ts"
 
-import type { JsonLdDocument } from "../types/jsonld/document.ts"
+import { base64urlnopad } from "../utils/multibase.ts"
+
+import type { BlankNode } from "../types/serialize/base.ts"
+import type { HMAC } from "../types/api/hmac.ts"
+import type { JsonLdDocument } from "../types/serialize/document.ts"
+import type { NQuad } from "../types/serialize/rdf.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 import type * as RdfOptions from "../types/api/rdf.ts"
 
-export type LabelMapFactory = (canonicalIdMap: Map<string, string>) => Promise<Map<string, string>>
+/**
+ * A map from the old blank node identifiers to the new blank node identifiers.
+ */
+export type LabelMap = Map<BlankNode, BlankNode>
+
+/**
+ * A factory function that creates a label map from a canonical blank node identifier map.
+ */
+export type LabelMapFactory = (canonicalIdMap: LabelMap) => Promise<LabelMap>
 
 /**
  * Canonicalize an array of N-Quad strings and replace any blank node identifiers in the canonicalized result using
  * a label map factory function.
  *
- * @param {Array<string>} nQuads An array of N-Quad strings.
+ * @param {Array<NQuad>} nQuads An array of N-Quad strings.
  * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
- * @param {object} [options] Custom options.
+ * @param {RdfOptions.Canonize} [options] Custom options.
  *
  * @returns {Promise<object>} Resolve to an N-Quads representation of the `canonicalNQuads` as an array of N-Quad
  * strings, with the replaced blank node labels, and a map from the old blank node identifiers to the new blank node
@@ -23,12 +36,12 @@ export type LabelMapFactory = (canonicalIdMap: Map<string, string>) => Promise<M
  * @see https://www.w3.org/TR/vc-di-ecdsa/#labelreplacementcanonicalizenquads
  */
 export async function labelReplacementCanonicalizeNQuads(
-  nQuads: Array<string>,
+  nQuads: Array<NQuad>,
   labelMapFactoryFunction: LabelMapFactory,
-  options?: object,
+  options?: RdfOptions.Canonize,
 ): Promise<{
-  labelMap: Map<string, string>
-  canonicalNQuads: Array<string>
+  labelMap: LabelMap
+  canonicalNQuads: Array<NQuad>
 }> {
   // Procedure:
   //
@@ -41,10 +54,11 @@ export async function labelReplacementCanonicalizeNQuads(
 
   // 1: canonicalize the N-Quads
   let canonicalIdMap = new Map<string, string>()
-  const output = await _canonize(nQuads.join(""), {
+  const output = await rdf.canonize(nQuads.join(""), {
+    ...options,
+    algorithm: "RDFC-1.0",
     inputFormat: "application/n-quads",
     canonicalIdMap,
-    ...options,
   })
 
   // 2: create the label map
@@ -70,19 +84,23 @@ export async function labelReplacementCanonicalizeNQuads(
  * factory function.
  *
  * @param {JsonLdDocument} document A JSON-LD document.
- * @param {Function} labelMapFactoryFunction A label map factory function.
- * @param {object} [options] Custom options.
+ * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
+ * @param {JsonLdOptions.ToRdf & RdfOptions.Canonize} [options] Custom options.
  *
- * @returns {object} An N-Quads representation of the `canonicalNQuads` as an array of N-Quad strings, with the replaced
- * blank node labels, and a map from the old blank node identifiers to the new blank node identifiers `labelMap`.
+ * @returns {Promise<object>} Resolve to an N-Quads representation of the `canonicalNQuads` as an array of N-Quad
+ * strings, with the replaced blank node labels, and a map from the old blank node identifiers to the new blank node
+ * identifiers `labelMap`.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#labelreplacementcanonicalizejsonld
  */
-export function labelReplacementCanonicalizeJsonLd(
+export async function labelReplacementCanonicalizeJsonLd(
   document: JsonLdDocument,
   labelMapFactoryFunction: LabelMapFactory,
-  options?: object,
-) {
+  options?: JsonLdOptions.ToRdf & RdfOptions.Canonize,
+): Promise<{
+  labelMap: Map<string, string>
+  canonicalNQuads: Array<string>
+}> {
   // Procedure:
   //
   // 1. Deserialize the JSON-LD document to RDF, `rdf`, using the Deserialize JSON-LD to RDF algorithm, passing any
@@ -90,19 +108,28 @@ export function labelReplacementCanonicalizeJsonLd(
   // 2. Serialize `rdf` to an array of N-Quad strings, `nQuads`.
   // 3. Return the result of calling the `labelReplacementCanonicalizeNQuads` function, passing `nQuads`,
   //    `labelMapFactoryFunction`, and `options` as arguments.
+
+  const rdf = await jsonld.toRdf(document, {
+    rdfDirection: "i18n-datatype",
+    ...options,
+    safe: true,
+    produceGeneralizedRdf: false,
+  })
+  const nQuads = [rdf]
+  return labelReplacementCanonicalizeNQuads(nQuads, labelMapFactoryFunction, options)
 }
 
 /**
  * Create a label map factory function that uses an input label map to replace canonical blank node identifiers with
  * another value.
  *
- * @param {object} labelMap A label map.
+ * @param {LabelMap} labelMap A label map.
  *
- * @returns {Function} A label map factory function.
+ * @returns {LabelMapFactory} A label map factory function.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#createlabelmapfunction
  */
-export function createLabelMapFunction(labelMap: Map<string, string>): LabelMapFactory {
+export function createLabelMapFunction(labelMap: LabelMap): LabelMapFactory {
   // Procedure:
   //
   // 1. Create a function, `labelMapFactoryFunction`, with one required input (a canonical node identifier map,
@@ -120,8 +147,8 @@ export function createLabelMapFunction(labelMap: Map<string, string>): LabelMapF
   //
   // 2. Return `labelMapFactoryFunction`.
 
-  return (canonicalIdMap: Map<string, string>) => {
-    const bnodeIdMap = new Map<string, string>()
+  return (canonicalIdMap: LabelMap) => {
+    const bnodeIdMap: LabelMap = new Map()
     for (const [input, newLabel] of canonicalIdMap) {
       bnodeIdMap.set(input, labelMap.get(newLabel)!)
     }
@@ -140,11 +167,11 @@ export function createLabelMapFunction(labelMap: Map<string, string>): LabelMapF
  *
  * @param {Function} hmac An HMAC previously initialized with a secret key.
  *
- * @returns {Function} A label map factory function.
+ * @returns {LabelMapFactory} A label map factory function.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#createhmacidlabelmapfunction
  */
-export function createHmacIdLabelMapFunction(hmac: Function): LabelMapFactory {
+export function createHmacIdLabelMapFunction(hmac: HMAC): LabelMapFactory {
   // Procedure:
   //
   // 1. Create a function, `labelMapFactoryFunction`, with one required input (a canonical node identifier map,
@@ -163,19 +190,30 @@ export function createHmacIdLabelMapFunction(hmac: Function): LabelMapFactory {
   //    1.3. Return `bnodeIdMap`.
   //
   // 2. Return `labelMapFactoryFunction`.
+
+  return (canonicalIdMap: LabelMap) => {
+    const bnodeIdMap: LabelMap = new Map()
+    for (const [input, newLabel] of canonicalIdMap) {
+      const encodedLabel = new TextEncoder().encode(newLabel)
+      const digest = hmac.sign(encodedLabel)
+      const b64urlDigest = base64urlnopad.encode(digest, true)
+      bnodeIdMap.set(input, b64urlDigest)
+    }
+    return Promise.resolve(bnodeIdMap)
+  }
 }
 
 /**
  * Relabel the blank node identifiers in an array of N-Quad strings using a blank node label map.
  *
- * @param {Array<string>} nQuads An array of N-Quad strings.
- * @param {Map<string, string>} labelMap A blank node label map.
+ * @param {Array<NQuad>} nQuads An array of N-Quad strings.
+ * @param {LabelMap} labelMap A blank node label map.
  *
- * @returns {Array<string>} An array of N-Quad strings with the blank node identifiers re-labeled.
+ * @returns {Array<NQuad>} An array of N-Quad strings with the blank node identifiers re-labeled.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#relabelblanknodes
  */
-export function relabelBlankNodes(nQuads: Array<string>, labelMap: Map<string, string>): Array<string> {
+export function relabelBlankNodes(nQuads: Array<NQuad>, labelMap: LabelMap): Array<NQuad> {
   // Procedure:
   //
   // 1. Create a new array of N-Quad strings, `relabeledNQuads`.
@@ -190,31 +228,9 @@ export function relabelBlankNodes(nQuads: Array<string>, labelMap: Map<string, s
   return nQuads.map((s1) => s1.replace(/(_:([^\s]+))/g, (_m, _s1, label) => `_:${labelMap.get(label)}`))
 }
 
-async function _canonize(input: string | JsonLdDocument, options: object) {
-  let outerInput: object | string = input
-  const outerOptions: RdfOptions.Canonize = {
-    algorithm: "RDFC-1.0",
-    format: "application/n-quads",
-    ...options,
-  }
-
-  if (typeof input !== "string") {
-    const innerOptions: JsonLdOptions.ToRdf = {
-      safe: true,
-      rdfDirection: "i18n-datatype",
-      produceGeneralizedRdf: false,
-      ...outerOptions,
-    }
-    delete innerOptions.format
-    outerInput = await jsonld.toRdf(input, innerOptions)
-  }
-
-  return await rdf.canonize(outerInput, outerOptions)
-}
-
-function _trimBlankPrefixes(map: Map<string, string>): Map<string, string> {
+function _trimBlankPrefixes(labelMap: LabelMap): LabelMap {
   const result = new Map<string, string>()
-  for (const [key, value] of map) {
+  for (const [key, value] of labelMap) {
     result.set(key.replace(/^_:/, ""), value.replace(/^_:/, ""))
   }
   return result

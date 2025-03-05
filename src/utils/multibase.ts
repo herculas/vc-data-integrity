@@ -64,19 +64,8 @@ export const base58btc: MultibaseCodec = {
  * Encode and decode binary values using the base-64-url encoding alphabet.
  */
 export const base64url: MultibaseCodec = {
-  header: "u",
-  encode: (data: Uint8Array, attachHeader: boolean = true): string =>
-    (attachHeader ? base64url.header : "") + url.encode(data),
-  decode: (str: string, checkHeader: boolean = true): Uint8Array => {
-    if (checkHeader && !str.startsWith(base64url.header!)) {
-      throw new ImplementationError(
-        ImplementationErrorCode.DECODING_ERROR,
-        "multibase/base64url::decode",
-        `The encoded string MUST start with the base-64-url header since "checkHeader" is set to ${checkHeader}!`,
-      )
-    }
-    return url.decode(checkHeader ? str.slice(base64url.header!.length) : str)
-  },
+  encode: (data: Uint8Array): string => url.encode(data),
+  decode: (str: string): Uint8Array => url.decode(str),
 }
 
 /**

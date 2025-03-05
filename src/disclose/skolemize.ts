@@ -1,4 +1,4 @@
-import type { JsonLdDocument } from "../types/jsonld/document.ts"
+import type { JsonLdDocument } from "../types/serialize/document.ts"
 
 /**
  * Replace all blank node identifiers in an array of N-Quad strings with custom scheme URNs.

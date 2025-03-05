@@ -1,6 +1,6 @@
-import type { DateTime, IRI } from "../jsonld/base.ts"
-import type { JsonLdObject, OneOrMany } from "../jsonld/document.ts"
-import type { LanguageObject } from "../jsonld/object.ts"
+import type { DateTime, IRI } from "../serialize/base.ts"
+import type { JsonLdObject, OneOrMany } from "../serialize/document.ts"
+import type { LanguageObject } from "../serialize/object.ts"
 import type { Proof } from "./proof.ts"
 
 /**

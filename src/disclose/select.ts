@@ -1,4 +1,4 @@
-import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
 
 /**
  * Convert a JSON Pointer to an array of paths into a JSON tree.

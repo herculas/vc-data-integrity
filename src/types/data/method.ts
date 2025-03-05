@@ -1,5 +1,5 @@
-import type { DateTime, IRI, IRIReference } from "../jsonld/base.ts"
-import type { JsonLdObject } from "../jsonld/document.ts"
+import type { DateTime, IRI, IRIReference } from "../serialize/base.ts"
+import type { JsonLdObject } from "../serialize/document.ts"
 import type { JWK } from "./jwk.ts"
 
 /**

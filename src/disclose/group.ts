@@ -1,4 +1,4 @@
-import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
 
 /**
  * Output canonical N-Quad strings that match custom selections of a compact JSON-LD document. It does this by

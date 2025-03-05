@@ -1,6 +1,6 @@
 import { ImplementationError, ImplementationErrorCode } from "../error/implement.ts"
 
-import type { OneOrMany } from "../types/jsonld/document.ts"
+import type { OneOrMany } from "../types/serialize/document.ts"
 
 /**
  * Concatenate multiple Uint8Arrays.

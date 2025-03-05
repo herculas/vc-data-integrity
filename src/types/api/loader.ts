@@ -1,5 +1,5 @@
-import type { IRI, IRIReference } from "../jsonld/base.ts"
-import type { JsonLdDocument, OneOrMany } from "../jsonld/document.ts"
+import type { IRI, IRIReference } from "../serialize/base.ts"
+import type { JsonLdDocument, OneOrMany } from "../serialize/document.ts"
 
 /**
  * The `RemoteDocument` type is used by a `LoadDocumentCallback` to return information about a remote document or

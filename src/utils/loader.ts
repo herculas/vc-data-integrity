@@ -1,8 +1,8 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 import { URL_CONTEXT_MAP } from "../context/map.ts"
 
-import type { IRI, IRIReference } from "../types/jsonld/base.ts"
-import type { JsonLdDocument } from "../types/jsonld/document.ts"
+import type { IRI, IRIReference } from "../types/serialize/base.ts"
+import type { JsonLdDocument } from "../types/serialize/document.ts"
 import type { LoadDocumentCallback, RemoteDocument } from "../types/api/loader.ts"
 
 /**

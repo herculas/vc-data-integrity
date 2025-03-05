@@ -1,5 +1,3 @@
-import type { IRI } from "../types/jsonld/base.ts"
-
 /**
  * An error that is thrown when a data integrity error is encountered. When exposing these errors through an HTTP
  * interface, implementers SHOULD use {@link https://datatracker.ietf.org/doc/html/rfc9457 | RFC-9457} to encode the
@@ -16,7 +14,7 @@ import type { IRI } from "../types/jsonld/base.ts"
  */
 export class ProcessingError extends Error {
   code: ProcessingErrorCode
-  type: IRI
+  type: string
 
   constructor(code: ProcessingErrorCode, title: string, detail: string) {
     super(detail)

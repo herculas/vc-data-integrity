@@ -1,4 +1,4 @@
-import type { JsonLdObject } from "../jsonld/document.ts"
+import type { JsonLdObject } from "../serialize/document.ts"
 
 /**
  * A JSON Web Key (JWK) is a JavaScript Object Notation (JSON) data structure that represents a cryptographic key.

@@ -1,8 +1,9 @@
 import * as jsonld from "jsonld"
 
-import type { Context } from "../types/jsonld/keyword.ts"
-import type { IRI } from "../types/jsonld/base.ts"
-import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
+import type { Context } from "../types/serialize/keyword.ts"
+import type { IRI } from "../types/serialize/base.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
+import type { NQuad } from "../types/serialize/rdf.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
@@ -124,14 +125,14 @@ export async function frame(
  * @param {JsonLdDocument} input The input document to normalize.
  * @param {JsonLdOptions.Normalize} [options] The options to use.
  *
- * @returns {Promise<string>} Resolve to the normalized RDF dataset.
+ * @returns {Promise<NQuad>} Resolve to the normalized RDF dataset.
  *
  * @see https://www.w3.org/TR/json-ld11-api/#rdf-serialization-deserialization
  */
 export async function normalize(
   input: JsonLdDocument,
   options?: JsonLdOptions.Normalize,
-): Promise<string> {
+): Promise<NQuad> {
   return await jsonld.default.canonize(input, options)
 }
 
@@ -141,11 +142,11 @@ export async function normalize(
  * @param {JsonLdDocument} input The JSON-LD document to deserialize.
  * @param {JsonLdOptions.ToRdf} [options] The options to use.
  *
- * @returns {Promise<object>} Resolve to the RDF dataset.
+ * @returns {Promise<NQuad>} Resolve to the RDF dataset, which is a string of N-Quads.
  */
 export async function toRdf(
   input: JsonLdDocument,
   options?: JsonLdOptions.ToRdf,
-): Promise<object> {
+): Promise<NQuad> {
   return await jsonld.default.toRDF(input, options)
 }

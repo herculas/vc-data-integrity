@@ -1,6 +1,6 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
-import type { IRI, IRIReference } from "../types/jsonld/base.ts"
+import type { IRI, IRIReference } from "../types/serialize/base.ts"
 import type { VerificationMethod } from "../types/data/method.ts"
 
 import type * as KeypairOptions from "../types/api/keypair.ts"

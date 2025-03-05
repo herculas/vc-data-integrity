@@ -1,5 +1,5 @@
-import type { IRI } from "../jsonld/base.ts"
-import type { JsonLdObject, OneOrMany } from "../jsonld/document.ts"
+import type { IRI } from "../serialize/base.ts"
+import type { JsonLdObject, OneOrMany } from "../serialize/document.ts"
 import type { VerificationMethod, VerificationRelationship } from "./method.ts"
 
 /**

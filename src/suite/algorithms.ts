@@ -2,7 +2,7 @@ import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { deepEqual } from "../utils/instance.ts"
 
 import type { Cryptosuite } from "./cryptosuite.ts"
-import type { JsonLdObject, OneOrMany } from "../types/jsonld/document.ts"
+import type { JsonLdObject, OneOrMany } from "../types/serialize/document.ts"
 import type { Proof } from "../types/data/proof.ts"
 
 import type * as Result from "../types/api/result.ts"

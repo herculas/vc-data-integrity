@@ -1,6 +1,6 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
-import type { JsonLdDocument } from "../types/jsonld/document.ts"
+import type { JsonLdDocument } from "../types/serialize/document.ts"
 import type { Proof } from "../types/data/proof.ts"
 
 import type * as Result from "../types/api/result.ts"

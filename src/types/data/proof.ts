@@ -1,5 +1,5 @@
-import type { DateTime, IRI, IRIReference } from "../jsonld/base.ts"
-import type { JsonLdObject, OneOrMany } from "../jsonld/document.ts"
+import type { DateTime, IRI, IRIReference } from "../serialize/base.ts"
+import type { JsonLdObject, OneOrMany } from "../serialize/document.ts"
 
 /**
  * A data integrity proof provides information about the proof mechanism, parameters required to verify that proof, and

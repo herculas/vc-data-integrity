@@ -404,3 +404,21 @@ export type DateTime = string
  * @see https://datatracker.ietf.org/doc/html/rfc5234
  */
 export type Term = string
+
+/**
+ * Blank nodes are disjoint from IRIs and literals. Otherwise, the set of possible blank nodes is arbitrary. RDF makes
+ * no reference to any internal structure of blank nodes.
+ *
+ * Blank node identifiers are local identifiers that are used in some concrete RDF syntaxes or RDF store
+ * implementations. They are always locally scoped to the file or RDF store, and are not persistent or portable
+ * identifiers for blank nodes. Blank node identifiers are not part of the RDF abstract syntax, but are entirely
+ * dependent on the concrete syntax or store implementation. The syntactic restrictions on blank node identifiers, if
+ * any, therefore also depend on the concrete RDF syntax or implementation.
+ *
+ * Implementations that handle blank node identifiers in concrete syntaxes need to be careful not to create the same
+ * blank node from multiple occurrences of the same blank node identifier except in situations where this is supposed by
+ * the syntax.
+ *
+ * @see https://www.w3.org/TR/rdf11-concepts/#dfn-blank-node-identifier
+ */
+export type BlankNode = string

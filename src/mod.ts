@@ -53,5 +53,11 @@ export type {
 } from "./types/data/method.ts"
 
 // JSON-LD type definitions
-export type { DateTime, DID, DIDURL, IRI, IRIReference, Term, URI, URIReference } from "./types/jsonld/base.ts"
-export type { JsonLdDocument, JsonLdObject, OneOrMany, OneOrWrapped, SingleWrapped } from "./types/jsonld/document.ts"
+export type { DateTime, DID, DIDURL, IRI, IRIReference, Term, URI, URIReference } from "./types/serialize/base.ts"
+export type {
+  JsonLdDocument,
+  JsonLdObject,
+  OneOrMany,
+  OneOrWrapped,
+  SingleWrapped,
+} from "./types/serialize/document.ts"

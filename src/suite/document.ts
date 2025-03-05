@@ -5,9 +5,9 @@ import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { severalToMany } from "../utils/format.ts"
 
 import type { CIDDocument } from "../types/data/cid.ts"
-import type { Context } from "../types/jsonld/keyword.ts"
-import type { IRIReference } from "../types/jsonld/base.ts"
-import type { JsonLdDocument, JsonLdObject } from "../types/jsonld/document.ts"
+import type { Context } from "../types/serialize/keyword.ts"
+import type { IRIReference } from "../types/serialize/base.ts"
+import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
 import type { LoadDocumentCallback } from "../types/api/loader.ts"
 import type { VerificationMethod } from "../types/data/method.ts"
 

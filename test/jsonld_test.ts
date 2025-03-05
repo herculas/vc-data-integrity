@@ -1,7 +1,7 @@
 import * as rdfc from "../src/serialize/jsonld.ts"
 
-import type { ContextDefinition } from "../src/types/jsonld/context.ts"
-import type { JsonLdDocument } from "../src/types/jsonld/document.ts"
+import type { ContextDefinition } from "../src/types/serialize/context.ts"
+import type { JsonLdDocument } from "../src/types/serialize/document.ts"
 
 /**
  * Compaction uses a developer-supplied context to shorten IRIs to terms or compact IRIs and JSON-LD values expressed in

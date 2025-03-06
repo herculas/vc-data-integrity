@@ -30,4 +30,9 @@ export enum BasicErrorCode {
    * The document associated with the given URL was not found.
    */
   DOCUMENT_NOT_FOUND_ERROR,
+
+  /**
+   * The document content is invalid.
+   */
+  DOCUMENT_CONTENT_ERROR,
 }

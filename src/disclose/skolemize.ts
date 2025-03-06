@@ -193,7 +193,7 @@ function skolemizeExpandedJsonLd(
         }
       } else {
         throw new BasicError(
-          BasicErrorCode.DOCUMENT_NOT_FOUND_ERROR,
+          BasicErrorCode.DOCUMENT_CONTENT_ERROR,
           "disclose/skolemize#skolemizeExpandedJsonLd",
           "The value of the `@id` property in `skolemizedNode` MUST NOT be an array.",
         )
@@ -245,7 +245,7 @@ export async function skolemizeCompactJsonLd(
   const context = document["@context"]
   if (!context) {
     throw new BasicError(
-      BasicErrorCode.DOCUMENT_NOT_FOUND_ERROR,
+      BasicErrorCode.DOCUMENT_CONTENT_ERROR,
       "disclose/skolemize#skolemizeCompactJsonLd",
       "The document MUST use only one `@context` property at the top level.",
     )

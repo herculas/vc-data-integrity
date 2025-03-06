@@ -26,3 +26,15 @@ export async function canonize(
 ): Promise<NQuad> {
   return await rdf.default.canonize(input, options)
 }
+
+/**
+ * Convert an RDF dataset to N-Quad strings.
+ *
+ * @param {RdfDataset} dataset The RDF dataset to serialize.
+ *
+ * @returns {Array<NQuad>} The serialized RDF dataset.
+ */
+export function serialize(dataset: RdfDataset): Array<NQuad> {
+  const serialized: string = rdf.default.NQuads.serialize(dataset)
+  return serialized.split("\n").slice(0, -1)
+}

@@ -5,7 +5,7 @@ import { base64urlnopad } from "../utils/multibase.ts"
 
 import type { HMAC, LabelMap, LabelMapFactory } from "../types/api/disclose.ts"
 import type { JsonLdDocument } from "../types/serialize/document.ts"
-import type { NQuad } from "../types/serialize/rdf.ts"
+import type { NQuad, RdfDataset } from "../types/serialize/rdf.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 import type * as RdfOptions from "../types/api/rdf.ts"
@@ -25,9 +25,9 @@ import type * as RdfOptions from "../types/api/rdf.ts"
  * @see https://www.w3.org/TR/vc-di-ecdsa/#labelreplacementcanonicalizenquads
  */
 export async function labelReplacementCanonicalizeNQuads(
-  nQuads: Array<NQuad>,
+  nQuads: NQuad | RdfDataset,
   labelMapFactoryFunction: LabelMapFactory,
-  options?: RdfOptions.Canonize,
+  options?: Partial<RdfOptions.Canonize>,
 ): Promise<{
   labelMap: LabelMap
   canonicalNQuads: Array<NQuad>
@@ -43,10 +43,9 @@ export async function labelReplacementCanonicalizeNQuads(
 
   // 1: canonicalize the N-Quads
   let canonicalIdMap = new Map<string, string>()
-  const output = await rdf.canonize(nQuads.join(""), {
+  const output = await rdf.canonize(nQuads, {
     ...options,
     algorithm: "RDFC-1.0",
-    inputFormat: "application/n-quads",
     canonicalIdMap,
   })
 
@@ -85,7 +84,7 @@ export async function labelReplacementCanonicalizeNQuads(
 export async function labelReplacementCanonicalizeJsonLd(
   document: JsonLdDocument,
   labelMapFactoryFunction: LabelMapFactory,
-  options?: JsonLdOptions.ToRdf & RdfOptions.Canonize,
+  options?: JsonLdOptions.ToRdf & Partial<RdfOptions.Canonize>,
 ): Promise<{
   labelMap: Map<string, string>
   canonicalNQuads: Array<string>
@@ -98,14 +97,13 @@ export async function labelReplacementCanonicalizeJsonLd(
   // 3. Return the result of calling the `labelReplacementCanonicalizeNQuads` function, passing `nQuads`,
   //    `labelMapFactoryFunction`, and `options` as arguments.
 
-  const rdf = await jsonld.toRdf(document, {
+  const rdfDataset = await jsonld.toRdf(document, {
     rdfDirection: "i18n-datatype",
     ...options,
     safe: true,
     produceGeneralizedRdf: false,
   })
-  const nQuads = [rdf]
-  return labelReplacementCanonicalizeNQuads(nQuads, labelMapFactoryFunction, options)
+  return labelReplacementCanonicalizeNQuads(rdfDataset, labelMapFactoryFunction, options)
 }
 
 /**
@@ -180,15 +178,15 @@ export function createHmacIdLabelMapFunction(hmac: HMAC): LabelMapFactory {
   //
   // 2. Return `labelMapFactoryFunction`.
 
-  return (canonicalIdMap: LabelMap) => {
+  return async (canonicalIdMap: LabelMap) => {
     const bnodeIdMap: LabelMap = new Map()
     for (const [input, newLabel] of canonicalIdMap) {
       const encodedLabel = new TextEncoder().encode(newLabel)
-      const digest = hmac.sign(encodedLabel)
+      const digest = await hmac(encodedLabel)
       const b64urlDigest = base64urlnopad.encode(digest, true)
       bnodeIdMap.set(input, b64urlDigest)
     }
-    return Promise.resolve(bnodeIdMap)
+    return bnodeIdMap
   }
 }
 

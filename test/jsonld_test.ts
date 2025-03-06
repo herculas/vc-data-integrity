@@ -1,7 +1,9 @@
-import * as rdfc from "../src/serialize/jsonld.ts"
+import { assertEquals, assertStrictEquals } from "@std/assert"
+
+import * as jsonld from "../src/serialize/jsonld.ts"
 
 import type { ContextDefinition } from "../src/types/serialize/context.ts"
-import type { JsonLdDocument } from "../src/types/serialize/document.ts"
+import type { JsonLdDocument, JsonLdObject } from "../src/types/serialize/document.ts"
 
 /**
  * Compaction uses a developer-supplied context to shorten IRIs to terms or compact IRIs and JSON-LD values expressed in
@@ -34,7 +36,7 @@ Deno.test("JSON-LD document compaction: basic 1", async () => {
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -66,7 +68,7 @@ Deno.test("JSON-LD document compaction: basic 2", async () => {
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -98,7 +100,7 @@ Deno.test("JSON-LD document compaction: shortening IRIs", async () => {
     "@vocab": "http://example.org/",
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -128,7 +130,7 @@ Deno.test("JSON-LD document compaction: compacting using a base IRI", async () =
     "label": "http://www.w3.org/2000/01/rdf-schema#label",
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -191,7 +193,7 @@ Deno.test("JSON-LD document compaction: representing values as strings", async (
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -228,7 +230,7 @@ Deno.test("JSON-LD document compaction: representing lists as arrays", async () 
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -277,7 +279,7 @@ Deno.test("JSON-LD document compaction: reversing node relationships", async () 
     "children": { "@reverse": "http://example.com/vocab#parent" },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -317,7 +319,7 @@ Deno.test("JSON-LD document compaction: indexing values", async () => {
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -353,7 +355,7 @@ Deno.test("JSON-LD document compaction: normalizing values as objects", async ()
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -388,7 +390,7 @@ Deno.test("JSON-LD document compaction: representing singular values as arrays",
     },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -426,7 +428,7 @@ Deno.test("JSON-LD document compaction: term selection", async () => {
     "iri": { "@id": "vocab:property", "@type": "@id" },
   } as const
 
-  const compactedDocument = await rdfc.compact(expandedDocument, context)
+  const compactedDocument = await jsonld.compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -450,7 +452,7 @@ Deno.test("JSON-LD document expansion 1", async () => {
     "homepage": "http://www.markus-lanthaler.com/",
   } as const
 
-  const expandedDocument = await rdfc.expand(compactedDocument)
+  const expandedDocument = await jsonld.expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -470,7 +472,7 @@ Deno.test("JSON-LD document expansion 2", async () => {
     "website": { "@id": "http://www.markus-lanthaler.com/" },
   } as const
 
-  const expandedDocument = await rdfc.expand(compactedDocument)
+  const expandedDocument = await jsonld.expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -493,7 +495,7 @@ Deno.test("JSON-LD document expansion 3", async () => {
     "homepage": "http://manu.sporny.org/",
   } as const
 
-  const expandedDocument = await rdfc.expand(compactedDocument)
+  const expandedDocument = await jsonld.expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -521,8 +523,8 @@ Deno.test("JSON-LD document flattening 1", async () => {
     ],
   } as const
 
-  const flattenedDocument = await rdfc.flatten(document)
-  const compactedDocument = await rdfc.compact(flattenedDocument, document["@context"]!)
+  const flattenedDocument = await jsonld.flatten(document)
+  const compactedDocument = await jsonld.compact(flattenedDocument, document["@context"]!)
 
   console.log(flattenedDocument)
   console.log(compactedDocument)
@@ -554,8 +556,8 @@ Deno.test("JSON-LD document flattening 2", async () => {
     ],
   } as const
 
-  const flattenedDocument = await rdfc.flatten(document)
-  const compactedDocument = await rdfc.compact(flattenedDocument, document["@context"]!)
+  const flattenedDocument = await jsonld.flatten(document)
+  const compactedDocument = await jsonld.compact(flattenedDocument, document["@context"]!)
   console.log(compactedDocument)
 })
 
@@ -603,7 +605,7 @@ Deno.test("JSON-LD document framing: basic 1", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -654,7 +656,7 @@ Deno.test("JSON-LD document framing: basic 2", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -702,7 +704,7 @@ Deno.test("JSON-LD document framing: matching on properties", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -748,7 +750,7 @@ Deno.test("JSON-LD document framing: wildcard matching", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -796,7 +798,7 @@ Deno.test("JSON-LD document framing: matching on the absence of a property", asy
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -895,7 +897,7 @@ Deno.test("JSON-LD document framing: matching on values", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -941,7 +943,7 @@ Deno.test("JSON-LD document framing: matching on id 1", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -994,7 +996,7 @@ Deno.test("JSON-LD document framing: matching on id 2", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -1035,7 +1037,7 @@ Deno.test("JSON-LD document framing: empty frame", async () => {
     }],
   } as const
 
-  const framedDocument = await rdfc.frame(flattenedDocument, frame)
+  const framedDocument = await jsonld.frame(flattenedDocument, frame)
   console.log(framedDocument)
 })
 
@@ -1058,6 +1060,419 @@ Deno.test("JSON-LD document normalization", async () => {
     },
   ] as const
 
-  const normalizedDocument = await rdfc.normalize(document)
+  const normalizedDocument = await jsonld.normalize(document)
   console.log(normalizedDocument)
+})
+
+Deno.test("JSON-LD document to RDF: simple case", async () => {
+  const document: JsonLdDocument = {
+    "@id": "https://example.com/",
+    "https://example.com/test": "test",
+  } as const
+
+  const rdfDocument = await jsonld.toRdf(document, { format: "application/n-quads" })
+  const expected = `<https://example.com/> <https://example.com/test> "test" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: relative graph reference", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "rel",
+      "@graph": [
+        {
+          "@id": "s:1",
+          "ex:p": [
+            {
+              "@value": "v1",
+            },
+          ],
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const expected = ""
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: relative subject reference", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "rel",
+      "ex:p": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const expected = ""
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: relative predicate reference", async () => {
+  const input: JsonLdDocument = [
+    {
+      "rel": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const expected = ""
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: relative object reference", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@type": [
+        "rel",
+      ],
+      "ex:p": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const expected = `_:b0 <ex:p> "v" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: blank node predicates", async () => {
+  const input: JsonLdDocument = [
+    {
+      "_:p": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const expected = ``
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: generalized blank node predicates", async () => {
+  const input: JsonLdDocument = [
+    {
+      "_:p": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    produceGeneralizedRdf: true,
+  })
+  const expected = `_:b0 <_:b1> "v" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: no @lang, no @dir, rdfDirection is null", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: null,
+  })
+  const expected = `<urn:id> <ex:p> "v" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: no @lang, no @dir, rdfDirection is i18n", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: "i18n-datatype",
+  })
+  const expected = `<urn:id> <ex:p> "v" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: no @lang, with @dir, rdfDirection unspecified", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@direction": "ltr",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+  })
+  const expected = `<urn:id> <ex:p> "v" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: no @lang, with @dir, rdfDirection is null", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@direction": "ltr",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: null,
+  })
+  const expected = `<urn:id> <ex:p> "v" .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: no @lang, with @dir, rdfDirection is i18n", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@direction": "ltr",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: "i18n-datatype",
+  })
+  const expected = `<urn:id> <ex:p> "v"^^<https://www.w3.org/ns/i18n#_ltr> .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: with @lang, no @dir, rdfDirection is null", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@language": "en-us",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: null,
+  })
+  const expected = `<urn:id> <ex:p> "v"@en-us .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: with @lang, no @dir, rdfDirection is i18n", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@language": "en-us",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: "i18n-datatype",
+  })
+  const expected = `<urn:id> <ex:p> "v"@en-us .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: with @lang, with @dir, rdfDirection is null", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@direction": "ltr",
+          "@language": "en-us",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: null,
+  })
+  const expected = `<urn:id> <ex:p> "v"@en-us .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: with @lang, with @dir, rdfDirection is i18n", async () => {
+  const input: JsonLdDocument = [
+    {
+      "@id": "urn:id",
+      "ex:p": [
+        {
+          "@direction": "ltr",
+          "@language": "en-us",
+          "@value": "v",
+        },
+      ],
+    },
+  ] as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: true,
+    rdfDirection: "i18n-datatype",
+  })
+  const expected = `<urn:id> <ex:p> "v"^^<https://www.w3.org/ns/i18n#en-us_ltr> .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: context with @lang/@dir, rdfDirection is null", async () => {
+  const input: JsonLdDocument = {
+    "@context": {
+      "@version": 1.1,
+      "@language": "ar-EG",
+      "@direction": "rtl",
+      "ex": "urn:ex:",
+      "publisher": { "@id": "ex:publisher", "@direction": null },
+      "title": { "@id": "ex:title" },
+      "title_en": { "@id": "ex:title", "@language": "en", "@direction": "ltr" },
+    },
+    "publisher": "NULL",
+    "title": "RTL",
+    "title_en": "LTR",
+  } as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: false,
+    rdfDirection: null,
+  })
+
+  const expected = `_:b0 <urn:ex:publisher> "NULL"@ar-eg .\n` +
+    `_:b0 <urn:ex:title> "LTR"@en .\n` +
+    `_:b0 <urn:ex:title> "RTL"@ar-eg .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document to RDF: context with @lang/@dir, rdfDirection is i18n", async () => {
+  const input: JsonLdDocument = {
+    "@context": {
+      "@version": 1.1,
+      "@language": "ar-EG",
+      "@direction": "rtl",
+      "ex": "urn:ex:",
+      "publisher": { "@id": "ex:publisher", "@direction": null },
+      "title": { "@id": "ex:title" },
+      "title_en": { "@id": "ex:title", "@language": "en", "@direction": "ltr" },
+    },
+    "publisher": "NULL",
+    "title": "RTL",
+    "title_en": "LTR",
+  } as const
+
+  const rdfDocument = await jsonld.toRdf(input, {
+    format: "application/n-quads",
+    skipExpansion: false,
+    rdfDirection: "i18n-datatype",
+  })
+
+  const expected = `_:b0 <urn:ex:publisher> "NULL"@ar-eg .\n` +
+    `_:b0 <urn:ex:title> "LTR"^^<https://www.w3.org/ns/i18n#en_ltr> .\n` +
+    `_:b0 <urn:ex:title> "RTL"^^<https://www.w3.org/ns/i18n#ar-eg_rtl> .\n`
+  assertStrictEquals(rdfDocument, expected)
+})
+
+Deno.test("JSON-LD document expand and to RDF", async () => {
+  const input: JsonLdDocument = {
+    "@context": {
+      "ex": "urn:ex#",
+      "ex:prop": {
+        "@type": "@id",
+      },
+    },
+    "@id": "urn:id",
+    "@type": "ex:type",
+    "ex:prop": "value",
+  } as const
+
+  const expanded: Array<JsonLdObject> = [
+    {
+      "@id": "urn:id",
+      "@type": [
+        "urn:ex#type",
+      ],
+      "urn:ex#prop": [
+        {
+          "@id": "value",
+        },
+      ],
+    },
+  ] as const
+
+  const expandedDocument = await jsonld.expand(input)
+  assertEquals(expandedDocument, expanded)
+
+  const rdfDocument = await jsonld.toRdf(expanded, {
+    format: "application/n-quads",
+    skipExpansion: true,
+  })
+
+  const expected = `<urn:id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ex#type> .\n`
+  assertStrictEquals(rdfDocument, expected)
 })

@@ -3,7 +3,7 @@ import * as jsonld from "jsonld"
 import type { Context } from "../types/serialize/keyword.ts"
 import type { IRI } from "../types/serialize/base.ts"
 import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
-import type { NQuad } from "../types/serialize/rdf.ts"
+import type { NQuad, RdfDataset } from "../types/serialize/rdf.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
@@ -151,6 +151,6 @@ export async function normalize(
 export async function toRdf(
   input: JsonLdDocument,
   options?: JsonLdOptions.ToRdf,
-): Promise<NQuad> {
+): Promise<NQuad | RdfDataset> {
   return await jsonld.default.toRDF(input, options)
 }

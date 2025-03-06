@@ -59,6 +59,7 @@ export interface ContextDefinition {
     | IRICompacted
     | Term
     | IRIReference
+    | TermDefinition
     | ExpandedTermDefinition
     | ContextDefinition[keyof ContextDefinition]
 }

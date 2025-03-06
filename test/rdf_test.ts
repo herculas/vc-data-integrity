@@ -255,6 +255,30 @@ Deno.test("Escape IRI", async () => {
   assertEquals(output, expected)
 })
 
+Deno.test("Serialize RDF datasets", () => {
+  const input: RdfDataset = [
+    {
+      subject: { termType: "BlankNode", value: "b0" },
+      predicate: { termType: "BlankNode", value: "b1" },
+      object: { termType: "BlankNode", value: "b2" },
+      graph: { termType: "DefaultGraph", value: "" },
+    },
+    {
+      subject: { termType: "BlankNode", value: "b3" },
+      predicate: { termType: "BlankNode", value: "b4" },
+      object: { termType: "BlankNode", value: "b5" },
+      graph: { termType: "DefaultGraph", value: "" },
+    },
+  ]
+
+  const output = rdf.serialize(input)
+  const expected1 = `_:b0 _:b1 _:b2 .`
+  const expected2 = `_:b3 _:b4 _:b5 .`
+
+  assertEquals(output[0], expected1)
+  assertEquals(output[1], expected2)
+})
+
 Deno.test("Duplicated quads", async () => {
   const input = `_:b0 <ex:p> _:b1 .\n_:b0 <ex:p> _:b1 .`
   const expected = `_:c14n1 <ex:p> _:c14n0 .\n`
@@ -308,20 +332,3 @@ function mockData2(subjects: number, objects: number): { n: number; data: string
     }).join("")).join("")
   return { n, data }
 }
-
-Deno.test("test", async () => {
-  const randomness = await crypto.getRandomValues(new Uint8Array(32))
-  const key = await crypto.subtle.importKey(
-    "raw",
-    randomness,
-    { name: "HMAC", hash: { name: "SHA-256" } },
-    true,
-    ["sign", "verify"],
-  )
-
-  console.log(key.algorithm)
-
-  const data = new TextEncoder().encode("data")
-  const hmac = await crypto.subtle.sign(key.algorithm, key, data)
-  console.log(hmac)
-})

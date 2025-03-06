@@ -346,7 +346,7 @@ export type IRICompacted = string
  *
  * @example "did:example:123456789abcdefghi"
  */
-export type DID = URI
+export type DID = string
 
 /**
  * A DID URL is a network location identifier for a specific resource. It can be used to retrieve things like
@@ -359,7 +359,7 @@ export type DID = URI
  * All DID URLs MUST conform to the DID URL Syntax ABNF Rules defined below:
  *
  * ```
- * did-url = did path-abempty [ "?" query ] [ "#" fragment ]
+ * did-url            = did path-abempty [ "?" query ] [ "#" fragment ]
  * ```
  *
  * @see https://www.w3.org/TR/did-core
@@ -371,7 +371,51 @@ export type DID = URI
  * @example "did:example:123?versionTime=2021-05-10T17:00:00Z"
  * @example "did:example:123?service=files&relativeRef=/resume.pdf"
  */
-export type DIDURL = URI
+export type DIDURL = string
+
+/**
+ * A Uniform Resource Name (URN) is a Uniform Resource Identifier (URI) that is assigned under the `urn` scheme and a
+ * particular URN namespace, with the intent that the URN will be a persistent, location-independent resource
+ * identifier. A URN namespace is a collection of such URNs, each of which is:
+ *
+ * 1. unique,
+ * 2. assigned in a consistent and managed way, and
+ * 3. assigned according to a common definition.
+ *
+ * The assignment of URNs is done by an organization (or, in some cases, according to an algorithm or other automated
+ * process) that has been formally delegated a URN namespace within the `urn` scheme (e.g., a URN in the `example` URN
+ * namespace might be of the form `urn:example:foo`).
+ *
+ * The basic syntax for a URN is defined using the Augmented Backus-Naur Form (ABNF) as follows:
+ *
+ * ```
+ * namestring         = assigned-name [ rq-components ] [ "#" f-component ]
+ * assigned-name      = "urn" ":" NID ":" NSS
+ *
+ * NID                = (alphanum) 0*30(ldh) (alphanum)
+ * NSS                = pchar *(pchar / "/")
+ *
+ * ldh                = alphanum / "-"
+ * rq-components      = [ "?+" r-component ] [ "?=" q-component ]
+ * r-component        = pchar *( pchar / "/" / "?" )
+ * q-component        = pchar *( pchar / "/" / "?" )
+ * f-component        = fragment
+ *
+ * alphanum           = ALPHA / DIGIT
+ * ```
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc8141
+ *
+ * @example "urn:example:a123,z456"
+ * @example "urn:example:a123,z456?+abc"
+ * @example "urn:example:a123,z456?=xyz"
+ * @example "urn:example:a123,z456#frag"
+ * @example "urn:example:a123,z456/foo"
+ * @example "urn:example:a123%2Cz456"
+ * @example "urn:example:A123,z456"
+ * @example "urn:example:%D0%B0123,z456"
+ */
+export type URNScheme = string
 
 /**
  * A dateTimeStamp is a string that represents a date and time in the `dateTimeStamp` format. The lexical space of

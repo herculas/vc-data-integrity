@@ -3,23 +3,12 @@ import * as rdf from "../serialize/rdf.ts"
 
 import { base64urlnopad } from "../utils/multibase.ts"
 
-import type { BlankNode } from "../types/serialize/base.ts"
-import type { HMAC } from "../types/api/hmac.ts"
+import type { HMAC, LabelMap, LabelMapFactory } from "../types/api/disclose.ts"
 import type { JsonLdDocument } from "../types/serialize/document.ts"
 import type { NQuad } from "../types/serialize/rdf.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 import type * as RdfOptions from "../types/api/rdf.ts"
-
-/**
- * A map from the old blank node identifiers to the new blank node identifiers.
- */
-export type LabelMap = Map<BlankNode, BlankNode>
-
-/**
- * A factory function that creates a label map from a canonical blank node identifier map.
- */
-export type LabelMapFactory = (canonicalIdMap: LabelMap) => Promise<LabelMap>
 
 /**
  * Canonicalize an array of N-Quad strings and replace any blank node identifiers in the canonicalized result using

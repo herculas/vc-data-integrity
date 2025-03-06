@@ -37,10 +37,14 @@ export async function compact(
  * Expansion is the process of taking a JSON-LD document and applying a context such that all IRIs, types, and values
  * are expanded so that `@context` is no longer necessary.
  *
- * Expansion has two important goals: 1) removing any contextual information from the document, and 2) ensuring all
- * values are represented in a regular form. These goals are accomplished by expanding all entry keys to IRIs and by
- * expressing all values in arrays in expanded form. Expanded form is the most verbose and regular way of expressing of
- * values in JSON-LD; all contextual information from the document is instead stored locally with each value.
+ * Expansion has two important goals:
+ *
+ * 1. removing any contextual information from the document, and
+ * 2. ensuring all values are represented in a regular form.
+ *
+ * These goals are accomplished by expanding all entry keys to IRIs and by expressing all values in arrays in expanded
+ * form. Expanded form is the most verbose and regular way of expressing of values in JSON-LD; all contextual
+ * information from the document is instead stored locally with each value.
  *
  * @param {JsonLdDocument} input The JSON-LD document to expand.
  * @param {JsonLdOptions.Expand} [options] The options to use.
@@ -53,7 +57,7 @@ export async function compact(
 export async function expand(
   input: JsonLdDocument,
   options?: JsonLdOptions.Expand,
-): Promise<JsonLdDocument> {
+): Promise<Array<JsonLdObject>> {
   return await jsonld.default.expand(input, options)
 }
 

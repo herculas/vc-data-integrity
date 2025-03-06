@@ -1,18 +1,26 @@
-import type { JsonLdDocument } from "../types/serialize/document.ts"
+import * as jsonld from "../serialize/jsonld.ts"
+
+import { BasicError, BasicErrorCode } from "../error/basic.ts"
+
+import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
+import type { NQuad } from "../types/serialize/rdf.ts"
+import type { URNScheme } from "../types/serialize/base.ts"
+
+import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
 /**
  * Replace all blank node identifiers in an array of N-Quad strings with custom scheme URNs.
  *
  * Note that this operation is intended to be reversible through the use of the `deskolemizeNQuads` function.
  *
- * @param {Array<string>} inputNQuads An array of N-Quad strings.
- * @param {string} urnScheme A URN scheme.
+ * @param {Array<NQuad>} inputNQuads An array of N-Quad strings.
+ * @param {URNScheme} urnScheme A URN scheme.
  *
- * @returns {Array<string>} An array of N-Quad strings with blank node identifiers replaced with URNs.
+ * @returns {Array<NQuad>} An array of N-Quad strings with blank node identifiers replaced with URNs.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#skolemizenquads
  */
-function skolemizeNQuads(inputNQuads: Array<string>, urnScheme: string) {
+export function skolemizeNQuads(inputNQuads: Array<NQuad>, urnScheme: URNScheme): Array<NQuad> {
   // Procedure:
   //
   // 1. Create a new array of N-Quad strings, `skolemizedNQuads`.
@@ -25,6 +33,13 @@ function skolemizeNQuads(inputNQuads: Array<string>, urnScheme: string) {
   //    2.2. Append `s2` to `skolemizedNQuads`.
   //
   // 3. Return `skolemizedNQuads`.
+
+  const skolemizedNQuads: Array<NQuad> = []
+  for (const s1 of inputNQuads) {
+    const s2 = s1.replace(/(_:([^\s]+))/g, `<urn:${urnScheme}:$2>`)
+    skolemizedNQuads.push(s2)
+  }
+  return skolemizedNQuads
 }
 
 /**
@@ -32,14 +47,14 @@ function skolemizeNQuads(inputNQuads: Array<string>, urnScheme: string) {
  *
  * Note that this operation is intended to be reversible through the use of the `skolemizeNQuads` function.
  *
- * @param {Array<string>} inputNQuads An array of N-Quad strings.
- * @param {string} urnScheme A URN scheme.
+ * @param {Array<NQuad>} inputNQuads An array of N-Quad strings.
+ * @param {URNScheme} urnScheme A URN scheme.
  *
- * @returns {Array<string>} An array of N-Quad strings with URNs replaced with blank node identifiers.
+ * @returns {Array<NQuad>} An array of N-Quad strings with URNs replaced with blank node identifiers.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#deskolemizenquads
  */
-function deskolemizeNQuads(inputNQuads: Array<string>, urnScheme: string) {
+export function deskolemizeNQuads(inputNQuads: Array<NQuad>, urnScheme: URNScheme): Array<NQuad> {
   // Procedure:
   //
   // 1. Create a new array of N-Quad strings, `deskolemizedNQuads`.
@@ -53,6 +68,47 @@ function deskolemizeNQuads(inputNQuads: Array<string>, urnScheme: string) {
   //    2.2. Append `s2` to `deskolemizedNQuads`.
   //
   // 3. Return `deskolemizedNQuads`.
+
+  const deskolemizedNQuads: Array<NQuad> = []
+  for (const s1 of inputNQuads) {
+    const regex = new RegExp(`(<urn:${urnScheme}:([^>]+)>)`, "g")
+    const s2 = s1.replace(regex, "_:$2")
+    deskolemizedNQuads.push(s2)
+  }
+  return deskolemizedNQuads
+}
+
+/**
+ * Convert a skolemized JSON-LD document, such as one created using the algorithm in `skolemizeCompactJsonLd`, to an
+ * array of deskolemized N-Quads.
+ *
+ * @param {JsonLdDocument} skolemizedDocument A JSON-LD document.
+ * @param {URNScheme} urnScheme A URN scheme, which should match the scheme used in the skolemization process.
+ * @param {JsonLdOptions.ToRdf} [options] Any additional custom options.
+ *
+ * @returns {Array<NQuad>} Resolve to an array of deskolemized N-Quad strings.
+ *
+ * @see https://www.w3.org/TR/vc-di-ecdsa/#todeskolemizednquads
+ */
+export async function toDeskolemizedNQuads(
+  skolemizedDocument: JsonLdDocument,
+  urnScheme: URNScheme,
+  options?: JsonLdOptions.ToRdf,
+): Promise<Array<NQuad>> {
+  // Procedure:
+  //
+  // 1. Initialize `skolemizedDataset` to the result of the Deserialize JSON-LD to RDF algorithm, passing `options`, to
+  //    convert `skolemizedDocument` from JSON-LD to RDF in N-Quads format.
+  // 2. Split `skolemizedDataset` into an array of individual N-Quad strings, `skolemizedNQuads`.
+  // 3. Set `deskolemizedNQuads` to the result of calling the `deskolemizeNQuads` function, passing `skolemizedNQuads`
+  //    and "custom-scheme:" as parameters. Implementations MAY choose a different `urnScheme` that is different than
+  //    the default "custom-scheme:" so long as the same scheme name was used to generate the `skolemizedDocument`.
+  // 4. Return `deskolemizedNQuads`.
+
+  const skolemizedDataset = await jsonld.toRdf(skolemizedDocument, options)
+  const skolemizedNQuads = skolemizedDataset.split("\n").slice(0, -1).map((nq) => nq + "\n")
+  const deskolemizedNQuads = deskolemizeNQuads(skolemizedNQuads, urnScheme)
+  return deskolemizedNQuads
 }
 
 /**
@@ -62,23 +118,21 @@ function deskolemizeNQuads(inputNQuads: Array<string>, urnScheme: string) {
  * Note that the skolemization used in this operation is intended to be reversible through the use of the
  * `toDeskolemizedNQuads` function.
  *
- * @param {JsonLdDocument} expanded An expanded JSON-LD document.
- * @param {string} urnScheme A custom URN scheme.
+ * @param {Array<JsonLdObject>} expanded An expanded JSON-LD document.
+ * @param {URNScheme} urnScheme A custom URN scheme.
  * @param {string} randomString A UUID string or other comparably random string.
  * @param {number} count A reference to a shared integer.
- * @param {object} [options] Any additional custom options, such as a document loader.
  *
- * @returns {JsonLdDocument} The expanded form of the skolemized JSON-LD document.
+ * @returns {Array<JsonLdObject>} The expanded form of the skolemized JSON-LD document.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#skolemizeexpandedjsonld
  */
 function skolemizeExpandedJsonLd(
-  expanded: JsonLdDocument,
-  urnScheme: string,
-  randomString: string,
-  count: number,
-  options?: object,
-) {
+  expanded: Array<JsonLdObject>,
+  urnScheme?: URNScheme,
+  randomString?: string,
+  count?: number,
+): Array<JsonLdObject> {
   // Procedure:
   //
   // 1. Initialize `skolemizedExpandedDocument` to an empty array.
@@ -105,6 +159,51 @@ function skolemizeExpandedJsonLd(
   //    2.5. Append `skolemizedNode` to `skolemizedExpandedDocument`.
   //
   // 3. Return `skolemizedExpandedDocument`.
+
+  urnScheme = urnScheme || "custom-scheme:"
+  randomString = randomString || Math.random().toString(36).substring(2, 15)
+  count = count || 0
+
+  // 1: initialize an array
+  const skolemizedExpandedDocument: Array<JsonLdObject> = []
+
+  // 2: iterate over elements in the expanded document
+  for (const element of expanded) {
+    // 2.1: the element is not an object or contains a `@value` key
+    if (typeof element !== "object" || element["@value"] !== undefined) {
+      skolemizedExpandedDocument.push(structuredClone(element))
+      continue
+    }
+
+    // 2.2: initialize a new node
+    const skolemizedNode: JsonLdObject = {}
+    for (const [property, value] of Object.entries(element)) {
+      skolemizedNode[property] = Array.isArray(value)
+        ? skolemizeExpandedJsonLd(value as Array<JsonLdObject>, urnScheme, randomString, count)
+        : skolemizeExpandedJsonLd([value as JsonLdObject], urnScheme, randomString, count)[0]
+    }
+
+    if (!skolemizedNode["@id"]) {
+      skolemizedNode["@id"] = `urn:${urnScheme}_${randomString}_${count}`
+      count++
+    } else {
+      if (!Array.isArray(skolemizedNode["@id"])) {
+        if (skolemizedNode["@id"].startsWith("_:")) {
+          skolemizedNode["@id"] = `urn:${urnScheme}${skolemizedNode["@id"].substring(2)}`
+        }
+      } else {
+        throw new BasicError(
+          BasicErrorCode.DOCUMENT_NOT_FOUND_ERROR,
+          "disclose/skolemize#skolemizeExpandedJsonLd",
+          "The value of the `@id` property in `skolemizedNode` MUST NOT be an array.",
+        )
+      }
+    }
+
+    skolemizedExpandedDocument.push(skolemizedNode)
+  }
+
+  return skolemizedExpandedDocument
 }
 
 /**
@@ -113,9 +212,10 @@ function skolemizeExpandedJsonLd(
  * Note that the skolemization used in this operation is intended to be reversible through the use of the
  * `toDeskolemizedNQuads` function which uses the same custom URN scheme.
  *
- * @param {JsonLdDocument} document A compact JSON-LD document.
- * @param {string} [urnScheme] A custom URN scheme which defaults to "custom-scheme:".
- * @param {object} [options] Any additional custom options, such as a document loader.
+ * @param {JsonLdObject} document A compact JSON-LD document.
+ * @param {URNScheme} [urnScheme] A custom URN scheme which defaults to "custom-scheme:".
+ * @param {string} [randomString] A UUID string or other comparably random string.
+ * @param {JsonLdOptions.Expand & JsonLdOptions.Compact} [options] Any additional custom options.
  *
  * Note that the `document` is assumed to use only one `@context` property at the top level of the document.
  *
@@ -124,11 +224,15 @@ function skolemizeExpandedJsonLd(
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#skolemizecompactjsonld
  */
-function skolemizeCompactJsonLd(
-  document: JsonLdDocument,
-  urnScheme: string = "custom-scheme:",
-  options?: object,
-) {
+export async function skolemizeCompactJsonLd(
+  document: JsonLdObject,
+  urnScheme?: URNScheme,
+  randomString?: string,
+  options?: JsonLdOptions.Expand & JsonLdOptions.Compact,
+): Promise<{
+  skolemizedExpandedDocument: JsonLdDocument
+  skolemizedCompactDocument: JsonLdDocument
+}> {
   // Procedure:
   //
   // 1. Initialize `expanded` to the result of the JSON-LD Expansion algorithm, passing `document` and `options` as
@@ -137,27 +241,21 @@ function skolemizeCompactJsonLd(
   // 3. Initialize `skolemizedCompactDocument` to the result of the JSON-LD Compaction algorithm, passing
   //    `skolemizedExpandedDocument` and `options` as arguments.
   // 4. Return an object with both `skolemizedExpandedDocument` and `skolemizedCompactDocument`.
-}
 
-/**
- * Convert a skolemized JSON-LD document, such as one created using the algorithm in `skolemizeCompactJsonLd`, to an
- * array of deskolemized N-Quads.
- *
- * @param {JsonLdDocument} skolemizedDocument A JSON-LD document.
- * @param {object} [options] Any additional custom options, such as a document loader.
- *
- * @returns {Array<string>} An array of deskolemized N-Quad strings.
- *
- * @see https://www.w3.org/TR/vc-di-ecdsa/#todeskolemizednquads
- */
-function toDeskolemizedNQuads(skolemizedDocument: JsonLdDocument, options?: object) {
-  // Procedure:
-  //
-  // 1. Initialize `skolemizedDataset` to the result of the Deserialize JSON-LD to RDF algorithm, passing `options`, to
-  //    convert `skolemizedDocument` from JSON-LD to RDF in N-Quads format.
-  // 2. Split `skolemizedDataset` into an array of individual N-Quad strings, `skolemizedNQuads`.
-  // 3. Set `deskolemizedNQuads` to the result of calling the `deskolemizeNQuads` function, passing `skolemizedNQuads`
-  //    and "custom-scheme:" as parameters. Implementations MAY choose a different `urnScheme` that is different than
-  //    the default "custom-scheme:" so long as the same scheme name was used to generate the `skolemizedDocument`.
-  // 4. Return `deskolemizedNQuads`.
+  const context = document["@context"]
+  if (!context) {
+    throw new BasicError(
+      BasicErrorCode.DOCUMENT_NOT_FOUND_ERROR,
+      "disclose/skolemize#skolemizeCompactJsonLd",
+      "The document MUST use only one `@context` property at the top level.",
+    )
+  }
+
+  const expanded = await jsonld.expand(document, options)
+  const skolemizedExpandedDocument = skolemizeExpandedJsonLd(expanded, urnScheme, randomString)
+  const skolemizedCompactDocument = await jsonld.compact(skolemizedExpandedDocument, context, options)
+  return {
+    skolemizedExpandedDocument,
+    skolemizedCompactDocument,
+  }
 }

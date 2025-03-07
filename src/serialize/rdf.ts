@@ -13,15 +13,15 @@ import type * as RdfOptions from "../types/api/rdf.ts"
  * It is expected that, for two RDF datasets, RDFC-1.0 returns the same canonically labeled list of quads if and only if
  * the two datasets are isomorphic (i.e., the same modulo blank node identifiers).
  *
- * @param {OneOrMany<NQuad | RdfDataset>} input The RDF dataset to canonize.
+ * @param {OneOrMany<NQuad> | RdfDataset} input The RDF dataset to canonize.
  * @param {RdfOptions.Canonize} [options] The options to use.
  *
- * @returns {Promise<string | object>} Resolve to the canonically labeled RDF dataset.
+ * @returns {Promise<NQuad>} Resolve to the canonically labeled RDF dataset.
  *
  * @see https://www.w3.org/TR/rdf-canon/#canon-algorithm
  */
 export async function canonize(
-  input: OneOrMany<NQuad | RdfDataset>,
+  input: OneOrMany<NQuad> | RdfDataset,
   options: RdfOptions.Canonize,
 ): Promise<NQuad> {
   return await rdf.default.canonize(input, options)

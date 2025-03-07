@@ -5,7 +5,7 @@ import { base64urlnopad } from "../utils/multibase.ts"
 
 import type { HMAC, LabelMap, LabelMapFactory } from "../types/api/disclose.ts"
 import type { JsonLdDocument } from "../types/serialize/document.ts"
-import type { NQuad, RdfDataset } from "../types/serialize/rdf.ts"
+import type { NQuad } from "../types/serialize/rdf.ts"
 
 import type * as JsonLdOptions from "../types/api/jsonld.ts"
 import type * as RdfOptions from "../types/api/rdf.ts"
@@ -16,7 +16,7 @@ import type * as RdfOptions from "../types/api/rdf.ts"
  *
  * @param {Array<NQuad>} nQuads An array of N-Quad strings.
  * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
- * @param {RdfOptions.Canonize} [options] Custom options.
+ * @param {Partial<RdfOptions.Canonize>} [options] Custom options.
  *
  * @returns {Promise<object>} Resolve to an N-Quads representation of the `canonicalNQuads` as an array of N-Quad
  * strings, with the replaced blank node labels, and a map from the old blank node identifiers to the new blank node
@@ -25,7 +25,7 @@ import type * as RdfOptions from "../types/api/rdf.ts"
  * @see https://www.w3.org/TR/vc-di-ecdsa/#labelreplacementcanonicalizenquads
  */
 export async function labelReplacementCanonicalizeNQuads(
-  nQuads: NQuad | RdfDataset,
+  nQuads: Array<NQuad>,
   labelMapFactoryFunction: LabelMapFactory,
   options?: Partial<RdfOptions.Canonize>,
 ): Promise<{
@@ -42,23 +42,31 @@ export async function labelReplacementCanonicalizeNQuads(
   // 4. Return an object containing `labelMap` and `canonicalNQuads`.
 
   // 1: canonicalize the N-Quads
-  let canonicalIdMap = new Map<string, string>()
-  const output = await rdf.canonize(nQuads, {
+  let canonicalIdMap: LabelMap = new Map()
+  const output = await rdf.canonize(nQuads.join("\n"), {
     ...options,
+    inputFormat: "application/n-quads",
     algorithm: "RDFC-1.0",
     canonicalIdMap,
   })
 
   // 2: create the label map
-  canonicalIdMap = _trimBlankPrefixes(canonicalIdMap)
+  canonicalIdMap = new Map(
+    Array.from(canonicalIdMap, ([key, value]) => [key.replace(/^_:/, ""), value.replace(/^_:/, "")]),
+  )
   const labelMap = await labelMapFactoryFunction(canonicalIdMap)
 
   // 3: relabel the blank nodes
-  const newLabelMap = new Map<string, string>()
+  const newLabelMap: LabelMap = new Map()
   for (const [input, newLabel] of labelMap) {
     newLabelMap.set(canonicalIdMap.get(input)!, newLabel)
   }
-  const canonicalNQuads = relabelBlankNodes((output as string).split("\n").slice(0, -1), newLabelMap).sort()
+
+  const canonicalNQuads = output
+    .split("\n")
+    .slice(0, -1)
+    .map((s1) => s1.replace(/(_:([^\s]+))/g, (_m, _s1, label) => `_:${newLabelMap.get(label)}`) + "\n")
+    .sort()
 
   // 4: return the result
   return {
@@ -73,7 +81,7 @@ export async function labelReplacementCanonicalizeNQuads(
  *
  * @param {JsonLdDocument} document A JSON-LD document.
  * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
- * @param {JsonLdOptions.ToRdf & RdfOptions.Canonize} [options] Custom options.
+ * @param {JsonLdOptions.ToRdf & Partial<RdfOptions.Canonize>} [options] Custom options.
  *
  * @returns {Promise<object>} Resolve to an N-Quads representation of the `canonicalNQuads` as an array of N-Quad
  * strings, with the replaced blank node labels, and a map from the old blank node identifiers to the new blank node
@@ -86,8 +94,8 @@ export async function labelReplacementCanonicalizeJsonLd(
   labelMapFactoryFunction: LabelMapFactory,
   options?: JsonLdOptions.ToRdf & Partial<RdfOptions.Canonize>,
 ): Promise<{
-  labelMap: Map<string, string>
-  canonicalNQuads: Array<string>
+  labelMap: LabelMap
+  canonicalNQuads: Array<NQuad>
 }> {
   // Procedure:
   //
@@ -97,13 +105,16 @@ export async function labelReplacementCanonicalizeJsonLd(
   // 3. Return the result of calling the `labelReplacementCanonicalizeNQuads` function, passing `nQuads`,
   //    `labelMapFactoryFunction`, and `options` as arguments.
 
-  const rdfDataset = await jsonld.toRdf(document, {
+  const rdf = await jsonld.toRdf(document, {
     rdfDirection: "i18n-datatype",
     ...options,
+    format: "application/n-quads",
     safe: true,
     produceGeneralizedRdf: false,
-  })
-  return labelReplacementCanonicalizeNQuads(rdfDataset, labelMapFactoryFunction, options)
+  }) as string
+
+  const nQuads: Array<NQuad> = rdf.split("\n").slice(0, -1)
+  return labelReplacementCanonicalizeNQuads(nQuads, labelMapFactoryFunction, options)
 }
 
 /**
@@ -152,7 +163,7 @@ export function createLabelMapFunction(labelMap: LabelMap): LabelMapFactory {
  * sorted order. This primitive might be useful for selective disclosure schemes, such as BBS, that favor unlinkability
  * over minimizing unrevealed data leakage.
  *
- * @param {Function} hmac An HMAC previously initialized with a secret key.
+ * @param {HMAC} hmac An HMAC previously initialized with a secret key.
  *
  * @returns {LabelMapFactory} A label map factory function.
  *
@@ -212,13 +223,11 @@ export function relabelBlankNodes(nQuads: Array<NQuad>, labelMap: LabelMap): Arr
   //
   // 3. Return `relabeledNQuads`.
 
-  return nQuads.map((s1) => s1.replace(/(_:([^\s]+))/g, (_m, _s1, label) => `_:${labelMap.get(label)}`))
-}
-
-function _trimBlankPrefixes(labelMap: LabelMap): LabelMap {
-  const result = new Map<string, string>()
-  for (const [key, value] of labelMap) {
-    result.set(key.replace(/^_:/, ""), value.replace(/^_:/, ""))
-  }
-  return result
+  return nQuads.map(
+    (s1) =>
+      s1.replace(
+        /(_:([^\s]+))/g,
+        (_m, _s1, label) => `_:${labelMap.get(label)}`,
+      ),
+  )
 }

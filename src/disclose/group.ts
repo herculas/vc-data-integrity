@@ -1,4 +1,14 @@
+import { labelReplacementCanonicalizeNQuads } from "./canonize.ts"
+import { selectCanonicalNQuads } from "./select.ts"
+import { skolemizeCompactJsonLd, toDeskolemizedNQuads } from "./skolemize.ts"
+
 import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
+import type { LabelMap, LabelMapFactory } from "../types/api/disclose.ts"
+import type { NQuad } from "../types/serialize/rdf.ts"
+import type { URNScheme } from "../types/serialize/base.ts"
+
+import type * as JsonLdOptions from "../types/api/jsonld.ts"
+import type * as RdfOptions from "../types/api/rdf.ts"
 
 /**
  * Output canonical N-Quad strings that match custom selections of a compact JSON-LD document. It does this by
@@ -7,9 +17,9 @@ import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.t
  * using an assigned name and array of JSON Pointers. The JSON pointers will be used to select portions of the
  * skolemized document, such that the output can be converted to canonical N-Quads to perform group matching.
  *
- * @param {JsonLdDocument} document A compact JSON-LD document.
+ * @param {JsonLdObject} document A compact JSON-LD document.
  * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
- * @param {object} groupDefinitions A map of named group definitions.
+ * @param {Map<string, Array<string>>} groupDefinitions A map of named group definitions.
  * @param {object} [options] Any additional custom options, such as a document loader.
  *
  * Note that the `document` is assumed to use a JSON-LD context that aliases `@id` and `@type` to `id` and `type`,
@@ -22,12 +32,31 @@ import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.t
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#canonicalizeandgroup
  */
-export function canonicalizeAndGroup(
-  document: JsonLdDocument,
+export async function canonicalizeAndGroup(
+  document: JsonLdObject,
   labelMapFactoryFunction: LabelMapFactory,
-  groupDefinitions: object,
-  options?: object,
-) {
+  groupDefinitions: Map<string, Array<string>>,
+  options?:
+    & {
+      urnScheme?: URNScheme
+      randomString?: string
+    }
+    & JsonLdOptions.Expand
+    & JsonLdOptions.Compact
+    & JsonLdOptions.ToRdf
+    & Partial<RdfOptions.Canonize>,
+): Promise<{
+  groups: Map<string, {
+    matching: Map<number, NQuad>
+    nonMatching: Map<number, NQuad>
+    deskolemizedNQuads: Array<NQuad>
+  }>
+  skolemizedExpandedDocument: JsonLdDocument
+  skolemizedCompactDocument: JsonLdDocument
+  deskolemizedNQuads: Array<NQuad>
+  labelMap: LabelMap
+  nQuads: Array<NQuad>
+}> {
   // Procedure:
   //
   // 1. Initialize `skolemizedExpandedDocument` and `skolemizedCompactDocument` to their associated values in the result
@@ -61,4 +90,58 @@ export function canonicalizeAndGroup(
   //
   // 8. Return an object containing `groups`, `skolemizedExpandedDocument`, `skolemizedCompactDocument`,
   //    `deskolemizedNQuads`, `labelMap`, and `nQuads`.
+
+  const skolemized = await skolemizeCompactJsonLd(document, options?.urnScheme, options?.randomString, options)
+  const skolemizedExpandedDocument = skolemized.expanded
+  const skolemizedCompactDocument = skolemized.compact
+
+  const deskolemizedNQuads = await toDeskolemizedNQuads(skolemizedExpandedDocument, options?.urnScheme, options)
+
+  const labeled = await labelReplacementCanonicalizeNQuads(deskolemizedNQuads, labelMapFactoryFunction, options)
+  const nQuads = labeled.canonicalNQuads
+  const labelMap = labeled.labelMap
+
+  const selections = new Map<string, {
+    selectionDocument: JsonLdDocument
+    deskolemizedNQuads: Array<NQuad>
+    nQuads: Array<NQuad>
+  }>()
+  const entries = [...Object.entries(groupDefinitions)]
+  await Promise.all(entries.map(async ([name, pointers]) => {
+    selections.set(
+      name,
+      await selectCanonicalNQuads(
+        pointers,
+        skolemizedCompactDocument,
+        labelMap,
+        options?.urnScheme,
+        options,
+      ),
+    )
+  }))
+
+  const groups = new Map<string, {
+    matching: Map<number, NQuad>
+    nonMatching: Map<number, NQuad>
+    deskolemizedNQuads: Array<NQuad>
+  }>()
+  for (const [name, selectionResult] of selections) {
+    const matching = new Map<number, NQuad>()
+    const nonMatching = new Map<number, NQuad>()
+
+    const selectedNQuads = selectionResult.nQuads
+    const selectedDeskolemizedNQuads = selectionResult.deskolemizedNQuads
+
+    nQuads.forEach((nq, index) => selectedNQuads.includes(nq) ? matching.set(index, nq) : nonMatching.set(index, nq))
+    groups.set(name, { matching, nonMatching, deskolemizedNQuads: selectedDeskolemizedNQuads })
+  }
+
+  return {
+    groups,
+    skolemizedExpandedDocument,
+    skolemizedCompactDocument,
+    deskolemizedNQuads,
+    labelMap,
+    nQuads,
+  }
 }

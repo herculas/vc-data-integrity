@@ -1,5 +1,5 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
-import { isObject, isScalar } from "../suite/guard.ts"
+import { isObject, isScalar } from "../utils/guard.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { relabelBlankNodes } from "./canonize.ts"
 import { toDeskolemizedNQuads } from "./skolemize.ts"
@@ -65,7 +65,7 @@ export function jsonPointerToPaths(pointer: string): Array<Path> {
  *
  * @param {JsonObject} source A JSON-LD object.
  *
- * @returns {object} A fragmented JSON-LD document.
+ * @returns {JsonObject} A fragmented JSON-LD document.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#createinitialselection
  */
@@ -99,7 +99,7 @@ function createInitialSelection(source: JsonObject): JsonObject {
  * @param {Array<Path>} paths An array of paths parsed from a JSON Pointer.
  * @param {JsonObject} document A compact JSON-LD document.
  * @param {JsonValue} selectionDocument A fragmented JSON-LD document in selection, to be populated.
- * @param {Array<JsonValue>} arrays An array for tracking selected arrays.
+ * @param {Array<JsonArray>} arrays An array of arrays for tracking selected arrays.
  *
  * This algorithm produces no output; instead, it populates the given `selectionDocument` with any values selected via
  * `paths`.
@@ -335,7 +335,8 @@ export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): J
  * @param {Array<string>} pointers An array of JSON Pointers.
  * @param {JsonLdObject} skolemizedCompactDocument A skolemized compact JSON-LD document.
  * @param {LabelMap} labelMap A blank node label map.
- * @param {object} [options] Any additional custom options, such as a document loader.
+ * @param {URNScheme} [urnScheme] A URN scheme to use for generating URN identifiers for blank nodes.
+ * @param {JsonLdOptions.ToRdf} [options] Any additional custom options.
  *
  * Note that the `document` is assumed to use a JSON-LD context that aliases `@id` and `@type` to `id` and `type`,
  * respectively, and to use only one `@context` property at the top level of the document.

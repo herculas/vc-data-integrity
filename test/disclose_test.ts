@@ -6,11 +6,15 @@ import {
   labelReplacementCanonicalizeJsonLd,
   labelReplacementCanonicalizeNQuads,
 } from "../src/disclose/canonize.ts"
+import { selectCanonicalNQuads, selectJsonLd } from "../src/disclose/select.ts"
+import { skolemizeCompactJsonLd, toDeskolemizedNQuads } from "../src/disclose/skolemize.ts"
 import { testLoader } from "./mock/loader.ts"
 
 import type { Credential } from "../src/types/data/credential.ts"
 import type { HMAC, LabelMap } from "../src/types/api/disclose.ts"
-import { skolemizeCompactJsonLd, toDeskolemizedNQuads } from "../src/disclose/skolemize.ts"
+import type { JsonValue } from "../src/types/serialize/document.ts"
+
+import * as rdf from "../src/serialize/rdf.ts"
 
 Deno.test("Replace label of canonicalized JSON-LD", async () => {
   const rawHmacKey = new Uint8Array(32)
@@ -263,7 +267,7 @@ Deno.test("HMAC ID canonized: with HMAC, with blank nodes, skolemized", async ()
   const labelFactoryFunc = createHmacIdLabelMapFunction(hmac)
 
   const skolemized = await skolemizeCompactJsonLd(credential, undefined, undefined, { documentLoader: testLoader })
-  const deskolemized = await toDeskolemizedNQuads(skolemized.compact, "custom-scheme", { documentLoader: testLoader })
+  const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
   const result = await labelReplacementCanonicalizeNQuads(deskolemized, labelFactoryFunc)
 
   const expected = [
@@ -282,3 +286,432 @@ Deno.test("HMAC ID canonized: with HMAC, with blank nodes, skolemized", async ()
 
   assertEquals(result.canonicalNQuads, expected)
 })
+
+Deno.test("JSON-LD selection: simple case", () => {
+  const pointers = [
+    "/credentialSubject/driverLicense/dateOfBirth",
+    "/credentialSubject/driverLicense/expirationDate",
+  ]
+
+  const credential: Credential = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    id: "urn:uuid:36245ee9-9074-4b05-a777-febff2e69757",
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    issuer: "did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9",
+    issuanceDate: "2010-01-01T19:23:24Z",
+    credentialSubject: {
+      id: "urn:uuid:1a0e4ef5-091f-4060-842e-18e519ab9440",
+      driverLicense: {
+        type: "DriverLicense",
+        documentIdentifier: "T21387yc328c7y32h23f23",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+        issuingAuthority: "VA",
+      },
+    },
+  }
+
+  const selected = selectJsonLd(pointers, credential)
+
+  const expected: JsonValue = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    id: "urn:uuid:36245ee9-9074-4b05-a777-febff2e69757",
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    credentialSubject: {
+      id: "urn:uuid:1a0e4ef5-091f-4060-842e-18e519ab9440",
+      driverLicense: {
+        type: "DriverLicense",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+      },
+    },
+  }
+
+  assertEquals(selected, expected)
+})
+
+Deno.test("JSON-LD selection: matching N pointers without identifiers", () => {
+  const pointers = [
+    "/credentialSubject/driverLicense/dateOfBirth",
+    "/credentialSubject/driverLicense/expirationDate",
+  ]
+
+  const credential = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    issuer: "did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9",
+    issuanceDate: "2010-01-01T19:23:24Z",
+    credentialSubject: {
+      driverLicense: {
+        type: "DriverLicense",
+        documentIdentifier: "T21387yc328c7y32h23f23",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+        issuingAuthority: "VA",
+      },
+    },
+  }
+
+  const selected = selectJsonLd(pointers, credential)
+
+  const expected: JsonValue = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    credentialSubject: {
+      driverLicense: {
+        type: "DriverLicense",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+      },
+    },
+  }
+
+  assertEquals(selected, expected)
+})
+
+Deno.test("N-Quads selection: matching N pointers with identifiers", async () => {
+  const pointers = [
+    "/credentialSubject/driverLicense/dateOfBirth",
+    "/credentialSubject/driverLicense/expirationDate",
+  ]
+
+  const credential: Credential = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    id: "urn:uuid:36245ee9-9074-4b05-a777-febff2e69757",
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    issuer: "did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9",
+    issuanceDate: "2010-01-01T19:23:24Z",
+    credentialSubject: {
+      id: "urn:uuid:1a0e4ef5-091f-4060-842e-18e519ab9440",
+      driverLicense: {
+        type: "DriverLicense",
+        documentIdentifier: "T21387yc328c7y32h23f23",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+        issuingAuthority: "VA",
+      },
+    },
+  }
+
+  const skolemized = await skolemizeCompactJsonLd(credential, undefined, undefined, { documentLoader: testLoader })
+  const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
+
+  let canonicalIdMap = new Map<string, string>()
+  await rdf.canonize(deskolemized.join(""), {
+    algorithm: "RDFC-1.0",
+    format: "application/n-quads",
+    inputFormat: "application/n-quads",
+    canonicalIdMap,
+  })
+  canonicalIdMap = stripBlankNodePrefixes(canonicalIdMap)
+
+  const selected = await selectCanonicalNQuads(
+    pointers,
+    skolemized.compact,
+    canonicalIdMap,
+    undefined,
+    { documentLoader: testLoader },
+  )
+
+  const expectedNQuads = [
+    "<urn:uuid:1a0e4ef5-091f-4060-842e-18e519ab9440> <urn:example:driverLicense> _:c14n0 .\n",
+    "<urn:uuid:36245ee9-9074-4b05-a777-febff2e69757> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .\n",
+    "<urn:uuid:36245ee9-9074-4b05-a777-febff2e69757> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicenseCredential> .\n",
+    "<urn:uuid:36245ee9-9074-4b05-a777-febff2e69757> <https://www.w3.org/2018/credentials#credentialSubject> <urn:uuid:1a0e4ef5-091f-4060-842e-18e519ab9440> .\n",
+    "_:c14n0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicense> .\n",
+    '_:c14n0 <urn:example:dateOfBirth> "01-01-1990" .\n',
+    '_:c14n0 <urn:example:expiration> "01-01-2030" .\n',
+  ]
+
+  assertEquals(
+    selected.nQuads.toSorted(),
+    expectedNQuads.toSorted(),
+  )
+})
+
+Deno.test("N-Quads selection: matching N pointers without identifiers", async () => {
+  const pointers = [
+    "/credentialSubject/driverLicense/dateOfBirth",
+    "/credentialSubject/driverLicense/expirationDate",
+  ]
+
+  const credential = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    issuer: "did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9",
+    issuanceDate: "2010-01-01T19:23:24Z",
+    credentialSubject: {
+      driverLicense: {
+        type: "DriverLicense",
+        documentIdentifier: "T21387yc328c7y32h23f23",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+        issuingAuthority: "VA",
+      },
+    },
+  }
+
+  const skolemized = await skolemizeCompactJsonLd(credential, undefined, undefined, { documentLoader: testLoader })
+  const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
+
+  let canonicalIdMap = new Map<string, string>()
+  await rdf.canonize(deskolemized.join(""), {
+    algorithm: "RDFC-1.0",
+    format: "application/n-quads",
+    inputFormat: "application/n-quads",
+    canonicalIdMap,
+  })
+  canonicalIdMap = stripBlankNodePrefixes(canonicalIdMap)
+
+  const selected = await selectCanonicalNQuads(
+    pointers,
+    skolemized.compact,
+    canonicalIdMap,
+    undefined,
+    { documentLoader: testLoader },
+  )
+
+  const expected = [
+    "_:c14n0 <urn:example:driverLicense> _:c14n1 .\n",
+    "_:c14n1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicense> .\n",
+    '_:c14n1 <urn:example:dateOfBirth> "01-01-1990" .\n',
+    '_:c14n1 <urn:example:expiration> "01-01-2030" .\n',
+    "_:c14n2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .\n",
+    "_:c14n2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicenseCredential> .\n",
+    "_:c14n2 <https://www.w3.org/2018/credentials#credentialSubject> _:c14n0 .\n",
+  ]
+
+  assertEquals(
+    selected.nQuads.toSorted(),
+    expected.toSorted(),
+  )
+})
+
+Deno.test("N-Quads selection: matching N pointers with blank node identifiers", async () => {
+  const pointers = [
+    "/credentialSubject/driverLicense/id",
+    "/credentialSubject/driverLicense/dateOfBirth",
+    "/credentialSubject/driverLicense/expirationDate",
+  ]
+
+  const credential: Credential = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    issuer: "did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9",
+    issuanceDate: "2010-01-01T19:23:24Z",
+    credentialSubject: {
+      driverLicense: {
+        id: "_:b123",
+        type: "DriverLicense",
+        documentIdentifier: "T21387yc328c7y32h23f23",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+        issuingAuthority: "VA",
+      },
+    },
+  }
+
+  const skolemized = await skolemizeCompactJsonLd(credential, undefined, undefined, { documentLoader: testLoader })
+  const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
+
+  let canonicalIdMap = new Map<string, string>()
+  await rdf.canonize(deskolemized.join(""), {
+    algorithm: "RDFC-1.0",
+    format: "application/n-quads",
+    inputFormat: "application/n-quads",
+    canonicalIdMap,
+  })
+  canonicalIdMap = stripBlankNodePrefixes(canonicalIdMap)
+
+  const selected = await selectCanonicalNQuads(
+    pointers,
+    skolemized.compact,
+    canonicalIdMap,
+    undefined,
+    { documentLoader: testLoader },
+  )
+
+  const expected = [
+    "_:c14n0 <urn:example:driverLicense> _:c14n1 .\n",
+    "_:c14n1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicense> .\n",
+    '_:c14n1 <urn:example:dateOfBirth> "01-01-1990" .\n',
+    '_:c14n1 <urn:example:expiration> "01-01-2030" .\n',
+    "_:c14n2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .\n",
+    "_:c14n2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicenseCredential> .\n",
+    "_:c14n2 <https://www.w3.org/2018/credentials#credentialSubject> _:c14n0 .\n",
+  ]
+
+  assertEquals(
+    selected.nQuads.toSorted(),
+    expected.toSorted(),
+  )
+})
+
+const stripBlankNodePrefixes = (map: Map<string, string>) => {
+  const stripped = new Map()
+  for (const [key, value] of map) {
+    stripped.set(key.replace(/^_:/, ""), value.replace(/^_:/, ""))
+  }
+  return stripped
+}

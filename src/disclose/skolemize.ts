@@ -83,7 +83,7 @@ export function deskolemizeNQuads(inputNQuads: Array<NQuad>, urnScheme: URNSchem
  * array of deskolemized N-Quads.
  *
  * @param {JsonLdDocument} skolemizedDocument A JSON-LD document.
- * @param {URNScheme} urnScheme A URN scheme, which should match the scheme used in the skolemization process.
+ * @param {URNScheme} [urnScheme] A URN scheme, which should match the scheme used in the skolemization process.
  * @param {JsonLdOptions.ToRdf} [options] Any additional custom options.
  *
  * @returns {Array<NQuad>} Resolve to an array of deskolemized N-Quad strings.
@@ -131,7 +131,7 @@ export async function toDeskolemizedNQuads(
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#skolemizeexpandedjsonld
  */
-function skolemizeExpandedJsonLd(
+export function skolemizeExpandedJsonLd(
   expanded: Array<JsonLdObject>,
   urnScheme?: URNScheme,
   randomString?: string,
@@ -250,7 +250,7 @@ export async function skolemizeCompactJsonLd(
   options?: JsonLdOptions.Expand & JsonLdOptions.Compact,
 ): Promise<{
   expanded: JsonLdDocument
-  compact: JsonLdDocument
+  compact: JsonLdObject
 }> {
   // Procedure:
   //

@@ -13,11 +13,11 @@ export * as jsonld from "./serialize/jsonld.ts"
 export * as rdf from "./serialize/rdf.ts"
 
 // Selective disclosure
-// TODO
-// export * as disclose from "./disclose/group.ts"
+export * as selective from "./disclose/index.ts"
 
 // Utilities
 export * as format from "./utils/format.ts"
+export * as guard from "./utils/guard.ts"
 export * as instance from "./utils/instance.ts"
 export * as loader from "./utils/loader.ts"
 export { base58btc, base64url, base64urlnopad } from "./utils/multibase.ts"
@@ -28,16 +28,15 @@ export { ImplementationError, ImplementationErrorCode } from "./error/implement.
 export { ProcessingError, ProcessingErrorCode } from "./error/process.ts"
 
 // Options
+export type * as DisclosureOptions from "./types/api/disclose.ts"
 export type * as DocumentOptions from "./types/api/document.ts"
 export type * as JsonLdOptions from "./types/api/jsonld.ts"
 export type * as KeypairOptions from "./types/api/keypair.ts"
 export type * as RdfOptions from "./types/api/rdf.ts"
 
-// Results
-export type * as Result from "./types/api/result.ts"
-
-// Interfaces
+// Results and interfaces
 export type { LoadDocumentCallback, RemoteDocument } from "./types/api/loader.ts"
+export type * as Result from "./types/api/result.ts"
 
 // Data type definitions
 export type { CIDDocument, Service } from "./types/data/cid.ts"

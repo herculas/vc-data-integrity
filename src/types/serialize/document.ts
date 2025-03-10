@@ -27,7 +27,7 @@ export interface JsonObject {
   [key: string]: JsonValue | null
 }
 
-type JsonValue = JsonPrimitive | JsonObject | JsonArray
+export type JsonValue = JsonPrimitive | JsonObject | JsonArray
 
 /**
  * A JSON-LD object is a JSON object that represents an RDF node. It is a JSON object that contains a combination of

@@ -25,3 +25,9 @@ export type LabelMap = Map<BlankNode, BlankNode>
  * A factory function that creates a label map from a canonical blank node identifier map.
  */
 export type LabelMapFactory = (canonicalIdMap: LabelMap) => Promise<LabelMap>
+
+/**
+ * The path to a node in a JSON object, represented as a string or a number. The path is a sequence of keys and indices
+ * separated by a dot. For example, the path to the value of the key "b" in the object {"a": {"b": 1}} is "a/b".
+ */
+export type Path = string | number

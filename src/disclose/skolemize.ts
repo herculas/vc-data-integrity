@@ -2,7 +2,7 @@ import * as jsonld from "../serialize/jsonld.ts"
 
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
-import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
+import type { JsonLdDocument, JsonLdObject, JsonObject, JsonValue } from "../types/serialize/document.ts"
 import type { NQuad } from "../types/serialize/rdf.ts"
 import type { URNScheme } from "../types/serialize/base.ts"
 
@@ -92,7 +92,7 @@ export function deskolemizeNQuads(inputNQuads: Array<NQuad>, urnScheme: URNSchem
  */
 export async function toDeskolemizedNQuads(
   skolemizedDocument: JsonLdDocument,
-  urnScheme: URNScheme,
+  urnScheme?: URNScheme,
   options?: JsonLdOptions.ToRdf,
 ): Promise<Array<NQuad>> {
   // Procedure:
@@ -105,7 +105,11 @@ export async function toDeskolemizedNQuads(
   //    the default "custom-scheme:" so long as the same scheme name was used to generate the `skolemizedDocument`.
   // 4. Return `deskolemizedNQuads`.
 
-  const skolemizedDataset = await jsonld.toRdf(skolemizedDocument, options)
+  urnScheme = urnScheme || "custom-scheme"
+  const skolemizedDataset = await jsonld.toRdf(skolemizedDocument, {
+    ...options,
+    format: "application/n-quads",
+  }) as string
   const skolemizedNQuads = skolemizedDataset.split("\n").slice(0, -1).map((nq) => nq + "\n")
   const deskolemizedNQuads = deskolemizeNQuads(skolemizedNQuads, urnScheme)
   return deskolemizedNQuads
@@ -119,9 +123,9 @@ export async function toDeskolemizedNQuads(
  * `toDeskolemizedNQuads` function.
  *
  * @param {Array<JsonLdObject>} expanded An expanded JSON-LD document.
- * @param {URNScheme} urnScheme A custom URN scheme.
- * @param {string} randomString A UUID string or other comparably random string.
- * @param {number} count A reference to a shared integer.
+ * @param {URNScheme} [urnScheme] A custom URN scheme.
+ * @param {string} [randomString] A UUID string or other comparably random string.
+ * @param {number} [count] A reference to a shared integer.
  *
  * @returns {Array<JsonLdObject>} The expanded form of the skolemized JSON-LD document.
  *
@@ -133,6 +137,35 @@ function skolemizeExpandedJsonLd(
   randomString?: string,
   count?: number,
 ): Array<JsonLdObject> {
+  urnScheme = urnScheme || "custom-scheme"
+  randomString = randomString || crypto.randomUUID()
+  count = count || 0
+  return skolemizeExpandedRecursive(
+    expanded as Array<JsonValue>,
+    {
+      urnScheme,
+      randomString,
+      count,
+    },
+  ) as Array<JsonLdObject>
+}
+
+/**
+ * The inner recursive function for skolemizing an expanded JSON-LD document.
+ *
+ * @param {Array<InnerExpanded>} expanded An expanded JSON-LD document, or elements thereof.
+ * @param {object} options Options for skolemizing the expanded JSON-LD document.
+ *
+ * @returns {Array<InnerExpanded>} The expanded form of the skolemized JSON-LD document, or elements thereof.
+ */
+function skolemizeExpandedRecursive(
+  expanded: Array<JsonValue>,
+  options: {
+    urnScheme: URNScheme
+    randomString: string
+    count: number
+  },
+): Array<JsonValue> {
   // Procedure:
   //
   // 1. Initialize `skolemizedExpandedDocument` to an empty array.
@@ -160,49 +193,35 @@ function skolemizeExpandedJsonLd(
   //
   // 3. Return `skolemizedExpandedDocument`.
 
-  urnScheme = urnScheme || "custom-scheme:"
-  randomString = randomString || Math.random().toString(36).substring(2, 15)
-  count = count || 0
-
-  // 1: initialize an array
-  const skolemizedExpandedDocument: Array<JsonLdObject> = []
-
-  // 2: iterate over elements in the expanded document
+  const skolemizedExpandedDocument: Array<JsonValue> = []
   for (const element of expanded) {
-    // 2.1: the element is not an object or contains a `@value` key
-    if (typeof element !== "object" || element["@value"] !== undefined) {
+    if (element === null) continue
+    if (typeof element !== "object" || ("@value" in element && Object.hasOwn(element, "@value"))) {
       skolemizedExpandedDocument.push(structuredClone(element))
       continue
     }
-
-    // 2.2: initialize a new node
-    const skolemizedNode: JsonLdObject = {}
+    const skolemizedNode: JsonObject = {}
     for (const [property, value] of Object.entries(element)) {
       skolemizedNode[property] = Array.isArray(value)
-        ? skolemizeExpandedJsonLd(value as Array<JsonLdObject>, urnScheme, randomString, count)
-        : skolemizeExpandedJsonLd([value as JsonLdObject], urnScheme, randomString, count)[0]
+        ? skolemizeExpandedRecursive(value, options)
+        : skolemizeExpandedRecursive([value as JsonValue], options)[0]
     }
-
     if (!skolemizedNode["@id"]) {
-      skolemizedNode["@id"] = `urn:${urnScheme}_${randomString}_${count}`
-      count++
+      skolemizedNode["@id"] = `urn:${options.urnScheme}:_${options.randomString}_${options.count++}`
     } else {
-      if (!Array.isArray(skolemizedNode["@id"])) {
-        if (skolemizedNode["@id"].startsWith("_:")) {
-          skolemizedNode["@id"] = `urn:${urnScheme}${skolemizedNode["@id"].substring(2)}`
-        }
-      } else {
+      if (typeof skolemizedNode["@id"] !== "string") {
         throw new BasicError(
           BasicErrorCode.DOCUMENT_CONTENT_ERROR,
           "disclose/skolemize#skolemizeExpandedJsonLd",
           "The value of the `@id` property in `skolemizedNode` MUST NOT be an array.",
         )
       }
+      if (skolemizedNode["@id"].startsWith("_:")) {
+        skolemizedNode["@id"] = `urn:${options.urnScheme}:${skolemizedNode["@id"].slice(2)}`
+      }
     }
-
     skolemizedExpandedDocument.push(skolemizedNode)
   }
-
   return skolemizedExpandedDocument
 }
 
@@ -230,8 +249,8 @@ export async function skolemizeCompactJsonLd(
   randomString?: string,
   options?: JsonLdOptions.Expand & JsonLdOptions.Compact,
 ): Promise<{
-  skolemizedExpandedDocument: JsonLdDocument
-  skolemizedCompactDocument: JsonLdDocument
+  expanded: JsonLdDocument
+  compact: JsonLdDocument
 }> {
   // Procedure:
   //
@@ -254,8 +273,9 @@ export async function skolemizeCompactJsonLd(
   const expanded = await jsonld.expand(document, options)
   const skolemizedExpandedDocument = skolemizeExpandedJsonLd(expanded, urnScheme, randomString)
   const skolemizedCompactDocument = await jsonld.compact(skolemizedExpandedDocument, context, options)
+
   return {
-    skolemizedExpandedDocument,
-    skolemizedCompactDocument,
+    expanded: skolemizedExpandedDocument,
+    compact: skolemizedCompactDocument,
   }
 }

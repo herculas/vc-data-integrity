@@ -1,18 +1,26 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
+import { isObject, isScalar } from "../suite/guard.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
+import { relabelBlankNodes } from "./canonize.ts"
+import { toDeskolemizedNQuads } from "./skolemize.ts"
 
-import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
+import type { JsonArray, JsonLdDocument, JsonLdObject, JsonObject, JsonValue } from "../types/serialize/document.ts"
+import type { LabelMap, Path } from "../types/api/disclose.ts"
+import type { NQuad } from "../types/serialize/rdf.ts"
+import type { URNScheme } from "../types/serialize/base.ts"
+
+import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
 /**
  * Convert a JSON Pointer to an array of paths into a JSON tree.
  *
  * @param {string} pointer A JSON Pointer string.
  *
- * @returns {Array<string | number>} An array of paths.
+ * @returns {Array<Path>} An array of paths.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#jsonpointertopaths
  */
-export function jsonPointerToPaths(pointer: string): Array<string | number> {
+export function jsonPointerToPaths(pointer: string): Array<Path> {
   // Procedure:
   //
   // 1. Initialize `paths` to an empty array.
@@ -27,12 +35,13 @@ export function jsonPointerToPaths(pointer: string): Array<string | number> {
   //
   // 4. Return `paths`.
 
-  const paths: Array<string | number> = []
+  const paths: Array<Path> = []
   const splitPath = pointer.split("/").slice(1)
 
   for (const path of splitPath) {
     if (!path.includes("~")) {
-      paths.push(isNaN(parseInt(path)) ? path : parseInt(path))
+      const index = parseInt(path, 10)
+      paths.push(isNaN(index) ? path : index)
     } else {
       paths.push(
         path.replace(/~[01]/g, (match) => {
@@ -54,13 +63,13 @@ export function jsonPointerToPaths(pointer: string): Array<string | number> {
  * Create an initial selection (a fragment of a JSON-LD document) based on a JSON-LD object. This is a helper function
  * used within the `selectJsonLd` function.
  *
- * @param {JsonLdObject} source A JSON-LD object.
+ * @param {JsonObject} source A JSON-LD object.
  *
- * @returns {Record<string, unknown>} A JSON-LD document fragment object.
+ * @returns {object} A fragmented JSON-LD document.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#createinitialselection
  */
-function createInitialSelection(source: JsonLdObject): Record<string, unknown> {
+function createInitialSelection(source: JsonObject): JsonObject {
   // Procedure:
   //
   // 1. Initialize `selection` to an empty object.
@@ -71,14 +80,12 @@ function createInitialSelection(source: JsonLdObject): Record<string, unknown> {
   //    path of any JSON Pointer, including any root document `type`.
   // 4. Return `selection`.
 
-  const selection: Record<string, unknown> = {}
-  if ("id" in source && source.id !== undefined) {
-    if (typeof source.id === "string" && !source.id.startsWith("_:")) {
-      selection.id = source.id
-    }
+  const selection: JsonObject = {}
+  if (source.id !== undefined && typeof source.id === "string" && !source.id.startsWith("_:")) {
+    selection.id = source.id
   }
 
-  if ("type" in source) {
+  if (source.type !== undefined) {
     selection.type = source.type
   }
 
@@ -89,10 +96,10 @@ function createInitialSelection(source: JsonLdObject): Record<string, unknown> {
  * Selects a portion of a compact JSON-LD document using paths parsed from a parsed JSON Pointer. This is a helper
  * function used within the `selectJsonLd` function.
  *
- * @param {Array<string>} paths An array of paths parsed from a JSON Pointer.
- * @param {JsonLdObject} document A compact JSON-LD document.
- * @param {Record<string, unknown>} selectionDocument A selection document to be populated.
- * @param {Array} arrays An array of arrays for tracking selected arrays.
+ * @param {Array<Path>} paths An array of paths parsed from a JSON Pointer.
+ * @param {JsonObject} document A compact JSON-LD document.
+ * @param {JsonValue} selectionDocument A fragmented JSON-LD document in selection, to be populated.
+ * @param {Array<JsonValue>} arrays An array for tracking selected arrays.
  *
  * This algorithm produces no output; instead, it populates the given `selectionDocument` with any values selected via
  * `paths`.
@@ -100,10 +107,10 @@ function createInitialSelection(source: JsonLdObject): Record<string, unknown> {
  * @see https://www.w3.org/TR/vc-di-ecdsa/#selectpaths
  */
 function selectPaths(
-  paths: Array<string>,
-  document: JsonLdObject,
-  selectionDocument: Record<string, unknown>,
-  arrays: Array<Array<number>>,
+  paths: Array<Path>,
+  document: JsonObject,
+  selectionDocument: JsonValue,
+  arrays: Array<JsonArray>,
 ) {
   // Procedure:
   //
@@ -135,64 +142,150 @@ function selectPaths(
   // 10. Get the last `path`, `lastPath`, from `paths`.
   // 11. Set `selectedParent.lastPath` to `selectedValue`.
 
-  let parentValue: string | number | boolean | object = document
-  let value: string | number | boolean | object = parentValue
-  let selectedParent = selectionDocument
-  let selectedValue = selectedParent
+  let parentValue: JsonValue = document
+  let value: JsonValue = parentValue
+
+  let selectedParent: JsonValue = selectionDocument
+  let selectedValue: JsonValue | undefined = selectedParent
+
+  let throwFlag: boolean = false
 
   for (const path of paths) {
-    selectedParent = selectedValue
+    selectedParent = selectedValue!
     parentValue = value
 
-    if ((path in parentValue) || Object.hasOwn(parentValue, path)) {
-      value = parentValue[path]
+    throwFlag = false
+    if (isScalar(parentValue)) {
+      throwFlag = true
+    } else if (Array.isArray(parentValue)) {
+      if (typeof path !== "number" || !Number.isInteger(path)) {
+        throwFlag = true
+      } else {
+        if (parentValue.at(path) === undefined) {
+          throwFlag = true
+        } else {
+          value = parentValue.at(path)!
+        }
+      }
     } else {
+      if (typeof path !== "string" || parentValue[path] === undefined) {
+        throwFlag = true
+      } else {
+        value = parentValue[path]
+      }
+    }
+    if (throwFlag) {
       throw new ProcessingError(
         ProcessingErrorCode.PROOF_GENERATION_ERROR,
         "disclose/select#selectPaths",
-        `JSON Pointer does not match the given document: ${path}`,
+        `JSON path ${path} does not match the given document!`,
       )
     }
 
-    selectedValue = selectedParent[path]
+    if (isScalar(selectedParent)) {
+      selectedValue = undefined
+    } else if (Array.isArray(selectedParent)) {
+      if (typeof path !== "number" || !Number.isInteger(path)) {
+        selectedValue = undefined
+      } else {
+        selectedValue = selectedParent.at(path)
+      }
+    } else {
+      if (typeof path !== "string" || selectedParent[path] === undefined) {
+        selectedValue = undefined
+      } else {
+        selectedValue = selectedParent[path]
+      }
+    }
+
     if (selectedValue === undefined) {
-      if (Array.isArray(value)) {
+      if (isScalar(value)) {
+        selectedValue = {}
+      } else if (Array.isArray(value)) {
         selectedValue = []
         arrays.push(selectedValue)
       } else {
         selectedValue = createInitialSelection(value)
       }
-      selectedParent[path] = selectedValue
+
+      throwFlag = false
+      if (isScalar(selectedParent)) {
+        throwFlag = true
+      } else if (Array.isArray(selectedParent)) {
+        if (typeof path !== "number" || !Number.isInteger(path) || path < 0) {
+          throwFlag = true
+        } else {
+          selectedParent[path] = selectedValue
+        }
+      } else {
+        if (typeof path !== "string") {
+          throwFlag = true
+        } else {
+          selectedParent[path] = selectedValue
+        }
+      }
+      if (throwFlag) {
+        throw new ProcessingError(
+          ProcessingErrorCode.PROOF_GENERATION_ERROR,
+          "disclose/select#selectPaths",
+          `JSON path ${path} does not match the given document!`,
+        )
+      }
     }
   }
 
-  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+  if (!isObject(value)) {
     selectedValue = value
   } else if (Array.isArray(value)) {
     selectedValue = structuredClone(value)
   } else {
-    selectedValue = { ...selectedValue, ...structuredClone(value) }
+    if (isObject(selectedValue)) {
+      selectedValue = { ...selectedValue, ...structuredClone(value) }
+    } else {
+      selectedValue = { selectedCurrentDoc: selectedValue, ...structuredClone(value) }
+    }
   }
 
-  const lastPath = paths[paths.length - 1]
-  selectedParent[lastPath] = selectedValue
+  throwFlag = false
+  const lastPath = paths.at(-1)
+  if (isScalar(selectedParent)) {
+    throwFlag = true
+  } else if (Array.isArray(selectedParent)) {
+    if (typeof lastPath !== "number" || !Number.isInteger(lastPath) || lastPath < 0) {
+      throwFlag = true
+    } else {
+      selectedParent[lastPath] = selectedValue
+    }
+  } else {
+    if (typeof lastPath !== "string") {
+      throwFlag = true
+    } else {
+      selectedParent[lastPath] = selectedValue
+    }
+  }
+  if (throwFlag) {
+    throw new ProcessingError(
+      ProcessingErrorCode.PROOF_GENERATION_ERROR,
+      "disclose/select#selectPaths",
+      `JSON path ${lastPath} does not match the given document!`,
+    )
+  }
 }
 
 /**
  * Select a portion of a compact JSON-LD document using an array of JSON Pointers.
  *
  * @param {Array<string>} pointers An array of JSON Pointers.
- * @param {JsonLdObject} document A compact JSON-LD document which is
+ * @param {JsonLdObject} document A compact JSON-LD document.
  *
  * Note that the `document` is assumed to use a JSON-LD context that aliases `@id` and `@type` to `id` and `type`,
  * respectively, and to use only one `@context` property at the top level of the document.
  *
- * @returns {Record<string, unknown> | null} A new JSON-LD document that represents a selection of the original JSON-LD
- * document.
+ * @returns {JsonValue} A new JSON-LD document that represents a selection of the original JSON-LD document.
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#selectjsonld
  */
-export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): Record<string, unknown> | null {
+export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): JsonValue {
   // Procedure:
   //
   // 1. If `pointers` is empty, return `null`. This indicates nothing has been selected from the original document.
@@ -215,9 +308,22 @@ export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): R
   //
   // 7. Return `selectionDocument`.
 
+  const innerDocument = document as JsonObject
+
   if (pointers.length === 0) return null
-  const arrays = []
-  const selectionDocument = createInitialSelection(document)
+  const arrays: Array<JsonArray> = []
+  const selectionDocument = createInitialSelection(innerDocument)
+  selectionDocument["@context"] = structuredClone(innerDocument["@context"])
+
+  for (const pointer of pointers) {
+    const paths = jsonPointerToPaths(pointer)
+    if (paths.length === 0) return structuredClone(innerDocument)
+    selectPaths(paths, innerDocument, selectionDocument, arrays)
+  }
+
+  for (let array of arrays) {
+    array = array.filter((item) => item !== undefined)
+  }
 
   return selectionDocument
 }
@@ -227,8 +333,8 @@ export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): R
  * canonical N-Quads with any blank node labels replaced using the given label map.
  *
  * @param {Array<string>} pointers An array of JSON Pointers.
- * @param {JsonLdDocument} skolemizedCompactDocument A skolemized compact JSON-LD document.
- * @param {object} labelMap A blank node label map.
+ * @param {JsonLdObject} skolemizedCompactDocument A skolemized compact JSON-LD document.
+ * @param {LabelMap} labelMap A blank node label map.
  * @param {object} [options] Any additional custom options, such as a document loader.
  *
  * Note that the `document` is assumed to use a JSON-LD context that aliases `@id` and `@type` to `id` and `type`,
@@ -240,12 +346,17 @@ export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): R
  *
  * @see https://www.w3.org/TR/vc-di-ecdsa/#selectcanonicalnquads
  */
-function selectCanonicalNQuads(
+export async function selectCanonicalNQuads(
   pointers: Array<string>,
-  skolemizedCompactDocument: JsonLdDocument,
-  labelMap: object,
-  options?: object,
-) {
+  skolemizedCompactDocument: JsonLdObject,
+  labelMap: LabelMap,
+  urnScheme?: URNScheme,
+  options?: JsonLdOptions.ToRdf,
+): Promise<{
+  selectionDocument: JsonLdDocument
+  deskolemizedNQuads: Array<NQuad>
+  nQuads: Array<NQuad>
+}> {
   // Procedure:
   //
   // 1. Initialize `selectionDocument` to the result of the `selectJsonLd` function, passing `pointers` and
@@ -255,4 +366,14 @@ function selectCanonicalNQuads(
   // 3. Initialize `nQuads` to the result of the `relabelBlankNodes` function, passing `deskolemizedNQuads` as `nQuads`,
   //    and `labelMap` as parameters.
   // 4. Return an object containing `selectionDocument`, `deskolemizedNQuads`, and `nQuads`.
+
+  const selectionDocument = selectJsonLd(pointers, skolemizedCompactDocument) as JsonLdDocument
+  const deskolemizedNQuads = await toDeskolemizedNQuads(selectionDocument, urnScheme, options)
+  const nQuads = relabelBlankNodes(deskolemizedNQuads, labelMap)
+
+  return {
+    selectionDocument,
+    deskolemizedNQuads,
+    nQuads,
+  }
 }

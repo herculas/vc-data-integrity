@@ -15,8 +15,6 @@ import type { Credential } from "../src/types/data/credential.ts"
 import type { HMAC, LabelMap } from "../src/types/api/disclose.ts"
 import type { JsonValue } from "../src/types/serialize/document.ts"
 
-// import * as rdf from "../src/serialize/rdf.ts"
-
 Deno.test("Replace label of canonicalized JSON-LD", async () => {
   const rawHmacKey = new Uint8Array(32)
   rawHmacKey[0] = 1

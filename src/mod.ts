@@ -48,10 +48,26 @@ export type { Canonize, Compact, Expand, Flatten, Frame, Normalize, ToRdf } from
 export type { Export, Import, Retrieve } from "./types/options/suite.ts"
 
 // JSON-LD type definitions
-export type { DateTime, DID, DIDURL, IRI, IRIReference, Term, URI, URIReference } from "./types/serialize/base.ts"
 export type {
+  BlankNode,
+  DateTime,
+  DID,
+  DIDURL,
+  IRI,
+  IRICompacted,
+  IRIReference,
+  Term,
+  URI,
+  URIReference,
+  URNScheme,
+} from "./types/serialize/base.ts"
+export type {
+  JsonArray,
   JsonLdDocument,
   JsonLdObject,
+  JsonObject,
+  JsonPrimitive,
+  JsonValue,
   OneOrMany,
   OneOrWrapped,
   SingleWrapped,

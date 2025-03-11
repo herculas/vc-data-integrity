@@ -1,4 +1,10 @@
 /**
+ * URLs for the context files used in the Verifiable Credential data model.
+ *
+ * @module VC_BASE_URL
+ */
+
+/**
  * Context URL for version 1 of the Verifiable Credential data model.
  */
 export const CREDENTIAL_V1 = "https://www.w3.org/2018/credentials/v1"

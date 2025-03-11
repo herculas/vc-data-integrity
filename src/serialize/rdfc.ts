@@ -1,11 +1,24 @@
-import * as jsonld from "jsonld"
+/**
+ * A set of functions to serialize and deserialize JSON-LD documents to and from RDF datasets, as well as to perform
+ * RDF dataset canonicalization.
+ *
+ * @module rdfc
+ *
+ * @see https://www.w3.org/TR/rdf-canon/
+ * @see https://www.w3.org/TR/json-ld/
+ * @see https://www.w3.org/TR/json-ld11-api/
+ * @see https://www.w3.org/TR/json-ld11-framing/
+ */
 
+import * as jsonld from "jsonld"
+import * as rdf from "rdf-canonize"
+
+import type { Canonize } from "../types/options/serialize.ts"
+import type { Compact, Expand, Flatten, Frame, Normalize, ToRdf } from "../types/options/serialize.ts"
 import type { Context } from "../types/serialize/keyword.ts"
 import type { IRI } from "../types/serialize/base.ts"
-import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
+import type { JsonLdDocument, JsonLdObject, OneOrMany } from "../types/serialize/document.ts"
 import type { NQuad, RdfDataset } from "../types/serialize/rdf.ts"
-
-import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
 /**
  * Compaction is the process of applying a developer-supplied context to shorten IRIs to terms or compact IRIs and
@@ -18,7 +31,7 @@ import type * as JsonLdOptions from "../types/api/jsonld.ts"
  *
  * @param {JsonLdDocument} input The JSON-LD document to compact.
  * @param {Context} context The context to compact with.
- * @param {JsonLdOptions.Compact} [options] The options to use.
+ * @param {Compact} [options] The options to use.
  *
  * @returns {Promise<JsonLdObject>} Resolve to the compacted JSON-LD document.
  *
@@ -28,7 +41,7 @@ import type * as JsonLdOptions from "../types/api/jsonld.ts"
 export async function compact(
   input: JsonLdDocument,
   context: Context,
-  options?: JsonLdOptions.Compact,
+  options?: Compact,
 ): Promise<JsonLdObject> {
   return await jsonld.default.compact(input, context, options)
 }
@@ -47,7 +60,7 @@ export async function compact(
  * information from the document is instead stored locally with each value.
  *
  * @param {JsonLdDocument} input The JSON-LD document to expand.
- * @param {JsonLdOptions.Expand} [options] The options to use.
+ * @param {Expand} [options] The options to use.
  *
  * @returns {Promise<JsonLdDocument>} Resolve to the expanded JSON-LD document.
  *
@@ -56,7 +69,7 @@ export async function compact(
  */
 export async function expand(
   input: JsonLdDocument,
-  options?: JsonLdOptions.Expand,
+  options?: Expand,
 ): Promise<Array<JsonLdObject>> {
   return await jsonld.default.expand(input, options)
 }
@@ -72,14 +85,14 @@ export async function expand(
  *
  * @param {JsonLdDocument} input The JSON-LD document to flatten.
  * @param {Context} [context] The context to flatten with.
- * @param {JsonLdOptions.Flatten} [options] The options to use.
+ * @param {Flatten} [options] The options to use.
  *
  * @returns {Promise<JsonLdObject>} Resolve to the flattened JSON-LD document.
  */
 export async function flatten(
   input: JsonLdDocument,
   context?: Context,
-  options?: JsonLdOptions.Flatten,
+  options?: Flatten,
 ): Promise<JsonLdObject> {
   return await jsonld.default.flatten(input, context, options)
 }
@@ -102,7 +115,7 @@ export async function flatten(
  *
  * @param {JsonLdDocument} input The JSON-LD document to frame.
  * @param {Frame} frame The JSON-LD frame to use.
- * @param {JsonLdOptions.Frame} [options] The options.
+ * @param {Frame} [options] The options.
  *
  * @returns {Promise<JsonLdObject>} Resolve to the framed JSON-LD document.
  *
@@ -112,7 +125,7 @@ export async function flatten(
 export async function frame(
   input: JsonLdDocument,
   frame: JsonLdObject | IRI,
-  options?: JsonLdOptions.Frame,
+  options?: Frame,
 ): Promise<JsonLdObject> {
   return await jsonld.default.frame(input, frame, options)
 }
@@ -127,7 +140,7 @@ export async function frame(
  * cryptographic usage) in order to comply with the JSON-LD 1.1 specification.
  *
  * @param {JsonLdDocument} input The input document to normalize.
- * @param {JsonLdOptions.Normalize} [options] The options to use.
+ * @param {Normalize} [options] The options to use.
  *
  * @returns {Promise<NQuad>} Resolve to the normalized RDF dataset.
  *
@@ -135,7 +148,7 @@ export async function frame(
  */
 export async function normalize(
   input: JsonLdDocument,
-  options?: JsonLdOptions.Normalize,
+  options?: Normalize,
 ): Promise<NQuad> {
   return await jsonld.default.canonize(input, options)
 }
@@ -144,13 +157,47 @@ export async function normalize(
  * Deserialize a JSON-LD document to an RDF dataset.
  *
  * @param {JsonLdDocument} input The JSON-LD document to deserialize.
- * @param {JsonLdOptions.ToRdf} [options] The options to use.
+ * @param {ToRdf} [options] The options to use.
  *
  * @returns {Promise<NQuad>} Resolve to the RDF dataset, which is a string of N-Quads.
  */
 export async function toRdf(
   input: JsonLdDocument,
-  options?: JsonLdOptions.ToRdf,
+  options?: ToRdf,
 ): Promise<NQuad | RdfDataset> {
   return await jsonld.default.toRDF(input, options)
+}
+
+/**
+ * RDFC-1.0 canonically labels an RDF dataset by assigning each blank node a canonical identifier. In RDFC-1.0, an RDF
+ * dataset is represented as a set of quads of the form `<s, p, o, g>`, where the graph component `g` is empty if and
+ * only if the triple `<s, p, o>` is in the default graph.
+ *
+ * It is expected that, for two RDF datasets, RDFC-1.0 returns the same canonically labeled list of quads if and only if
+ * the two datasets are isomorphic (i.e., the same modulo blank node identifiers).
+ *
+ * @param {OneOrMany<NQuad> | RdfDataset} input The RDF dataset to canonize.
+ * @param {Canonize} [options] The options to use.
+ *
+ * @returns {Promise<NQuad>} Resolve to the canonically labeled RDF dataset.
+ *
+ * @see https://www.w3.org/TR/rdf-canon/#canon-algorithm
+ */
+export async function canonize(
+  input: OneOrMany<NQuad> | RdfDataset,
+  options: Canonize,
+): Promise<NQuad> {
+  return await rdf.default.canonize(input, options)
+}
+
+/**
+ * Convert an RDF dataset to N-Quad strings.
+ *
+ * @param {RdfDataset} dataset The RDF dataset to serialize.
+ *
+ * @returns {Array<NQuad>} The serialized RDF dataset.
+ */
+export function serialize(dataset: RdfDataset): Array<NQuad> {
+  const serialized: string = rdf.default.NQuads.serialize(dataset)
+  return serialized.split("\n").slice(0, -1)
 }

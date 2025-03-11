@@ -1,3 +1,9 @@
+/**
+ * This module provides utility functions for formatting data.
+ *
+ * @module format
+ */
+
 import { ImplementationError, ImplementationErrorCode } from "../error/implement.ts"
 
 import type { OneOrMany } from "../types/serialize/document.ts"

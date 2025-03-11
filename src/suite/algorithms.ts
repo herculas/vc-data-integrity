@@ -1,11 +1,22 @@
+/**
+ * The algorithms defined below operate on documents represented as JSON objects. This specification follows the JSON-LD
+ * 1.1 Processing Algorithms and API specification in representing a JSON object as a map. An unsecured data document is
+ * a map that contains no proof values. An input document is an map that has not yet had the current proof added to it,
+ * but it MAY contain a proof value that was added to it by a previous process. A secured data document is a map that
+ * contains one or more proof values.
+ *
+ * @module algorithm
+ *
+ * @see https://www.w3.org/TR/vc-data-integrity/#algorithms
+ */
+
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { deepEqual } from "../utils/instance.ts"
 
 import type { Cryptosuite } from "./cryptosuite.ts"
 import type { JsonLdObject, OneOrMany } from "../types/serialize/document.ts"
 import type { Proof } from "../types/data/proof.ts"
-
-import type * as Result from "../types/api/result.ts"
+import type { Verification, VerificationCombined } from "../types/api/suite.ts"
 
 /**
  * Add a digital proof to an input document, which can then be used to verify the output document's authenticity and
@@ -148,7 +159,7 @@ export async function addProofs(
  * @param {typeof Cryptosuite} cryptosuite The suite to use for verifying the proof.
  * @param {object} options The options to use for verifying the proof.
  *
- * @returns {Promise<Result.Verification>} Resolve to a verification result.
+ * @returns {Promise<Verification>} Resolve to a verification result.
  *
  * @see https://www.w3.org/TR/vc-data-integrity/#verify-proof
  */
@@ -156,7 +167,7 @@ export async function verifyProof(
   securedDocument: JsonLdObject,
   cryptosuite: typeof Cryptosuite,
   options: { expectedProofPurpose?: string; domain?: OneOrMany<string>; challenge?: string },
-): Promise<Result.Verification> {
+): Promise<Verification> {
   // Procedures:
   //
   // 1. Let `securedDocument` be the result of running parse JSON bytes to an Infra value on `documentBytes`.
@@ -256,8 +267,8 @@ export async function verifyProofs(
   securedDocument: JsonLdObject,
   cryptosuite: typeof Cryptosuite,
 ): Promise<{
-  combinedVerificationResult: Result.VerificationCombined
-  successfulVerificationResults: Array<Result.Verification>
+  combinedVerificationResult: VerificationCombined
+  successfulVerificationResults: Array<Verification>
 }> {
   // Procedures:
   //
@@ -295,7 +306,7 @@ export async function verifyProofs(
   // 8. Return `combinedVerificationResult` and `successfulVerificationResults`.
 
   let allProofs = securedDocument.proof as OneOrMany<Proof>
-  const verificationResults: Array<Result.Verification> = []
+  const verificationResults: Array<Verification> = []
 
   allProofs = Array.isArray(allProofs) ? allProofs : [allProofs]
   for (const proof of allProofs) {
@@ -326,8 +337,8 @@ export async function verifyProofs(
     verificationResults.push(cryptosuiteVerificationResult)
   }
 
-  const successfulVerificationResults: Array<Result.Verification> = []
-  const combinedVerificationResult: Result.VerificationCombined = {
+  const successfulVerificationResults: Array<Verification> = []
+  const combinedVerificationResult: VerificationCombined = {
     status: true,
     document: undefined,
   }

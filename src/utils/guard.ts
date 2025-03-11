@@ -1,4 +1,10 @@
 /**
+ * This module provides functions for type checking.
+ *
+ * @module guard
+ */
+
+/**
  * Check if the value is an non-null object. Note that this function will return true for arrays.
  *
  * @param {unknown} value The value to be checked.

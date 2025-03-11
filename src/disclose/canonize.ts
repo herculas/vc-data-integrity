@@ -1,14 +1,10 @@
-import * as jsonld from "../serialize/jsonld.ts"
-import * as rdf from "../serialize/rdf.ts"
-
 import { base64urlnopad } from "../utils/multibase.ts"
+import { canonize, toRdf } from "../serialize/rdfc.ts"
 
+import type { Canonize, ToRdf } from "../types/options/serialize.ts"
 import type { HMAC, LabelMap, LabelMapFactory } from "../types/api/disclose.ts"
 import type { JsonLdDocument } from "../types/serialize/document.ts"
 import type { NQuad } from "../types/serialize/rdf.ts"
-
-import type * as JsonLdOptions from "../types/api/jsonld.ts"
-import type * as RdfOptions from "../types/api/rdf.ts"
 
 /**
  * Canonicalize an array of N-Quad strings and replace any blank node identifiers in the canonicalized result using
@@ -16,7 +12,7 @@ import type * as RdfOptions from "../types/api/rdf.ts"
  *
  * @param {Array<NQuad>} nQuads An array of N-Quad strings.
  * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
- * @param {Partial<RdfOptions.Canonize>} [options] Custom options.
+ * @param {Partial<Canonize>} [options] Custom options.
  *
  * @returns {Promise<object>} Resolve to an N-Quads representation of the `canonicalNQuads` as an array of N-Quad
  * strings, with the replaced blank node labels, and a map from the old blank node identifiers to the new blank node
@@ -27,7 +23,7 @@ import type * as RdfOptions from "../types/api/rdf.ts"
 export async function labelReplacementCanonicalizeNQuads(
   nQuads: Array<NQuad>,
   labelMapFactoryFunction: LabelMapFactory,
-  options?: Partial<RdfOptions.Canonize>,
+  options?: Partial<Canonize>,
 ): Promise<{
   labelMap: LabelMap
   canonicalNQuads: Array<NQuad>
@@ -43,7 +39,7 @@ export async function labelReplacementCanonicalizeNQuads(
 
   // 1: canonicalize the N-Quads
   let canonicalIdMap: LabelMap = new Map()
-  const output = await rdf.canonize(nQuads.join("\n"), {
+  const output = await canonize(nQuads.join("\n"), {
     ...options,
     inputFormat: "application/n-quads",
     algorithm: "RDFC-1.0",
@@ -81,7 +77,7 @@ export async function labelReplacementCanonicalizeNQuads(
  *
  * @param {JsonLdDocument} document A JSON-LD document.
  * @param {LabelMapFactory} labelMapFactoryFunction A label map factory function.
- * @param {JsonLdOptions.ToRdf & Partial<RdfOptions.Canonize>} [options] Custom options.
+ * @param {ToRdf & Partial<Canonize>} [options] Custom options.
  *
  * @returns {Promise<object>} Resolve to an N-Quads representation of the `canonicalNQuads` as an array of N-Quad
  * strings, with the replaced blank node labels, and a map from the old blank node identifiers to the new blank node
@@ -92,7 +88,7 @@ export async function labelReplacementCanonicalizeNQuads(
 export async function labelReplacementCanonicalizeJsonLd(
   document: JsonLdDocument,
   labelMapFactoryFunction: LabelMapFactory,
-  options?: JsonLdOptions.ToRdf & Partial<RdfOptions.Canonize>,
+  options?: ToRdf & Partial<Canonize>,
 ): Promise<{
   labelMap: LabelMap
   canonicalNQuads: Array<NQuad>
@@ -105,7 +101,7 @@ export async function labelReplacementCanonicalizeJsonLd(
   // 3. Return the result of calling the `labelReplacementCanonicalizeNQuads` function, passing `nQuads`,
   //    `labelMapFactoryFunction`, and `options` as arguments.
 
-  const rdf = await jsonld.toRdf(document, {
+  const rdf = await toRdf(document, {
     rdfDirection: "i18n-datatype",
     ...options,
     format: "application/n-quads",

@@ -1,3 +1,11 @@
+/**
+ * A set of functions that are used throughout cryptographic suites that perform selective disclosure.
+ *
+ * @module selective
+ *
+ * @see https://www.w3.org/TR/vc-di-ecdsa/#selective-disclosure-functions
+ */
+
 export {
   createHmacIdLabelMapFunction,
   createLabelMapFunction,

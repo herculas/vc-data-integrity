@@ -1,3 +1,11 @@
+/**
+ * JSON Canonicalization Scheme (JCS) functions.
+ *
+ * @module jcs
+ *
+ * @see https://datatracker.ietf.org/doc/html/rfc8785
+ */
+
 import { ImplementationError, ImplementationErrorCode } from "../error/implement.ts"
 
 import type { JsonLdDocument } from "../types/serialize/document.ts"

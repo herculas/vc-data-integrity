@@ -3,7 +3,7 @@
  * which identifies the base and encoding alphabet used to encode the binary value, followed by the encoded binary value
  * (using that base and alphabet).
  *
- * @module multibase
+ * @module multi
  *
  * @see https://www.w3.org/TR/cid-1.0/#multibase-0
  */
@@ -14,7 +14,7 @@ import { ImplementationError, ImplementationErrorCode } from "../error/implement
 /**
  * An interface for encoding and decoding binary values using a specific base and encoding alphabet.
  */
-export interface MultibaseCodec {
+export interface Codec {
   /**
    * The multibase header which identifies the base and encoding alphabet used to encode the binary value.
    */
@@ -44,7 +44,7 @@ export interface MultibaseCodec {
 /**
  * Encode and decode binary values using the base-58-btc encoding alphabet.
  */
-export const base58btc: MultibaseCodec = {
+export const base58btc: Codec = {
   header: "z",
   encode: (data: Uint8Array, attachHeader: boolean = true): string =>
     (attachHeader ? base58btc.header : "") + base58.encode(data),
@@ -63,7 +63,7 @@ export const base58btc: MultibaseCodec = {
 /**
  * Encode and decode binary values using the base-64-url encoding alphabet.
  */
-export const base64url: MultibaseCodec = {
+export const base64url: Codec = {
   encode: (data: Uint8Array): string => url.encode(data),
   decode: (str: string): Uint8Array => url.decode(str),
 }
@@ -71,7 +71,7 @@ export const base64url: MultibaseCodec = {
 /**
  * Encode and decode binary values using the base-64-url-no-pad encoding alphabet.
  */
-export const base64urlnopad: MultibaseCodec = {
+export const base64urlnopad: Codec = {
   header: "u",
   encode: (data: Uint8Array, attachHeader: boolean = true): string =>
     (attachHeader ? base64urlnopad.header : "") + nopad.encode(data),

@@ -1,12 +1,10 @@
-import * as jsonld from "../serialize/jsonld.ts"
-
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
+import { compact, expand, toRdf } from "../serialize/rdfc.ts"
 
+import type { Compact, Expand, ToRdf } from "../types/options/serialize.ts"
 import type { JsonLdDocument, JsonLdObject, JsonObject, JsonValue } from "../types/serialize/document.ts"
 import type { NQuad } from "../types/serialize/rdf.ts"
 import type { URNScheme } from "../types/serialize/base.ts"
-
-import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
 /**
  * Replace all blank node identifiers in an array of N-Quad strings with custom scheme URNs.
@@ -84,7 +82,7 @@ export function deskolemizeNQuads(inputNQuads: Array<NQuad>, urnScheme: URNSchem
  *
  * @param {JsonLdDocument} skolemizedDocument A JSON-LD document.
  * @param {URNScheme} [urnScheme] A URN scheme, which should match the scheme used in the skolemization process.
- * @param {JsonLdOptions.ToRdf} [options] Any additional custom options.
+ * @param {ToRdf} [options] Any additional custom options.
  *
  * @returns {Array<NQuad>} Resolve to an array of deskolemized N-Quad strings.
  *
@@ -93,7 +91,7 @@ export function deskolemizeNQuads(inputNQuads: Array<NQuad>, urnScheme: URNSchem
 export async function toDeskolemizedNQuads(
   skolemizedDocument: JsonLdDocument,
   urnScheme?: URNScheme,
-  options?: JsonLdOptions.ToRdf,
+  options?: ToRdf,
 ): Promise<Array<NQuad>> {
   // Procedure:
   //
@@ -106,7 +104,7 @@ export async function toDeskolemizedNQuads(
   // 4. Return `deskolemizedNQuads`.
 
   urnScheme = urnScheme || "custom-scheme"
-  const skolemizedDataset = await jsonld.toRdf(skolemizedDocument, {
+  const skolemizedDataset = await toRdf(skolemizedDocument, {
     ...options,
     format: "application/n-quads",
   }) as string
@@ -234,7 +232,7 @@ function skolemizeExpandedRecursive(
  * @param {JsonLdObject} document A compact JSON-LD document.
  * @param {URNScheme} [urnScheme] A custom URN scheme which defaults to "custom-scheme:".
  * @param {string} [randomString] A UUID string or other comparably random string.
- * @param {JsonLdOptions.Expand & JsonLdOptions.Compact} [options] Any additional custom options.
+ * @param {Expand & Compact} [options] Any additional custom options.
  *
  * Note that the `document` is assumed to use only one `@context` property at the top level of the document.
  *
@@ -247,7 +245,7 @@ export async function skolemizeCompactJsonLd(
   document: JsonLdObject,
   urnScheme?: URNScheme,
   randomString?: string,
-  options?: JsonLdOptions.Expand & JsonLdOptions.Compact,
+  options?: Expand & Compact,
 ): Promise<{
   expanded: JsonLdDocument
   compact: JsonLdObject
@@ -270,9 +268,9 @@ export async function skolemizeCompactJsonLd(
     )
   }
 
-  const expanded = await jsonld.expand(document, options)
+  const expanded = await expand(document, options)
   const skolemizedExpandedDocument = skolemizeExpandedJsonLd(expanded, urnScheme, randomString)
-  const skolemizedCompactDocument = await jsonld.compact(skolemizedExpandedDocument, context, options)
+  const skolemizedCompactDocument = await compact(skolemizedExpandedDocument, context, options)
 
   return {
     expanded: skolemizedExpandedDocument,

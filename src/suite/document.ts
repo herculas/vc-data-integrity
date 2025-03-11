@@ -1,5 +1,13 @@
+/**
+ * Algorithms to safely retrieve verification methods and to retrieve document fragments.
+ *
+ * @module document
+ *
+ * @see https://www.w3.org/TR/cid/#algorithms
+ */
+
 import { CID_V1 } from "../context/url.ts"
-import { compact } from "../serialize/jsonld.ts"
+import { compact } from "../serialize/rdfc.ts"
 import { deepEqual, hasProperty } from "../utils/instance.ts"
 import { ProcessingError, ProcessingErrorCode } from "../error/process.ts"
 import { severalToMany } from "../utils/format.ts"
@@ -8,11 +16,10 @@ import type { CIDDocument } from "../types/data/cid.ts"
 import type { Context } from "../types/serialize/keyword.ts"
 import type { IRIReference } from "../types/serialize/base.ts"
 import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
-import type { LoadDocumentCallback } from "../types/api/loader.ts"
+import type { LoadDocumentCallback } from "../types/serialize/loader.ts"
+import type { Relationship, Validation } from "../types/api/suite.ts"
+import type { Retrieve } from "../types/options/suite.ts"
 import type { VerificationMethod } from "../types/data/method.ts"
-
-import type * as DocumentOptions from "../types/api/document.ts"
-import type * as Result from "../types/api/result.ts"
 
 /**
  * Retrieve a verification method, such as a cryptographic public key, by using a verification method identifier.
@@ -29,8 +36,8 @@ import type * as Result from "../types/api/result.ts"
  * poisons a cache by claiming control of a victim's verification method.
  *
  * @param {IRIReference} vmIdentifier The verification method identifier.
- * @param {DocumentOptions.Relationship} relationships A set of verification relationships.
- * @param {DocumentOptions.Retrieve} options The dereferencing options.
+ * @param {Relationship} relationships A set of verification relationships.
+ * @param {Retrieve} options The dereferencing options.
  *
  * @returns {Promise<VerificationMethod>} Resolve to a verification method object.
  *
@@ -38,8 +45,8 @@ import type * as Result from "../types/api/result.ts"
  */
 export async function retrieveVerificationMethod(
   vmIdentifier: IRIReference,
-  relationships: Set<DocumentOptions.Relationship>,
-  options: DocumentOptions.Retrieve,
+  relationships: Set<Relationship>,
+  options: Retrieve,
 ): Promise<VerificationMethod> {
   // Procedure:
   //
@@ -158,14 +165,14 @@ export async function retrieveVerificationMethod(
  *
  * @param {VerificationMethod} method The verification method to be encapsulated.
  * @param {CIDDocument} [document] The controlled identifier document to encapsulate the verification method into.
- * @param {DocumentOptions.Relationship} [relationships] A set of verification relationships.
+ * @param {Relationship} [relationships] A set of verification relationships.
  *
  * @returns {CIDDocument} A controlled identifier document with the encapsulated verification method.
  */
 export function encapsulateVerificationMethod(
   method: VerificationMethod,
   document?: CIDDocument,
-  relationships?: Set<DocumentOptions.Relationship>,
+  relationships?: Set<Relationship>,
 ): CIDDocument {
   // set the default controlled identifier document
   if (!document) {
@@ -297,7 +304,7 @@ export async function validateContext(
   knownContext: Context,
   recompact: boolean = false,
   documentLoader: LoadDocumentCallback,
-): Promise<Result.Validation> {
+): Promise<Validation> {
   // Procedure:
   //
   // 1. Set `result.validated` to `false`, `result.warnings` to an empty list, `result.errors` to an empty list,
@@ -317,7 +324,7 @@ export async function validateContext(
   //    remove the `document` property from `result`.
   // 5. Return the value of `result`.
 
-  const result: Result.Validation = {
+  const result: Validation = {
     validated: false,
     warnings: [],
     errors: [],

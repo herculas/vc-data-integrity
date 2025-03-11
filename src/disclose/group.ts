@@ -2,13 +2,11 @@ import { labelReplacementCanonicalizeNQuads } from "./canonize.ts"
 import { selectCanonicalNQuads } from "./select.ts"
 import { skolemizeCompactJsonLd, toDeskolemizedNQuads } from "./skolemize.ts"
 
+import type { Canonize, Compact, Expand, ToRdf } from "../types/options/serialize.ts"
 import type { JsonLdDocument, JsonLdObject } from "../types/serialize/document.ts"
 import type { LabelMap, LabelMapFactory } from "../types/api/disclose.ts"
 import type { NQuad } from "../types/serialize/rdf.ts"
 import type { URNScheme } from "../types/serialize/base.ts"
-
-import type * as JsonLdOptions from "../types/api/jsonld.ts"
-import type * as RdfOptions from "../types/api/rdf.ts"
 
 /**
  * Output canonical N-Quad strings that match custom selections of a compact JSON-LD document. It does this by
@@ -41,10 +39,10 @@ export async function canonicalizeAndGroup(
       urnScheme?: URNScheme
       randomString?: string
     }
-    & JsonLdOptions.Expand
-    & JsonLdOptions.Compact
-    & JsonLdOptions.ToRdf
-    & Partial<RdfOptions.Canonize>,
+    & Expand
+    & Compact
+    & ToRdf
+    & Partial<Canonize>,
 ): Promise<{
   groups: Map<string, {
     matching: Map<number, NQuad>

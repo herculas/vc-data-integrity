@@ -1,3 +1,9 @@
+/**
+ * This module provides utilities for working with instances.
+ *
+ * @module instance
+ */
+
 import { equal } from "@std/assert"
 
 type InstanceType = object | string | number | boolean | undefined | null

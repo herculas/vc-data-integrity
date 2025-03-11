@@ -1,5 +1,6 @@
-import type { IRI, IRIReference } from "../serialize/base.ts"
-import type { JsonLdDocument, OneOrMany } from "../serialize/document.ts"
+import type { IRI, IRIReference } from "./base.ts"
+import type { JsonLdDocument } from "./document.ts"
+import type { LoadProfile } from "../options/load.ts"
 
 /**
  * The `RemoteDocument` type is used by a `LoadDocumentCallback` to return information about a remote document or
@@ -43,32 +44,8 @@ export interface RemoteDocument {
  * Promise with a `JsonLdError` having an appropriate error code.
  *
  * @param {IRI | IRIReference} url The URL of the remote document or context to load.
- * @param {LoadDocumentOptions} [options] A set of options to determine the behavior of the callback.
+ * @param {LoadProfile} [options] A set of options to determine the behavior of the callback.
  *
  * @see https://www.w3.org/TR/json-ld11-api/#loaddocumentcallback
  */
-export type LoadDocumentCallback = (url: IRI | IRIReference, options?: LoadDocumentOptions) => Promise<RemoteDocument>
-
-/**
- * The `LoadDocumentOptions` type is used to pass various options to the `LoadDocumentCallback` function.
- *
- * @see https://www.w3.org/TR/json-ld11-api/#loaddocumentoptions
- */
-export type LoadDocumentOptions = {
-  /**
-   * If set to `true`, when extracting JSON-LD script elements from HTML, unless a specific fragment identifier is
-   * targeted, extracts all encountered JSON-LD script elements using an array form, if necessary.
-   */
-  extractAllScripts?: boolean
-
-  /**
-   * When the resulting `contentType` is `text/html` or `application/xhtml+xml`, this option determines the profile to
-   * use for selecting JSON-LD script elements.
-   */
-  profile?: string
-
-  /**
-   * One or more IRIs to use in the request as a profile parameter.
-   */
-  requestProfile?: OneOrMany<string>
-}
+export type LoadDocumentCallback = (url: IRI | IRIReference, options?: LoadProfile) => Promise<RemoteDocument>

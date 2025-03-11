@@ -1,9 +1,10 @@
-import { assertEquals, assertStrictEquals } from "@std/assert"
+import { assertEquals, assertExists, assertMatch, assertStrictEquals } from "@std/assert"
 
-import * as jsonld from "../src/serialize/jsonld.ts"
+import { canonize, compact, expand, flatten, frame, normalize, serialize, toRdf } from "../src/serialize/rdfc.ts"
 
 import type { ContextDefinition } from "../src/types/serialize/context.ts"
 import type { JsonLdDocument, JsonLdObject } from "../src/types/serialize/document.ts"
+import type { RdfDataset } from "../src/types/serialize/rdf.ts"
 
 /**
  * Compaction uses a developer-supplied context to shorten IRIs to terms or compact IRIs and JSON-LD values expressed in
@@ -36,7 +37,7 @@ Deno.test("JSON-LD document compaction: basic 1", async () => {
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -68,7 +69,7 @@ Deno.test("JSON-LD document compaction: basic 2", async () => {
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -100,7 +101,7 @@ Deno.test("JSON-LD document compaction: shortening IRIs", async () => {
     "@vocab": "http://example.org/",
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -130,7 +131,7 @@ Deno.test("JSON-LD document compaction: compacting using a base IRI", async () =
     "label": "http://www.w3.org/2000/01/rdf-schema#label",
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -193,7 +194,7 @@ Deno.test("JSON-LD document compaction: representing values as strings", async (
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -230,7 +231,7 @@ Deno.test("JSON-LD document compaction: representing lists as arrays", async () 
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -279,7 +280,7 @@ Deno.test("JSON-LD document compaction: reversing node relationships", async () 
     "children": { "@reverse": "http://example.com/vocab#parent" },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -319,7 +320,7 @@ Deno.test("JSON-LD document compaction: indexing values", async () => {
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -355,7 +356,7 @@ Deno.test("JSON-LD document compaction: normalizing values as objects", async ()
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -390,7 +391,7 @@ Deno.test("JSON-LD document compaction: representing singular values as arrays",
     },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -428,7 +429,7 @@ Deno.test("JSON-LD document compaction: term selection", async () => {
     "iri": { "@id": "vocab:property", "@type": "@id" },
   } as const
 
-  const compactedDocument = await jsonld.compact(expandedDocument, context)
+  const compactedDocument = await compact(expandedDocument, context)
   console.log(compactedDocument)
 })
 
@@ -452,7 +453,7 @@ Deno.test("JSON-LD document expansion 1", async () => {
     "homepage": "http://www.markus-lanthaler.com/",
   } as const
 
-  const expandedDocument = await jsonld.expand(compactedDocument)
+  const expandedDocument = await expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -472,7 +473,7 @@ Deno.test("JSON-LD document expansion 2", async () => {
     "website": { "@id": "http://www.markus-lanthaler.com/" },
   } as const
 
-  const expandedDocument = await jsonld.expand(compactedDocument)
+  const expandedDocument = await expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -495,7 +496,7 @@ Deno.test("JSON-LD document expansion 3", async () => {
     "homepage": "http://manu.sporny.org/",
   } as const
 
-  const expandedDocument = await jsonld.expand(compactedDocument)
+  const expandedDocument = await expand(compactedDocument)
   console.log(expandedDocument)
 })
 
@@ -523,8 +524,8 @@ Deno.test("JSON-LD document flattening 1", async () => {
     ],
   } as const
 
-  const flattenedDocument = await jsonld.flatten(document)
-  const compactedDocument = await jsonld.compact(flattenedDocument, document["@context"]!)
+  const flattenedDocument = await flatten(document)
+  const compactedDocument = await compact(flattenedDocument, document["@context"]!)
 
   console.log(flattenedDocument)
   console.log(compactedDocument)
@@ -556,8 +557,8 @@ Deno.test("JSON-LD document flattening 2", async () => {
     ],
   } as const
 
-  const flattenedDocument = await jsonld.flatten(document)
-  const compactedDocument = await jsonld.compact(flattenedDocument, document["@context"]!)
+  const flattenedDocument = await flatten(document)
+  const compactedDocument = await compact(flattenedDocument, document["@context"]!)
   console.log(compactedDocument)
 })
 
@@ -568,7 +569,7 @@ Deno.test("JSON-LD document flattening 2", async () => {
  * @see https://www.w3.org/TR/json-ld/#framed-document-form
  */
 Deno.test("JSON-LD document framing: basic 1", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": {
       "@version": 1.1,
       "@vocab": "http://example.org/",
@@ -605,7 +606,7 @@ Deno.test("JSON-LD document framing: basic 1", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -619,7 +620,7 @@ Deno.test("JSON-LD document framing: basic 1", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#framing
  */
 Deno.test("JSON-LD document framing: basic 2", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": {
       "@vocab": "http://example.org/",
     },
@@ -656,7 +657,7 @@ Deno.test("JSON-LD document framing: basic 2", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -667,7 +668,7 @@ Deno.test("JSON-LD document framing: basic 2", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#matching-on-properties
  */
 Deno.test("JSON-LD document framing: matching on properties", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": {
       "@vocab": "http://example.org/",
     },
@@ -704,7 +705,7 @@ Deno.test("JSON-LD document framing: matching on properties", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -715,7 +716,7 @@ Deno.test("JSON-LD document framing: matching on properties", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#wildcard-matching
  */
 Deno.test("JSON-LD document framing: wildcard matching", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": { "@vocab": "http://example.org/" },
     "location": {},
     "contains": {
@@ -750,7 +751,7 @@ Deno.test("JSON-LD document framing: wildcard matching", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -761,7 +762,7 @@ Deno.test("JSON-LD document framing: wildcard matching", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#match-on-the-absence-of-a-property
  */
 Deno.test("JSON-LD document framing: matching on the absence of a property", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": { "@vocab": "http://example.org/" },
     "creator": [],
     "title": [],
@@ -798,7 +799,7 @@ Deno.test("JSON-LD document framing: matching on the absence of a property", asy
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -809,7 +810,7 @@ Deno.test("JSON-LD document framing: matching on the absence of a property", asy
  * @see https://www.w3.org/TR/json-ld11-framing/#matching-on-values
  */
 Deno.test("JSON-LD document framing: matching on values", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": {
       "@vocab": "http://example.org/",
     },
@@ -897,7 +898,7 @@ Deno.test("JSON-LD document framing: matching on values", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -908,7 +909,7 @@ Deno.test("JSON-LD document framing: matching on values", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#matching-on-id
  */
 Deno.test("JSON-LD document framing: matching on id 1", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": { "@vocab": "http://example.org/" },
     "@id": "http://example.org/library",
     "contains": {
@@ -943,7 +944,7 @@ Deno.test("JSON-LD document framing: matching on id 1", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -954,7 +955,7 @@ Deno.test("JSON-LD document framing: matching on id 1", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#matching-on-id
  */
 Deno.test("JSON-LD document framing: matching on id 2", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": { "@vocab": "http://example.org/" },
     "@id": [
       "http://example.org/home",
@@ -996,7 +997,7 @@ Deno.test("JSON-LD document framing: matching on id 2", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -1007,7 +1008,7 @@ Deno.test("JSON-LD document framing: matching on id 2", async () => {
  * @see https://www.w3.org/TR/json-ld11-framing/#empty-frame-0
  */
 Deno.test("JSON-LD document framing: empty frame", async () => {
-  const frame: JsonLdDocument = {
+  const frameDoc: JsonLdDocument = {
     "@context": {
       "@vocab": "http://example.org/",
     },
@@ -1037,7 +1038,7 @@ Deno.test("JSON-LD document framing: empty frame", async () => {
     }],
   } as const
 
-  const framedDocument = await jsonld.frame(flattenedDocument, frame)
+  const framedDocument = await frame(flattenedDocument, frameDoc)
   console.log(framedDocument)
 })
 
@@ -1060,7 +1061,7 @@ Deno.test("JSON-LD document normalization", async () => {
     },
   ] as const
 
-  const normalizedDocument = await jsonld.normalize(document)
+  const normalizedDocument = await normalize(document)
   console.log(normalizedDocument)
 })
 
@@ -1070,7 +1071,7 @@ Deno.test("JSON-LD document to RDF: simple case", async () => {
     "https://example.com/test": "test",
   } as const
 
-  const rdfDocument = await jsonld.toRdf(document, { format: "application/n-quads" })
+  const rdfDocument = await toRdf(document, { format: "application/n-quads" })
   const expected = `<https://example.com/> <https://example.com/test> "test" .\n`
   assertStrictEquals(rdfDocument, expected)
 })
@@ -1092,7 +1093,7 @@ Deno.test("JSON-LD document to RDF: relative graph reference", async () => {
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const rdfDocument = await toRdf(input, { format: "application/n-quads", skipExpansion: true })
   const expected = ""
   assertStrictEquals(rdfDocument, expected)
 })
@@ -1109,7 +1110,7 @@ Deno.test("JSON-LD document to RDF: relative subject reference", async () => {
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const rdfDocument = await toRdf(input, { format: "application/n-quads", skipExpansion: true })
   const expected = ""
   assertStrictEquals(rdfDocument, expected)
 })
@@ -1125,7 +1126,7 @@ Deno.test("JSON-LD document to RDF: relative predicate reference", async () => {
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const rdfDocument = await toRdf(input, { format: "application/n-quads", skipExpansion: true })
   const expected = ""
   assertStrictEquals(rdfDocument, expected)
 })
@@ -1144,7 +1145,7 @@ Deno.test("JSON-LD document to RDF: relative object reference", async () => {
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const rdfDocument = await toRdf(input, { format: "application/n-quads", skipExpansion: true })
   const expected = `_:b0 <ex:p> "v" .\n`
   assertStrictEquals(rdfDocument, expected)
 })
@@ -1160,7 +1161,7 @@ Deno.test("JSON-LD document to RDF: blank node predicates", async () => {
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, { format: "application/n-quads", skipExpansion: true })
+  const rdfDocument = await toRdf(input, { format: "application/n-quads", skipExpansion: true })
   const expected = ``
   assertStrictEquals(rdfDocument, expected)
 })
@@ -1176,7 +1177,7 @@ Deno.test("JSON-LD document to RDF: generalized blank node predicates", async ()
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     produceGeneralizedRdf: true,
@@ -1197,7 +1198,7 @@ Deno.test("JSON-LD document to RDF: no @lang, no @dir, rdfDirection is null", as
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: null,
@@ -1218,7 +1219,7 @@ Deno.test("JSON-LD document to RDF: no @lang, no @dir, rdfDirection is i18n", as
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: "i18n-datatype",
@@ -1240,7 +1241,7 @@ Deno.test("JSON-LD document to RDF: no @lang, with @dir, rdfDirection unspecifie
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
   })
@@ -1261,7 +1262,7 @@ Deno.test("JSON-LD document to RDF: no @lang, with @dir, rdfDirection is null", 
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: null,
@@ -1283,7 +1284,7 @@ Deno.test("JSON-LD document to RDF: no @lang, with @dir, rdfDirection is i18n", 
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: "i18n-datatype",
@@ -1305,7 +1306,7 @@ Deno.test("JSON-LD document to RDF: with @lang, no @dir, rdfDirection is null", 
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: null,
@@ -1327,7 +1328,7 @@ Deno.test("JSON-LD document to RDF: with @lang, no @dir, rdfDirection is i18n", 
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: "i18n-datatype",
@@ -1350,7 +1351,7 @@ Deno.test("JSON-LD document to RDF: with @lang, with @dir, rdfDirection is null"
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: null,
@@ -1373,7 +1374,7 @@ Deno.test("JSON-LD document to RDF: with @lang, with @dir, rdfDirection is i18n"
     },
   ] as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: true,
     rdfDirection: "i18n-datatype",
@@ -1398,7 +1399,7 @@ Deno.test("JSON-LD document to RDF: context with @lang/@dir, rdfDirection is nul
     "title_en": "LTR",
   } as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: false,
     rdfDirection: null,
@@ -1426,7 +1427,7 @@ Deno.test("JSON-LD document to RDF: context with @lang/@dir, rdfDirection is i18
     "title_en": "LTR",
   } as const
 
-  const rdfDocument = await jsonld.toRdf(input, {
+  const rdfDocument = await toRdf(input, {
     format: "application/n-quads",
     skipExpansion: false,
     rdfDirection: "i18n-datatype",
@@ -1465,10 +1466,10 @@ Deno.test("JSON-LD document expand and to RDF", async () => {
     },
   ] as const
 
-  const expandedDocument = await jsonld.expand(input)
+  const expandedDocument = await expand(input)
   assertEquals(expandedDocument, expanded)
 
-  const rdfDocument = await jsonld.toRdf(expanded, {
+  const rdfDocument = await toRdf(expanded, {
     format: "application/n-quads",
     skipExpansion: true,
   })
@@ -1476,3 +1477,332 @@ Deno.test("JSON-LD document expand and to RDF", async () => {
   const expected = `<urn:id> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:ex#type> .\n`
   assertStrictEquals(rdfDocument, expected)
 })
+
+Deno.test("RDF: Invalid algorithm", async () => {
+  const input: Array<string> = []
+  const algorithm = "INVALID"
+
+  try {
+    await canonize(input, {
+      algorithm,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, `Invalid RDF Dataset Canonicalization algorithm: ${algorithm}`)
+  }
+})
+
+Deno.test("RDF: Invalid input format", async () => {
+  const input = ""
+  const inputFormat = "application/invalid"
+
+  try {
+    await canonize(input, {
+      algorithm: "RDFC-1.0",
+      inputFormat,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, `Unknown canonicalization input format: "${inputFormat}".`)
+  }
+})
+
+Deno.test("RDF: Non-specified input format", async () => {
+  const input: Array<string> = []
+  const expected = ""
+
+  const output = await canonize(input, {
+    algorithm: "RDFC-1.0",
+  })
+
+  assertStrictEquals(output, expected)
+})
+
+Deno.test("RDF: Invalid message digest algorithm", async () => {
+  const input = "_:b0 <ex:p> _:b1 ."
+  const messageDigestAlgorithm = "INVALID"
+
+  try {
+    await canonize(input, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+      messageDigestAlgorithm,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, `Unsupported algorithm "${messageDigestAlgorithm}".`)
+  }
+})
+
+Deno.test("RDF: Invalid output format", async () => {
+  const input: Array<string> = []
+  const outputFormat = "invalid"
+
+  try {
+    await canonize(input, {
+      algorithm: "RDFC-1.0",
+      format: outputFormat,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, `Unknown canonicalization output format: "${outputFormat}".`)
+  }
+})
+
+Deno.test("RDF: Valid output format", async () => {
+  const input: Array<string> = []
+  const expected = ""
+
+  const output = await canonize(input, {
+    algorithm: "RDFC-1.0",
+    format: "application/n-quads",
+  })
+
+  assertStrictEquals(output, expected)
+})
+
+Deno.test("RDF: Invalid empty dataset as N-Quads", async () => {
+  const input: Array<string> = []
+
+  try {
+    await canonize(input, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, "N-Quads input must be a string.")
+  }
+})
+
+Deno.test("RDF: Canonical Id Map", async () => {
+  const input = `_:b0 <urn:p0> _:b1 .\n_:b1 <urn:p1> "v1" .`
+  const expected = `_:c14n0 <urn:p0> _:c14n1 .\n_:c14n1 <urn:p1> "v1" .\n`
+
+  const expectedMap = new Map([
+    ["b0", "c14n0"],
+    ["b1", "c14n1"],
+  ])
+
+  const canonicalIdMap = new Map<string, string>()
+
+  const output = await canonize(input, {
+    algorithm: "RDFC-1.0",
+    inputFormat: "application/n-quads",
+    canonicalIdMap,
+  })
+
+  assertEquals(output, expected)
+  assertEquals(canonicalIdMap, expectedMap)
+})
+
+Deno.test("RDF: Allow URDNA-2015 by default", async () => {
+  await canonize([], {
+    algorithm: "URDNA2015",
+  })
+})
+
+Deno.test("RDF: Reject URDNA-2015 when specified", async () => {
+  const algorithm = "URDNA2015"
+  try {
+    await canonize([], {
+      algorithm,
+      rejectURDNA2015: true,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, `Invalid RDF Dataset Canonicalization algorithm: ${algorithm}`)
+  }
+})
+
+Deno.test("RDF: Abort when signal specified", async () => {
+  const data = mockData1([10, 10]).data
+
+  try {
+    await canonize(data, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+      signal: AbortSignal.timeout(100),
+      maxDeepIterations: Infinity,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertEquals((e as Error).message, `Abort signal received: "TimeoutError: Signal timed out.".`)
+  }
+})
+
+Deno.test("RDF: Abort when work factor specified 1", async () => {
+  const data = mockData2(2, 2).data
+
+  try {
+    await canonize(data, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+      maxWorkFactor: 0,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertMatch((e as Error).message, /Maximum deep iterations exceeded \(\d+\)\./)
+  }
+})
+
+Deno.test("RDF: Abort when work factor specified 2", async () => {
+  const data = mockData2(3, 3).data
+
+  try {
+    await canonize(data, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+      maxWorkFactor: 1,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertMatch((e as Error).message, /Maximum deep iterations exceeded \(\d+\)\./)
+  }
+})
+
+Deno.test("RDF: Not abort when work factor specified 1", async () => {
+  const data = mockData2(3, 3).data
+
+  await canonize(data, {
+    algorithm: "RDFC-1.0",
+    inputFormat: "application/n-quads",
+    maxWorkFactor: Infinity,
+  })
+})
+
+Deno.test("RDF: Not abort when work factor specified 2", async () => {
+  const data = mockData2(3, 3).data
+
+  await canonize(data, {
+    algorithm: "RDFC-1.0",
+    inputFormat: "application/n-quads",
+    maxWorkFactor: 1,
+    maxDeepIterations: 33,
+  })
+})
+
+Deno.test("RDF: Abort when max iterations specified 1", async () => {
+  const data = mockData2(2, 2).data
+
+  try {
+    await canonize(data, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+      maxDeepIterations: 0,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertMatch((e as Error).message, /Maximum deep iterations exceeded \(\d+\)\./)
+  }
+})
+
+Deno.test("RDF: Abort when max iterations specified 2", async () => {
+  const data = mockData2(6, 6).data
+
+  try {
+    await canonize(data, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+      maxDeepIterations: 1000,
+    })
+  } catch (e) {
+    assertExists(e)
+    assertMatch((e as Error).message, /Maximum deep iterations exceeded \(\d+\)\./)
+  }
+})
+
+Deno.test("RDF: Escape IRI", async () => {
+  const input: RdfDataset = [
+    {
+      subject: { termType: "NamedNode", value: "ex:s" },
+      predicate: { termType: "NamedNode", value: "ex:p" },
+      object: { termType: "NamedNode", value: "ex:o" },
+      graph: { termType: "NamedNode", value: "ex:g" },
+    },
+  ]
+
+  const output = await canonize(input, {
+    algorithm: "RDFC-1.0",
+  })
+  const expected = `<ex:s> <ex:p> <ex:o> <ex:g> .\n`
+  assertEquals(output, expected)
+})
+
+Deno.test("RDF: Serialize RDF datasets", () => {
+  const input: RdfDataset = [
+    {
+      subject: { termType: "BlankNode", value: "b0" },
+      predicate: { termType: "BlankNode", value: "b1" },
+      object: { termType: "BlankNode", value: "b2" },
+      graph: { termType: "DefaultGraph", value: "" },
+    },
+    {
+      subject: { termType: "BlankNode", value: "b3" },
+      predicate: { termType: "BlankNode", value: "b4" },
+      object: { termType: "BlankNode", value: "b5" },
+      graph: { termType: "DefaultGraph", value: "" },
+    },
+  ]
+
+  const output = serialize(input)
+  const expected1 = `_:b0 _:b1 _:b2 .`
+  const expected2 = `_:b3 _:b4 _:b5 .`
+
+  assertEquals(output[0], expected1)
+  assertEquals(output[1], expected2)
+})
+
+Deno.test("RDF: Duplicated quads", async () => {
+  const input = `_:b0 <ex:p> _:b1 .\n_:b0 <ex:p> _:b1 .`
+  const expected = `_:c14n1 <ex:p> _:c14n0 .\n`
+
+  const output = await canonize(input, {
+    algorithm: "RDFC-1.0",
+    inputFormat: "application/n-quads",
+  })
+
+  assertEquals(output, expected)
+})
+
+Deno.test("RDF: Invalid N-Quads", async () => {
+  const input = `_:b0 <ex:p> .\n`
+
+  try {
+    await canonize(input, {
+      algorithm: "RDFC-1.0",
+      inputFormat: "application/n-quads",
+    })
+  } catch (e) {
+    assertExists(e)
+    assertMatch((e as Error).message, /N-Quads parse error on line \d+\./)
+  }
+})
+
+function mockData1(counts: number[]): { n: number; data: string } {
+  if (counts.length < 2) throw new Error("Need more counts")
+
+  let n = 0
+  const data = counts.slice(0, -1).reduce((acc, count, level) => {
+    return acc + Array.from({ length: count }, (_, cur) =>
+      Array.from({ length: counts[level + 1] }, (_, next) => {
+        n++
+        return `_:s_${level}_${cur} <ex:p> _:s_${level + 1}_${next} .\n`
+      }).join("")).join("")
+  }, "")
+
+  return { n, data }
+}
+
+function mockData2(subjects: number, objects: number): { n: number; data: string } {
+  let n = 0
+  const data = Array.from({ length: subjects }, (_, subject) =>
+    Array.from({ length: objects }, (_, object) => {
+      if (subject !== object) {
+        n++
+        return `_:s_${subject} <ex:p> _:o_${object} .\n`
+      }
+      return ""
+    }).join("")).join("")
+  return { n, data }
+}

@@ -1,9 +1,8 @@
 import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
+import type { Export, Import } from "../types/options/suite.ts"
 import type { IRI, IRIReference } from "../types/serialize/base.ts"
 import type { VerificationMethod } from "../types/data/method.ts"
-
-import type * as KeypairOptions from "../types/api/keypair.ts"
 
 /**
  * The keypair base class. This class is used to represent a cryptographic keypair, which is used to sign and verify
@@ -112,11 +111,11 @@ export class Keypair {
   /**
    * Export the serialized representation of the keypair, along with other metadata which can be used to form a proof.
    *
-   * @param {KeypairOptions.Export} [_options] Options for keypair export.
+   * @param {Export} [_options] Options for keypair export.
    *
    * @returns {Promise<VerificationMethod>} Resolve to a verification method containing this keypair and other metadata.
    */
-  export(_options?: KeypairOptions.Export): Promise<VerificationMethod> {
+  export(_options?: Export): Promise<VerificationMethod> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair.export",
@@ -129,11 +128,11 @@ export class Keypair {
    * keypair of specific type.
    *
    * @param {VerificationMethod} _document An externally fetched verification method containing a serialized keypair.
-   * @param {KeypairOptions.Import} [_options] Options for keypair import.
+   * @param {Import} [_options] Options for keypair import.
    *
    * @returns {Promise<Keypair>} Resolve to a keypair instance.
    */
-  static import(_document: VerificationMethod, _options?: KeypairOptions.Import): Promise<Keypair> {
+  static import(_document: VerificationMethod, _options?: Import): Promise<Keypair> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Keypair::import",

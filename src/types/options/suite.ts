@@ -1,7 +1,18 @@
+import type { Flag } from "../api/suite.ts"
+import type { LoadDocumentCallback } from "../serialize/loader.ts"
+
 /**
- * The keypair type.
+ * Options for retrieving a verification method.
  */
-export type Flag = "public" | "private"
+export interface Retrieve {
+  /**
+   * The callback of the loader to be used to retrieve remote documents and contexts, implementing the
+   * `LoadDocumentCallback` interface.
+   *
+   * @see https://www.w3.org/TR/json-ld11-api/#dom-jsonldoptions-documentloader
+   */
+  documentLoader: LoadDocumentCallback
+}
 
 /**
  * The options for exporting a keypair.

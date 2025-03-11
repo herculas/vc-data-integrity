@@ -1,5 +1,6 @@
 import { assertEquals } from "@std/assert"
 
+import { canonize } from "../src/serialize/rdfc.ts"
 import {
   createHmacIdLabelMapFunction,
   createLabelMapFunction,
@@ -14,7 +15,7 @@ import type { Credential } from "../src/types/data/credential.ts"
 import type { HMAC, LabelMap } from "../src/types/api/disclose.ts"
 import type { JsonValue } from "../src/types/serialize/document.ts"
 
-import * as rdf from "../src/serialize/rdf.ts"
+// import * as rdf from "../src/serialize/rdf.ts"
 
 Deno.test("Replace label of canonicalized JSON-LD", async () => {
   const rawHmacKey = new Uint8Array(32)
@@ -512,7 +513,7 @@ Deno.test("N-Quads selection: matching N pointers with identifiers", async () =>
   const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
 
   let canonicalIdMap = new Map<string, string>()
-  await rdf.canonize(deskolemized.join(""), {
+  await canonize(deskolemized.join(""), {
     algorithm: "RDFC-1.0",
     format: "application/n-quads",
     inputFormat: "application/n-quads",
@@ -593,7 +594,7 @@ Deno.test("N-Quads selection: matching N pointers without identifiers", async ()
   const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
 
   let canonicalIdMap = new Map<string, string>()
-  await rdf.canonize(deskolemized.join(""), {
+  await canonize(deskolemized.join(""), {
     algorithm: "RDFC-1.0",
     format: "application/n-quads",
     inputFormat: "application/n-quads",
@@ -676,7 +677,7 @@ Deno.test("N-Quads selection: matching N pointers with blank node identifiers", 
   const deskolemized = await toDeskolemizedNQuads(skolemized.compact, undefined, { documentLoader: testLoader })
 
   let canonicalIdMap = new Map<string, string>()
-  await rdf.canonize(deskolemized.join(""), {
+  await canonize(deskolemized.join(""), {
     algorithm: "RDFC-1.0",
     format: "application/n-quads",
     inputFormat: "application/n-quads",

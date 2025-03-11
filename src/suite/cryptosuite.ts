@@ -2,8 +2,7 @@ import { BasicError, BasicErrorCode } from "../error/basic.ts"
 
 import type { JsonLdDocument } from "../types/serialize/document.ts"
 import type { Proof } from "../types/data/proof.ts"
-
-import type * as Result from "../types/api/result.ts"
+import type { Verification } from "../types/api/suite.ts"
 
 /**
  * Base class from which various linked data cryptographic suites inherit.
@@ -76,9 +75,9 @@ export class Cryptosuite {
    * @param {JsonLdDocument} _securedDocument The secured document to be verified.
    * @param {object} [_options] A set of verification options.
    *
-   * @returns {Promise<Result.Verification>} Resolve to a verification result.
+   * @returns {Promise<Verification>} Resolve to a verification result.
    */
-  static verifyProof(_securedDocument: JsonLdDocument, _options?: object): Promise<Result.Verification> {
+  static verifyProof(_securedDocument: JsonLdDocument, _options?: object): Promise<Verification> {
     throw new BasicError(
       BasicErrorCode.METHOD_NOT_IMPLEMENTED_ERROR,
       "Cryptosuite::verifyProof",

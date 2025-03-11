@@ -1,4 +1,4 @@
-import * as jcs from "../src/serialize/jcs.ts"
+import { canonize } from "../src/serialize/jcs.ts"
 
 import type { JsonLdDocument } from "../src/types/serialize/document.ts"
 
@@ -19,7 +19,7 @@ Deno.test("JSON canonicalization: basic 1", () => {
     },
   ] as const
 
-  const canonized = jcs.canonize(expandedDocument)
+  const canonized = canonize(expandedDocument)
   console.log(canonized)
 })
 
@@ -41,7 +41,7 @@ Deno.test("JSON canonicalization: basic 2", () => {
     },
   } as const
 
-  const canonized = jcs.canonize(expandedDocument)
+  const canonized = canonize(expandedDocument)
   console.log(canonized)
 })
 
@@ -59,6 +59,6 @@ Deno.test("JSON canonicalization: basic 3", () => {
     ],
   } as const
 
-  const canonized = jcs.canonize(expandedDocument)
+  const canonized = canonize(expandedDocument)
   console.log(canonized)
 })

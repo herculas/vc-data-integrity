@@ -7,9 +7,8 @@ import { toDeskolemizedNQuads } from "./skolemize.ts"
 import type { JsonArray, JsonLdDocument, JsonLdObject, JsonObject, JsonValue } from "../types/serialize/document.ts"
 import type { LabelMap, Path } from "../types/api/disclose.ts"
 import type { NQuad } from "../types/serialize/rdf.ts"
+import type { ToRdf } from "../types/options/serialize.ts"
 import type { URNScheme } from "../types/serialize/base.ts"
-
-import type * as JsonLdOptions from "../types/api/jsonld.ts"
 
 /**
  * Convert a JSON Pointer to an array of paths into a JSON tree.
@@ -336,7 +335,7 @@ export function selectJsonLd(pointers: Array<string>, document: JsonLdObject): J
  * @param {JsonLdObject} skolemizedCompactDocument A skolemized compact JSON-LD document.
  * @param {LabelMap} labelMap A blank node label map.
  * @param {URNScheme} [urnScheme] A URN scheme to use for generating URN identifiers for blank nodes.
- * @param {JsonLdOptions.ToRdf} [options] Any additional custom options.
+ * @param {ToRdf} [options] Any additional custom options.
  *
  * Note that the `document` is assumed to use a JSON-LD context that aliases `@id` and `@type` to `id` and `type`,
  * respectively, and to use only one `@context` property at the top level of the document.
@@ -352,7 +351,7 @@ export async function selectCanonicalNQuads(
   skolemizedCompactDocument: JsonLdObject,
   labelMap: LabelMap,
   urnScheme?: URNScheme,
-  options?: JsonLdOptions.ToRdf,
+  options?: ToRdf,
 ): Promise<{
   selectionDocument: JsonLdDocument
   deskolemizedNQuads: Array<NQuad>

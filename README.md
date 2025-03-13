@@ -14,43 +14,6 @@ W3C specification of [JSON-LD](https://www.w3.org/TR/json-ld11/),
 Data integrity proofs can be used to provide integrity and authenticity guarantees for linked data files. This package
 is designed to provide a fundamental and general interface for proof implementation and application.
 
-## Implementations
-
-A data integrity proof is designed to be easy to use by developers and therefore strives to minimize the amount of
-information one has to remember to generate a proof. Often, just the cryptographic suite name (such as
-`eddsa-rdfc-2022`) is required from developers to initiate the creation of a proof. These cryptographic suites are often
-created and reviewed by people that have the requisite cryptographic training to ensure that safe combinations of
-cryptographic primitives are used.
-
-The requirement for all data integrity cryptographic suite implementations are as follows:
-
-- The implementation MUST identify a cryptographic suite `type` and any parameters that can be used with the suite.
-- The implementation MUST detail the **_transformation algorithms_** (if any), parameters, and other necessary details,
-  used to modify input data into the data to be protected.
-- The implementation MUST detail the **_hashing algorithms_** parameters, and other necessary details used to perform
-  cryptographic hashing to the data to be protected.
-- The implementation MUST detail the **_proof serialization algorithms_**, parameters, and other necessary details used
-  to perform cryptographic protection of the data.
-- The implementation MUST detail the **_proof verification algorithms_**, parameters, and other necessary details used
-  to perform cryptographic verification of the data.
-- The implementation MUST define a **_data integrity cryptographic suite instantiation algorithm_** that accepts a set
-  of options and returns a cryptosuite instance. This algorithm SHOULD be listed in the
-  [Verifiable Credential Extensions](https://w3c.github.io/vc-extensions/) document. A data integrity cryptographic
-  suite instance struct hat the following items:
-
-  - `createProof`: An algorithm that takes an input document and proof options as input, and produces a data integrity
-    proof or an error.
-  - `verifyProof`: An algorithm that takes a secured data document as input, and produces a cryptosuite verification
-    result or an error. The cryptosuite verification result is a struct that contains the following items:
-
-    - `verified`: A boolean that is `true` if the verification succeeded, or `false` otherwise.
-    - `verifiedDocument`: A map that represents the secured data document with the verified proofs removed if verified
-      is `true`, or `null` otherwise.
-
-    The structure MAY contain other implementation-specific information that is useful for developers, such as debugging
-    information. If an error is produced, the verification process failed to complete. An error, such as a network
-    error, does not mean that a future attempt at verification would fail.
-
 ## How it Works?
 
 The operation of Data Integrity is conceptually simple.
@@ -100,7 +63,7 @@ deno add jsr:@herculas/vc-data-integrity
 ## Usage
 
 You should use this package along with specific signature implementations or cryptographic suites, e.g.,
-[Ed25519 Signature](https://jsr.io/@crumble-jon/ld-sig-ed25519).
+[EdDSA cryptosuites](https://jsr.io/@herculas/vc-suite-eddsa).
 
 The usages with individual cryptographic suites always contains the following elements:
 

@@ -14,6 +14,7 @@ import { testLoader } from "./mock/loader.ts"
 import type { Credential } from "../src/types/data/credential.ts"
 import type { HMAC, LabelMap } from "../src/types/api/disclose.ts"
 import type { JsonValue } from "../src/types/serialize/document.ts"
+import { canonicalizeAndGroup } from "../src/disclose/group.ts"
 
 Deno.test("Replace label of canonicalized JSON-LD", async () => {
   const rawHmacKey = new Uint8Array(32)
@@ -517,7 +518,11 @@ Deno.test("N-Quads selection: matching N pointers with identifiers", async () =>
     inputFormat: "application/n-quads",
     canonicalIdMap,
   })
-  canonicalIdMap = stripBlankNodePrefixes(canonicalIdMap)
+  canonicalIdMap = new Map(
+    [...canonicalIdMap].map(
+      ([key, value]) => [key.replace(/^_:/, ""), value.replace(/^_:/, "")],
+    ),
+  )
 
   const selected = await selectCanonicalNQuads(
     pointers,
@@ -598,7 +603,11 @@ Deno.test("N-Quads selection: matching N pointers without identifiers", async ()
     inputFormat: "application/n-quads",
     canonicalIdMap,
   })
-  canonicalIdMap = stripBlankNodePrefixes(canonicalIdMap)
+  canonicalIdMap = new Map(
+    [...canonicalIdMap].map(
+      ([key, value]) => [key.replace(/^_:/, ""), value.replace(/^_:/, "")],
+    ),
+  )
 
   const selected = await selectCanonicalNQuads(
     pointers,
@@ -681,7 +690,11 @@ Deno.test("N-Quads selection: matching N pointers with blank node identifiers", 
     inputFormat: "application/n-quads",
     canonicalIdMap,
   })
-  canonicalIdMap = stripBlankNodePrefixes(canonicalIdMap)
+  canonicalIdMap = new Map(
+    [...canonicalIdMap].map(
+      ([key, value]) => [key.replace(/^_:/, ""), value.replace(/^_:/, "")],
+    ),
+  )
 
   const selected = await selectCanonicalNQuads(
     pointers,
@@ -707,10 +720,63 @@ Deno.test("N-Quads selection: matching N pointers with blank node identifiers", 
   )
 })
 
-const stripBlankNodePrefixes = (map: Map<string, string>) => {
-  const stripped = new Map()
-  for (const [key, value] of map) {
-    stripped.set(key.replace(/^_:/, ""), value.replace(/^_:/, ""))
+Deno.test("Canonize and group", async () => {
+  const unsecuredDocument: Credential = {
+    "@context": [
+      "https://www.w3.org/ns/credentials/v2",
+      "https://w3id.org/citizenship/v4rc1",
+    ],
+    type: [
+      "VerifiableCredential",
+      "EmploymentAuthorizationDocumentCredential",
+    ],
+    issuer: {
+      id: "did:key:zDnaegE6RR3atJtHKwTRTWHsJ3kNHqFwv7n9YjTgmU7TyfU76",
+      image:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2NgUPr/HwADaAIhG61j/AAAAABJRU5ErkJggg==",
+    },
+    credentialSubject: {
+      type: ["Person", "EmployablePerson"],
+      givenName: "JOHN",
+      additionalName: "JACOB",
+      familyName: "SMITH",
+      image:
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2Ng+M/wHwAEAQH/7yMK/gAAAABJRU5ErkJggg==",
+      gender: "Male",
+      residentSince: "2015-01-01",
+      birthCountry: "Bahamas",
+      birthDate: "1999-07-17",
+      employmentAuthorizationDocument: {
+        type: "EmploymentAuthorizationDocument",
+        identifier: "83627465",
+        lprCategory: "C09",
+        lprNumber: "999-999-999",
+      },
+    },
+    name: "Employment Authorization Document",
+    description: "Example Employment Authorization Document.",
+    validFrom: "2019-12-03T00:00:00Z",
+    validUntil: "2029-12-03T00:00:00Z",
   }
-  return stripped
-}
+
+  const groupDefinitions: Map<string, Array<string>> = new Map([["mandatory", ["/issuer"]]])
+
+  const hmacCryptoKey = await crypto.subtle.generateKey(
+    { name: "HMAC", hash: "SHA-256" },
+    true,
+    ["sign", "verify"],
+  )
+  const hmac: HMAC = async (data: Uint8Array) =>
+    new Uint8Array(await crypto.subtle.sign(hmacCryptoKey.algorithm, hmacCryptoKey, data))
+  const labelMapFactoryFunction = createHmacIdLabelMapFunction(hmac)
+  const options = { documentLoader: testLoader }
+
+  const res = await canonicalizeAndGroup(
+    unsecuredDocument,
+    labelMapFactoryFunction,
+    groupDefinitions,
+    options,
+  )
+
+  console.log(res.groups)
+})

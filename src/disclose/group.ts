@@ -104,8 +104,8 @@ export async function canonicalizeAndGroup(
     deskolemizedNQuads: Array<NQuad>
     nQuads: Array<NQuad>
   }>()
-  const entries = [...Object.entries(groupDefinitions)]
-  await Promise.all(entries.map(async ([name, pointers]) => {
+
+  await Promise.all([...groupDefinitions].map(async ([name, pointers]) => {
     selections.set(
       name,
       await selectCanonicalNQuads(

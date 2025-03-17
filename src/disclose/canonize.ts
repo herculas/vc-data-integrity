@@ -198,6 +198,62 @@ export function createHmacIdLabelMapFunction(hmac: HMAC): LabelMapFactory {
 }
 
 /**
+ * Create a label map factory function that uses an HMAC to shuffle canonical blank node identifiers.
+ *
+ * It should be noted that this algorithm builds upon `createHmacIdLabelMapFunction` by adding an additional step to
+ * shuffle the identifiers based on the HMAC values.
+ *
+ * @param {HMAC} hmac An HMAC previously initialized with a secret key.
+ *
+ * @returns {LabelMapFactory} A label map factory function.
+ */
+export function createShuffledIdLabelMapFunction(hmac: HMAC): LabelMapFactory {
+  // Procedure:
+  //
+  // 1. Create a function `labelMapFactoryFunction` with one required input (a canonical node identifier map,
+  //    `canonicalIdMap`), that will return a blank node identifier map, `bnodeIdMap`, as output. Set the function's
+  //    implementation to:
+  //
+  //    1.1. Generate a new empty bnode identifier map, `bnodeIdMap`.
+  //    1.2. For each map entry, `entry`, in `canonicalIdMap`:
+  //
+  //         1.2.1. Perform an HMAC operation on the canonical identifier from the value in `entry` to get an HMAC
+  //                digest, `digest`.
+  //         1.2.2. Generate a new string value, `b64urlDigest`, and initialize it to "u" followed by appending a
+  //                base64url-no-pad encoded version of the `digest` value.
+  //         1.2.3. Add a new entry, `newEntry`, to `bnodeIdMap` using the key from `entry` and `b64urlDigest` as the
+  //                value.
+  //
+  //    1.3. Derive the shuffled mapping from the `bnodeIdMap` as follows:
+  //
+  //         1.3.1. Set `hmacIds` to be the sorted array of values from the `bnodeIdMap`, and set `bnodeKeys` to be the
+  //                ordered array of keys from the `bnodeIdMap`.
+  //         1.3.2. For each key in `bnodeKeys`, replace the `bnodeIdMap` value for that key with the index position of
+  //                the value in the `hmacIds` array prefixed by "b", i.e.,
+  //                `bnodeIdMap.set(bkey, 'b' + hmacIds.indexOf(bnodeIdMap.get(bkey))).`
+  //
+  //    1.4. Return `bnodeIdMap`.
+  //
+  // 2. Return `labelMapFactoryFunction`.
+
+  return async (canonicalIdMap: LabelMap) => {
+    // First generate HMAC-based blank node identifiers
+    const hmacIdLabelMapFunction = createHmacIdLabelMapFunction(hmac)
+    const bnodeIdMap = await hmacIdLabelMapFunction(canonicalIdMap)
+
+    // Then derive the shuffled mapping
+    const hmacIds = Array.from(bnodeIdMap.values()).sort()
+    const bnodeKeys = Array.from(bnodeIdMap.keys())
+
+    for (const bkey of bnodeKeys) {
+      bnodeIdMap.set(bkey, `b${hmacIds.indexOf(bnodeIdMap.get(bkey)!)}`)
+    }
+
+    return bnodeIdMap
+  }
+}
+
+/**
  * Relabel the blank node identifiers in an array of N-Quad strings using a blank node label map.
  *
  * @param {Array<NQuad>} nQuads An array of N-Quad strings.

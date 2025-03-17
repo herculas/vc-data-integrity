@@ -4,6 +4,7 @@ import { canonize } from "../src/serialize/rdfc.ts"
 import {
   createHmacIdLabelMapFunction,
   createLabelMapFunction,
+  createShuffledIdLabelMapFunction,
   labelReplacementCanonicalizeJsonLd,
   labelReplacementCanonicalizeNQuads,
 } from "../src/disclose/canonize.ts"
@@ -209,6 +210,83 @@ Deno.test("HMAC ID canonized: with HMAC, with blank nodes", async () => {
 
   assertEquals(result.canonicalNQuads, expected)
 })
+
+Deno.test("HMAC ID shuffled and canonized: with HMAC, with blank nodes", async () => {
+  const credential: Credential = {
+    "@context": [
+      "https://www.w3.org/2018/credentials/v1",
+      {
+        "@protected": true,
+        DriverLicenseCredential: "urn:example:DriverLicenseCredential",
+        DriverLicense: {
+          "@id": "urn:example:DriverLicense",
+          "@context": {
+            "@protected": true,
+            id: "@id",
+            type: "@type",
+            documentIdentifier: "urn:example:documentIdentifier",
+            dateOfBirth: "urn:example:dateOfBirth",
+            expirationDate: "urn:example:expiration",
+            issuingAuthority: "urn:example:issuingAuthority",
+          },
+        },
+        driverLicense: {
+          "@id": "urn:example:driverLicense",
+          "@type": "@id",
+        },
+      },
+      "https://w3id.org/security/data-integrity/v2",
+    ],
+    type: ["VerifiableCredential", "DriverLicenseCredential"],
+    issuer: "did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9",
+    issuanceDate: "2010-01-01T19:23:24Z",
+    credentialSubject: {
+      driverLicense: {
+        type: "DriverLicense",
+        documentIdentifier: "T21387yc328c7y32h23f23",
+        dateOfBirth: "01-01-1990",
+        expirationDate: "01-01-2030",
+        issuingAuthority: "VA",
+      },
+    },
+  }
+
+  const rawHmacKey = new Uint8Array(32)
+  rawHmacKey[0] = 1
+  rawHmacKey[31] = 1
+  const hmacKey = await crypto.subtle.importKey(
+    "raw",
+    rawHmacKey,
+    { name: "HMAC", hash: { name: "SHA-256" } },
+    true,
+    ["sign", "verify"],
+  )
+
+  const hmac: HMAC = async (data: Uint8Array) => {
+    const res = await crypto.subtle.sign(hmacKey.algorithm, hmacKey, data)
+    return new Uint8Array(res)
+  }
+
+  const labelFactoryFunc = createShuffledIdLabelMapFunction(hmac)
+  const result = await labelReplacementCanonicalizeJsonLd(credential, labelFactoryFunc, { documentLoader: testLoader })
+
+  const expected = [
+    "_:b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .\n",
+    "_:b0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicenseCredential> .\n",
+    "_:b0 <https://www.w3.org/2018/credentials#credentialSubject> _:b1 .\n",
+    '_:b0 <https://www.w3.org/2018/credentials#issuanceDate> "2010-01-01T19:23:24Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .\n',
+    "_:b0 <https://www.w3.org/2018/credentials#issuer> <did:key:zDnaekGZTbQBerwcehBSXLqAg6s55hVEBms1zFy89VHXtJSa9> .\n",
+    "_:b1 <urn:example:driverLicense> _:b2 .\n",
+    "_:b2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <urn:example:DriverLicense> .\n",
+    '_:b2 <urn:example:dateOfBirth> "01-01-1990" .\n',
+    '_:b2 <urn:example:documentIdentifier> "T21387yc328c7y32h23f23" .\n',
+    '_:b2 <urn:example:expiration> "01-01-2030" .\n',
+    '_:b2 <urn:example:issuingAuthority> "VA" .\n',
+  ]
+
+  assertEquals(result.canonicalNQuads, expected)
+})
+
 Deno.test("HMAC ID canonized: with HMAC, with blank nodes, skolemized", async () => {
   const credential: Credential = {
     "@context": [

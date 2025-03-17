@@ -206,6 +206,8 @@ export function createHmacIdLabelMapFunction(hmac: HMAC): LabelMapFactory {
  * @param {HMAC} hmac An HMAC previously initialized with a secret key.
  *
  * @returns {LabelMapFactory} A label map factory function.
+ * 
+ * @see https://www.w3.org/TR/vc-di-bbs/#createshuffledidlabelmapfunction
  */
 export function createShuffledIdLabelMapFunction(hmac: HMAC): LabelMapFactory {
   // Procedure:

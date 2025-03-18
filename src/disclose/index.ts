@@ -9,6 +9,7 @@
 export {
   createHmacIdLabelMapFunction,
   createLabelMapFunction,
+  createShuffledIdLabelMapFunction,
   labelReplacementCanonicalizeJsonLd,
   labelReplacementCanonicalizeNQuads,
   relabelBlankNodes,
